@@ -63,7 +63,7 @@ export default function Home() {
                     </ul>
                 </section>
                 <section className="bg-[#4ea4a1] w-full p-4 font-mono">
-                    <div className="bg-white border-4 border-black p-6 h-60">
+                    <div className="bg-white border-4 border-black p-6 text-black">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis nulla consequuntur ipsam vitae odio beatae modi exercitationem dolor, perspiciatis libero inventore? Voluptatem accusamus culpa nihil, laudantium quibusdam quia harum quisquam!
                     </div>
                 </section>

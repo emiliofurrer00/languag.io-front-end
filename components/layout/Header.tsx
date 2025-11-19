@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Navigation from "./Navigation";
+import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function Header() {
+    const { data: session } = useSession();
     return (
         <div className="w-full p-4 text-center flex flex-col md:block top-0 left-0 right-0 bg-[#fcc52c] border-b-1 border-b-[#ffefc3]">
             <div className="flex justify-between items-center gap-1 text-black">

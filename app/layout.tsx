@@ -23,11 +23,13 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-return (
-<html lang="en" className="h-full">
-<body className="h-full">
-<SessionProvider>{children}</SessionProvider>
-</body>
-</html>
+    return (
+        <html lang="en" className="h-full">
+            <body className="h-full">
+                <div className="h-full bg-neutral-100">
+                    <SessionProvider>{children}</SessionProvider>
+                </div>
+            </body>
+        </html>
     );
 }

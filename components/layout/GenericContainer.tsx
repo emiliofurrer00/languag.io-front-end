@@ -1,5 +1,13 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-export default function Container({ children }: { children: ReactNode }) {
-    return <div className="bg-white p-10 border-t border-l border-r-4 border-b-4 rounded-[16]">{children}</div>;
+export const GENERIC_BORDER_CLASSES = 'border-t border-l border-r-4 border-b-4 rounded-[16]';
+
+export default function Container({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={`bg-white ${GENERIC_BORDER_CLASSES} ${className}`}>{children}</div>;
 }

@@ -1,14 +1,20 @@
-"use client";
+'use client';
 
-import { signIn, useSession } from "next-auth/react";
+import { useUser, SignInButton } from '@clerk/nextjs';
 
-export default function MagicButton(){
-    const { data: session } = useSession();
-    const isLoggedIn = Boolean(session?.user)
+export default function MagicButton() {
+  const { user, isSignedIn } = useUser();
 
-    return (
-        <button className={`text-lg font-mono font-semibold ${isLoggedIn ? "text-black bg-white border-4 border-black" : "text-white bg-black"} px-5 py-3 w-full rounded-sm`} onClick={() => signIn('google')} disabled={isLoggedIn}>
-            {isLoggedIn ? `🐦 Welcome ${session?.user?.name} 💩` : "I wanna be like them"}
-        </button>
-    )
+  return (
+    <SignInButton mode="modal">
+      <button
+        className={`text-lg font-mono font-semibold ${isSignedIn ? 'text-black bg-white border-4 border-black' : 'text-white bg-black'} px-5 py-3 w-full rounded-sm`}
+        disabled={isSignedIn}
+      >
+        {isSignedIn
+          ? `🐦 Welcome ${user?.firstName || user?.fullName || 'User'} 💩`
+          : 'I wanna be like them'}
+      </button>
+    </SignInButton>
+  );
 }

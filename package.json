@@ -12,10 +12,13 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.7",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.562.0",
     "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-speech-recognition": "^4.0.1",
+    "tailwind-merge": "^3.4.0",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
@@ -30,6 +33,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
   }
 }

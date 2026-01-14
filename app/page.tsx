@@ -1,4 +1,4 @@
-import Header from '@/components/layout/Header';
+import Navbar from '@/components/landing/Navbar';
 import MagicButton from '@/components/layout/MagicButton';
 import Image from 'next/image';
 
@@ -16,7 +16,7 @@ function Star() {
 export default function Home() {
   return (
     <div className="flex flex-col w-full min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black w-full">
-      <Header />
+      <Navbar />
       <main className="flex min-h-screen w-full flex-col items-center  dark:bg-black sm:items-start">
         <div className="flex flex-col md:items-center gap-6 text-center md:flex-row bg-[#fcc52c] p-4 w-full">
           <Image

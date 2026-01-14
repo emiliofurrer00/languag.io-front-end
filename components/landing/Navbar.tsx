@@ -1,5 +1,6 @@
 import { Link, Sparkles } from 'lucide-react';
 import { NeoButton } from '@/components/ui/NeoButton';
+import { SignInButton } from '@clerk/nextjs';
 
 export default function Navbar() {
   return (
@@ -12,7 +13,7 @@ export default function Navbar() {
           </div>
           <span className="font-display font-bold text-xl">Flashcard</span>
         </div>
-{/* Nav Links */}
+        {/* Nav Links */}
         <div className="hidden md:flex items-center gap-8">
           <a href="#features" className="font-medium hover:text-primary transition-colors">
             Features
@@ -27,9 +28,11 @@ export default function Navbar() {
 
         {/* CTA Buttons */}
         <div className="flex items-center gap-3">
-          <NeoButton variant="outline" size="sm" className="hidden sm:inline-flex cursor-pointer">
-            Log In
-          </NeoButton>
+          <SignInButton mode="modal">
+            <NeoButton variant="outline" size="sm" className="hidden sm:inline-flex cursor-pointer">
+              Log In
+            </NeoButton>
+          </SignInButton>
           <NeoButton variant="primary" size="sm" className="cursor-pointer">
             Get Started
           </NeoButton>

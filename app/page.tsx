@@ -1,7 +1,6 @@
 import HeroSection from '@/components/landing/HeroSection';
 import Navbar from '@/components/landing/Navbar';
-import MagicButton from '@/components/layout/MagicButton';
-import Image from 'next/image';
+import StatsSection from '@/components/landing/StatsSection';
 
 function Star() {
   return (
@@ -16,10 +15,11 @@ function Star() {
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-full min-h-screen items-center justify-center bg-background  font-sans dark:bg-black w-full">
+    <div className="flex flex-col min-h-screen items-center justify-center bg-background  font-sans dark:bg-black w-full">
       <Navbar />
       <main className="flex min-h-screen w-full flex-col items-center  dark:bg-black sm:items-start">
         <HeroSection />
+        <StatsSection />
       </main>
     </div>
   );

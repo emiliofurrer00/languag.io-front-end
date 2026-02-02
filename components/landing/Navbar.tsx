@@ -11,7 +11,7 @@ export default function Navbar() {
           <div className="w-10 h-10 rounded-full bg-primary border-[2px] border-foreground flex items-center justify-center shadow-[3px_3px_0_0_hsl(var(--foreground))]">
             <Sparkles className="w-5 h-5" />
           </div>
-          <span className="font-display font-bold text-xl">Flashcard</span>
+          <span className="font-display font-bold text-xl">Languag.io</span>
         </div>
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-8">

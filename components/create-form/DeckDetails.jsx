@@ -1,4 +1,8 @@
-import { Lock, LockIcon } from 'lucide-react';
+'use client';
+
+import { Globe, LockIcon } from 'lucide-react';
+import DeckColors from './DeckColors';
+import { Switch } from '../ui/Switch';
 
 const CATEGORIES = [
   'Language',
@@ -13,7 +17,7 @@ const CATEGORIES = [
   'Sports',
 ];
 
-export default function DeckDetails() {
+export default function DeckDetails({ deckDetails, setDeckDetails }) {
   return (
     <div className="border-3 rounded-lg shadow-[5px_5px_0_0_hsl(var(--foreground))] p-5">
       <h2 className="text-lg font-bold mb-5">Deck Details</h2>
@@ -22,39 +26,55 @@ export default function DeckDetails() {
           Deck Title *
           <input
             type="text"
-            className="mt-1 block w-full rounded-md border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            className="font-normal mt-1 block w-full rounded-md border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
             placeholder="e.g., Spanish Basics"
+            onChange={(e) => setDeckDetails({ ...deckDetails, title: e.target.value })}
           />
         </label>
         <label className="text-sm font-bold">
           Description
           <textarea
             type="text"
-            className="mt-1 block w-full rounded-md h-24 border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            className="font-normal mt-1 block w-full rounded-md h-24 border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
             placeholder="A brief description of your deck."
+            onChange={(e) => setDeckDetails({ ...deckDetails, description: e.target.value })}
           />
         </label>
         <label className="text-sm font-bold">
           Category
           <CategorySelect />
         </label>
-        <div>
-          <span className="text-sm font-bold mb-4">Deck Color</span>
-          <div className="flex gap-3">
-            <div className="cursor-pointer w-12 h-12 border-3 bg-neo-teal rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"></div>
-            <div className="cursor-pointer w-12 h-12 border-3 bg-neo-blue rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"></div>
-            <div className="cursor-pointer w-12 h-12 border-3 bg-neo-coral rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"></div>
-            <div className="cursor-pointer w-12 h-12 border-3 bg-neo-magenta rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"></div>
-            <div className="cursor-pointer w-12 h-12 border-3 bg-neo-yellow rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"></div>
-          </div>
+        <div className="h-20">
+          <DeckColors
+            selectedColor={deckDetails.color}
+            onColorSelect={(color) => setDeckDetails({ ...deckDetails, color })}
+          />
         </div>
-        <div className="flex items-center bg-neo-black/10 py-5 px-5 border-3 rounded gap-4">
-          <div>
-            <LockIcon className="text-black/60 w-5 h-5"></LockIcon>
+        <div className="flex items-center justify-between bg-neo-black/10 py-5 px-5 border-3 rounded gap-4">
+          <div className="flex items-center gap-3">
+            <div>
+              {deckDetails.isPrivate ? (
+                <LockIcon className="text-black/60 w-5 h-5"></LockIcon>
+              ) : (
+                <Globe className="text-neo-teal w-5 h-5"></Globe>
+              )}
+            </div>
+            <div>
+              <span className="text-md font-bold mb-4">
+                {deckDetails.isPrivate ? 'Private Deck' : 'Public Deck'}
+              </span>
+              <p className="text-black/50 text-sm">
+                {deckDetails.isPrivate
+                  ? 'Only you can see this deck.'
+                  : 'Everyone can see this deck.'}
+              </p>
+            </div>
           </div>
           <div>
-            <span className="text-md font-bold mb-4">Private Deck</span>
-            <p className="text-black/50 text-sm">Only you can see this deck.</p>
+            <Switch
+              checked={deckDetails.isPrivate}
+              onCheckedChange={(isPrivate) => setDeckDetails({ ...deckDetails, isPrivate })}
+            />
           </div>
         </div>
       </div>

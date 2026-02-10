@@ -2,8 +2,8 @@ import { Globe, Layers, Lock } from 'lucide-react';
 
 export default function DeckPreview({ deckDetails }) {
   return (
-    <div className="py-3">
-      <h2 className="text-lg font-bold mt-5 mb-3">Preview</h2>
+    <div className="pb-3">
+      <h2 className="text-lg font-bold mb-3">Preview</h2>
       <div
         className={`flex border-3 rounded-xl bg-neo-${deckDetails.color} shadow-[5px_5px_0_0_hsl(var(--foreground))] p-5`}
       >
@@ -23,6 +23,15 @@ export default function DeckPreview({ deckDetails }) {
             <Layers className="inline mr-2 w-4   h-4"></Layers>0 Cards
           </span>
         </div>
+      </div>
+      {/* Tips */}
+      <div className="mt-4 p-4 bg-muted rounded-xl border-2 border-foreground">
+        <h4 className="font-display font-semibold mb-2">💡 Tips</h4>
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>• Keep cards focused on one concept</li>
+          <li>• Use images for visual learning</li>
+          <li>• Public decks can be discovered by others</li>
+        </ul>
       </div>
     </div>
   );

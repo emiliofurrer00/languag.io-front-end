@@ -18,6 +18,7 @@ const CATEGORIES = [
 ];
 
 export default function DeckDetails({ deckDetails, setDeckDetails }) {
+  const { title, description, category, color, visibility } = deckDetails;
   return (
     <div className="border-3 rounded-lg shadow-[5px_5px_0_0_hsl(var(--foreground))] p-5">
       <h2 className="text-lg font-bold mb-5">Deck Details</h2>
@@ -29,6 +30,7 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
             className="font-normal mt-1 block w-full rounded-md border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
             placeholder="e.g., Spanish Basics"
             onChange={(e) => setDeckDetails({ ...deckDetails, title: e.target.value })}
+            defaultValue={title}
           />
         </label>
         <label className="text-sm font-bold">
@@ -38,22 +40,26 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
             className="font-normal mt-1 block w-full rounded-md h-24 border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
             placeholder="A brief description of your deck."
             onChange={(e) => setDeckDetails({ ...deckDetails, description: e.target.value })}
+            defaultValue={description}
           />
         </label>
         <label className="text-sm font-bold">
           Category
-          <CategorySelect />
+          <CategorySelect
+            defaultValue={category}
+            onChange={(e) => setDeckDetails({ ...deckDetails, category: e.target.value })}
+          />
         </label>
         <div className="h-20">
           <DeckColors
-            selectedColor={deckDetails.color}
+            selectedColor={color}
             onColorSelect={(color) => setDeckDetails({ ...deckDetails, color })}
           />
         </div>
         <div className="flex items-center justify-between bg-neo-black/10 py-5 px-5 border-3 rounded gap-4">
           <div className="flex items-center gap-3">
             <div>
-              {deckDetails.isPrivate ? (
+              {visibility ? (
                 <LockIcon className="text-black/60 w-5 h-5"></LockIcon>
               ) : (
                 <Globe className="text-neo-teal w-5 h-5"></Globe>
@@ -61,19 +67,17 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
             </div>
             <div>
               <span className="text-md font-bold mb-4">
-                {deckDetails.isPrivate ? 'Private Deck' : 'Public Deck'}
+                {visibility ? 'Private Deck' : 'Public Deck'}
               </span>
               <p className="text-black/50 text-sm">
-                {deckDetails.isPrivate
-                  ? 'Only you can see this deck.'
-                  : 'Everyone can see this deck.'}
+                {visibility ? 'Only you can see this deck.' : 'Everyone can see this deck.'}
               </p>
             </div>
           </div>
           <div>
             <Switch
-              checked={deckDetails.isPrivate}
-              onCheckedChange={(isPrivate) => setDeckDetails({ ...deckDetails, isPrivate })}
+              checked={visibility}
+              onCheckedChange={(visibility) => setDeckDetails({ ...deckDetails, visibility })}
             />
           </div>
         </div>
@@ -82,9 +86,13 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
   );
 }
 
-function CategorySelect() {
+function CategorySelect({ defaultValue, onChange }) {
   return (
-    <select className="font-normal mt-1 block w-fit rounded-md border-2 border-foreground px-3 py-2 shadow-sm bg-neo-yellow">
+    <select
+      className="font-normal mt-1 block w-fit rounded-md border-2 border-foreground px-3 py-2 shadow-sm bg-neo-yellow"
+      defaultValue={defaultValue}
+      onChange={onChange}
+    >
       {CATEGORIES.map((category) => (
         <option key={category} value={category}>
           {category}

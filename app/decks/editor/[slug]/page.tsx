@@ -23,7 +23,7 @@ async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
   const deck: DeckDetails = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/decks/${slug}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
-    next: { revalidate: 30 }, // Revalidate every 30 seconds to keep data fresh
+    cache: 'no-store',
   }).then((res) => res.json());
   console.log('Fetched deck details:', deck);
 

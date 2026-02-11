@@ -2,7 +2,7 @@ import { Sparkles, ArrowLeft, Save } from 'lucide-react';
 import { NeoButton } from '../ui/NeoButton';
 import Link from 'next/link';
 import { useTransition } from 'react';
-import { redirect } from 'next/dist/server/api-utils';
+import { redirect } from 'next/navigation';
 
 export default function Navbar({ handleSave, isEditMode }) {
   const [isPending, startTransition] = useTransition();

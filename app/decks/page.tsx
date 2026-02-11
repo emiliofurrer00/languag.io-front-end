@@ -9,6 +9,7 @@ async function fetchDecks(): Promise<DeckList> {
     headers: {
       'Content-Type': 'application/json',
     },
+    next: { revalidate: 10 },
   });
   return response.json();
 }

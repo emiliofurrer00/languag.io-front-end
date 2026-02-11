@@ -9,7 +9,7 @@ export default function DeckCard({
     description: string;
     category: string;
     color: string;
-    visibility: boolean;
+    visibility: number;
     id: string;
     cardCount: number;
   };

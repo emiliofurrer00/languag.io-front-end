@@ -5,7 +5,7 @@ export type DeckDetails = {
   description: string;
   category: string;
   color: string;
-  visibility: boolean;
+  visibility: number;
   id?: string;
 };
 
@@ -16,7 +16,7 @@ async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
       description: '',
       category: '',
       color: 'teal',
-      visibility: true,
+      visibility: 1,
     };
   }
 

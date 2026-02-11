@@ -77,7 +77,9 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
           <div>
             <Switch
               checked={visibility}
-              onCheckedChange={(visibility) => setDeckDetails({ ...deckDetails, visibility })}
+              onCheckedChange={(visibility) =>
+                setDeckDetails({ ...deckDetails, visibility: visibility ? 1 : 0 })
+              }
             />
           </div>
         </div>

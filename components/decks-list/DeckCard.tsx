@@ -18,7 +18,7 @@ export default function DeckCard({
   const { title, description, category, color, visibility, id, cardCount } = deckData;
   return (
     <div
-      className={`flex-1 border-3 w-full bg-neo-${color} bg-card rounded-xl shadow-[5px_5px_0_0_hsl(var(--foreground))] p-6 flex flex-col justify-between`}
+      className={`hover:translate-0.5 transition-all duration-50 flex-1 border-3 w-full bg-neo-${color} bg-card rounded-xl hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] shadow-[5px_5px_0_0_hsl(var(--foreground))] p-6 flex flex-col justify-between`}
     >
       <Link href={`/decks/editor/${id}`} key={id}>
         <div className="flex justify-between mb-3">

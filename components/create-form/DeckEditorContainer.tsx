@@ -13,16 +13,16 @@ export default function DeckEditorContainer({
 }) {
   const [deckDetails, setDeckDetails] = useState<DeckDetails>(defaultDeckDetails);
 
-  function handleSave(submitNewDeck: boolean) {
+  async function handleSave(submitNewDeck: boolean) {
     console.log('Saving deck with details:', deckDetails);
     const payload = {
       title: deckDetails.title,
       description: deckDetails.description,
       category: deckDetails.category,
       color: deckDetails.color,
-      visibility: deckDetails.visibility ? 0 : 1, // Assuming the API expects 0 for private and 1 for public
+      visibility: deckDetails.visibility,
     };
-    fetch(
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/decks${submitNewDeck ? '' : `/${defaultDeckDetails.id}`}`,
       {
         method: submitNewDeck ? 'POST' : 'PUT', // Use POST for new decks and PUT for updates
@@ -31,17 +31,10 @@ export default function DeckEditorContainer({
         },
         body: JSON.stringify(payload),
       }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('Deck saved successfully:', data);
-        // Optionally, redirect to the deck page or show a success message
-      })
-      .catch((error) => {
-        console.error('Error saving deck:', error);
-        // Optionally, show an error message to the user
-      });
+    );
+    return response.ok;
   }
+
   return (
     <div className="bg-background min-h-screen w-full">
       <Navbar handleSave={handleSave} isEditMode={Boolean(defaultDeckDetails.id)} />

@@ -67,10 +67,10 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
             </div>
             <div>
               <span className="text-md font-bold mb-4">
-                {visibility ? 'Private Deck' : 'Public Deck'}
+                {!visibility ? 'Private Deck' : 'Public Deck'}
               </span>
               <p className="text-black/50 text-sm">
-                {visibility ? 'Only you can see this deck.' : 'Everyone can see this deck.'}
+                {!visibility ? 'Only you can see this deck.' : 'Everyone can see this deck.'}
               </p>
             </div>
           </div>

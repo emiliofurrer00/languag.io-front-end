@@ -1,8 +1,13 @@
-import { Link, Sparkles } from 'lucide-react';
+'use client';
+
+import { Sparkles } from 'lucide-react';
 import { NeoButton } from '@/components/ui/NeoButton';
-import { SignInButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
+import Link from 'next/link';
 
 export default function Navbar() {
+  const { isSignedIn, user, isLoaded } = useUser();
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto px-4 py-4 flex items-center justify-between">
@@ -28,14 +33,30 @@ export default function Navbar() {
 
         {/* CTA Buttons */}
         <div className="flex items-center gap-3">
-          <SignInButton mode="modal">
-            <NeoButton variant="outline" size="sm" className="hidden sm:inline-flex cursor-pointer">
-              Log In
+          <SignedOut>
+            <SignInButton mode="modal">
+              <NeoButton
+                variant="outline"
+                size="sm"
+                className="hidden sm:inline-flex cursor-pointer"
+              >
+                Log In
+              </NeoButton>
+            </SignInButton>
+            <NeoButton variant="primary" size="sm" className="cursor-pointer">
+              Get Started
             </NeoButton>
-          </SignInButton>
-          <NeoButton variant="primary" size="sm" className="cursor-pointer">
-            Get Started
-          </NeoButton>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/decks" className="hidden sm:inline-flex">
+              <NeoButton variant="outline" size="sm" className="cursor-pointer">
+                My Decks
+              </NeoButton>
+            </Link>
+            <NeoButton variant="primary" size="sm" className="cursor-pointer">
+              {`Hi, ${user?.firstName || 'User'}!`} 🤓
+            </NeoButton>
+          </SignedIn>
         </div>
       </div>
     </nav>

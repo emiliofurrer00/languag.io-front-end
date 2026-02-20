@@ -39,6 +39,7 @@ async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
     color: deck.color || 'teal',
     visibility: deck.visibility, // Assuming visibility 0 means private
     id: deck.id,
+    cards: deck.cards || [],
   };
 }
 

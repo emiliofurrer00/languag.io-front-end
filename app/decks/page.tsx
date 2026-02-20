@@ -1,7 +1,7 @@
 import DeckListContainer from '@/components/decks-list/DeckListContainer';
 import { DeckDetails } from './editor/[slug]/page';
 
-type DeckList = Array<DeckDetails & { cardCount: number; id: string }>;
+type DeckList = Array<DeckDetails & { cards: any[]; id: string }>;
 
 async function fetchDecks(): Promise<DeckList> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/decks/public`, {

@@ -10,7 +10,13 @@ const colors = [
   { name: 'Yellow', class: 'bg-neo-yellow', id: 'yellow' },
 ];
 
-export default function DeckColors({ selectedColor, onColorSelect }) {
+export default function DeckColors({
+  selectedColor,
+  onColorSelect,
+}: {
+  selectedColor: string;
+  onColorSelect: (colorId: string) => void;
+}) {
   return (
     <>
       <span className="text-sm font-bold mb-4">Deck Color</span>

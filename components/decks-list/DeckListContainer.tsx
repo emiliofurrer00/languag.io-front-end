@@ -12,7 +12,7 @@ export default function DeskListContainer({
     color: string;
     visibility: number;
     id: string;
-    cardCount: number;
+    cards: any[];
   }>;
 }) {
   return (

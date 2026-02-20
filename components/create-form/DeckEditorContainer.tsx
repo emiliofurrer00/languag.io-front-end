@@ -3,6 +3,7 @@
 import Navbar from '@/components/create-form/Navbar';
 import DeckDetailsEdit from '@/components/create-form/DeckDetails';
 import DeckPreview from '@/components/create-form/DeckPreview';
+import CardsEditorContainer from '@/components/create-form/CardsEditorContainer';
 import { useState } from 'react';
 import { DeckDetails } from '@/app/decks/editor/[slug]/page';
 
@@ -18,9 +19,10 @@ export default function DeckEditorContainer({
     const payload = {
       title: deckDetails.title,
       description: deckDetails.description,
-      category: deckDetails.category,
+      category: deckDetails.category || 'Language',
       color: deckDetails.color,
       visibility: deckDetails.visibility,
+      cards: deckDetails.cards || [],
     };
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/decks${submitNewDeck ? '' : `/${defaultDeckDetails.id}`}`,
@@ -39,7 +41,13 @@ export default function DeckEditorContainer({
     <div className="bg-background min-h-screen w-full">
       <Navbar handleSave={handleSave} isEditMode={Boolean(defaultDeckDetails.id)} />
       <section className="px-3 md:grid-cols-[2fr_1fr] grid gap-6">
-        <DeckDetailsEdit deckDetails={deckDetails} setDeckDetails={setDeckDetails} />
+        <div className="flex flex-col gap-4">
+          <DeckDetailsEdit deckDetails={deckDetails} setDeckDetails={setDeckDetails} />
+          <CardsEditorContainer
+            cards={deckDetails.cards || []}
+            setCards={(newCards: any) => setDeckDetails({ ...deckDetails, cards: newCards })}
+          />
+        </div>
         <DeckPreview deckDetails={deckDetails} />
       </section>
     </div>

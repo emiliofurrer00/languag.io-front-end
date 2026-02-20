@@ -25,11 +25,11 @@ export default function CardPreview({
       <div className="flex-1 min-w-0 grid grid-cols-2 gap-4">
         <div className="truncate">
           <span className="text-xs text-muted-foreground uppercase tracking-wide">Front</span>
-          <p className="font-medium truncate">{card.front}</p>
+          <p className="font-medium truncate">{card.frontText}</p>
         </div>
         <div className="truncate">
           <span className="text-xs text-muted-foreground uppercase tracking-wide">Back</span>
-          <p className="font-medium truncate">{card.back}</p>
+          <p className="font-medium truncate">{card.backText}</p>
         </div>
       </div>
 

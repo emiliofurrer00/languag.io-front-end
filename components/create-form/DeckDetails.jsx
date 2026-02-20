@@ -36,7 +36,6 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
         <label className="text-sm font-bold">
           Description
           <textarea
-            type="text"
             className="font-normal mt-1 block w-full rounded-md h-24 border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
             placeholder="A brief description of your deck."
             onChange={(e) => setDeckDetails({ ...deckDetails, description: e.target.value })}
@@ -76,7 +75,7 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
           </div>
           <div>
             <Switch
-              checked={visibility}
+              checked={visibility === 1}
               onCheckedChange={(visibility) =>
                 setDeckDetails({ ...deckDetails, visibility: visibility ? 1 : 0 })
               }

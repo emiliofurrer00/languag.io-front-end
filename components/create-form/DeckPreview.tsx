@@ -1,6 +1,7 @@
+import { DeckDetails } from '@/app/decks/editor/[slug]/page';
 import { Globe, Layers, Lock } from 'lucide-react';
 
-export default function DeckPreview({ deckDetails }) {
+export default function DeckPreview({ deckDetails }: { deckDetails: DeckDetails }) {
   return (
     <div className="pb-3">
       <h2 className="text-lg font-bold mb-3">Preview</h2>
@@ -9,7 +10,7 @@ export default function DeckPreview({ deckDetails }) {
       >
         <div className="flex flex-col gap-2 justify-center w-full pl-3">
           <div className="w-full flex justify-end">
-            {deckDetails.isPrivate ? (
+            {deckDetails.visibility === 0 ? (
               <Lock className="text-black/60 w-5 h-5"></Lock>
             ) : (
               <Globe className="text-black/60 w-5 h-5"></Globe>

@@ -53,9 +53,12 @@ export default function Navbar() {
                 My Decks
               </NeoButton>
             </Link>
-            <NeoButton variant="primary" size="sm" className="cursor-pointer">
-              {`Hi, ${user?.firstName || 'User'}!`} 🤓
-            </NeoButton>
+            {/* For now just link to decks. Later on implement a profile page */}
+            <Link href="/decks" className="hidden sm:inline-flex">
+              <NeoButton variant="primary" size="sm" className="cursor-pointer">
+                {`Hi, ${user?.firstName || 'User'}!`} 🤓
+              </NeoButton>
+            </Link>
           </SignedIn>
         </div>
       </div>

@@ -7,6 +7,10 @@ export type DeckDetails = {
   color: string;
   visibility: number;
   id?: string;
+  cards?: {
+    front: string;
+    back: string;
+  }[];
 };
 
 async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
@@ -17,6 +21,7 @@ async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
       category: '',
       color: 'teal',
       visibility: 1,
+      cards: [],
     };
   }
 

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{js,mjs,cjs,jsx,ts,tsx,css,json}\"",
-    "format:check": "prettier --check \"**/*.{js,mjs,cjs,jsx,ts,tsx,css,json}\""
+    "format:check": "prettier --check \"**/*.{js,mjs,cjs,jsx,ts,tsx,css,json}\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.7",
@@ -32,6 +33,7 @@
     "eslint-config-next": "^16.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",

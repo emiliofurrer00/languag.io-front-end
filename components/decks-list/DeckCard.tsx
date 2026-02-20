@@ -11,11 +11,11 @@ export default function DeckCard({
     color: string;
     visibility: number;
     id: string;
-    cardCount: number;
+    cards: any[];
   };
 }) {
   const viewMode = 'grid'; // will be toggable in UI later on
-  const { title, description, category, color, visibility, id, cardCount } = deckData;
+  const { title, description, category, color, visibility, id, cards } = deckData;
   return (
     <div
       className={`hover:translate-0.5 transition-all duration-50 flex-1 border-3 w-full bg-neo-${color} bg-card rounded-xl hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] shadow-[5px_5px_0_0_hsl(var(--foreground))] p-6 flex flex-col justify-between`}
@@ -33,7 +33,9 @@ export default function DeckCard({
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4" />
-            <span className="font-semibold">{cardCount || 0} cards</span>
+            <span className="font-semibold">
+              {cards.length || 0} {cards.length === 1 ? 'card' : 'cards'}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />

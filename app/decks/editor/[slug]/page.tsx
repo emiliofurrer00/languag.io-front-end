@@ -7,13 +7,13 @@ export type DeckDetails = {
   color: string;
   visibility: number;
   id?: string;
-  cards?: {
-    front: string;
-    back: string;
+  cards: {
+    frontText: string;
+    backText: string;
   }[];
 };
 
-async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
+export async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
   if (slug === 'new') {
     return {
       title: '',

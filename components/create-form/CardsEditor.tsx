@@ -1,14 +1,27 @@
 import { useState } from 'react';
 import { NeoButton } from '../ui/NeoButton';
+import { DeckCard } from '@/lib/decks/types';
 
-function getDefaultCard(editingCardIndex: number | null, cards: any[]) {
+type CardsEditorProps = {
+  cards: DeckCard[];
+  setCards: (newCards: DeckCard[]) => void;
+  handleCloseEditor: () => void;
+  editingCardIndex: number | null;
+};
+
+function getDefaultCard(editingCardIndex: number | null, cards: DeckCard[]) {
   if (editingCardIndex === null) {
     return { frontText: '', backText: '' };
   }
   return cards[editingCardIndex] || { frontText: '', backText: '' };
 }
 
-export default function CardsEditor({ cards, setCards, handleCloseEditor, editingCardIndex }: any) {
+export default function CardsEditor({
+  cards,
+  setCards,
+  handleCloseEditor,
+  editingCardIndex,
+}: CardsEditorProps) {
   const defaultData = getDefaultCard(editingCardIndex, cards);
   const isNewCard = editingCardIndex === null;
 
@@ -48,7 +61,6 @@ export default function CardsEditor({ cards, setCards, handleCloseEditor, editin
                 updatedCards[editingCardIndex] = {
                   frontText,
                   backText,
-                  order: editingCardIndex + 1,
                 };
                 setCards(updatedCards);
               }

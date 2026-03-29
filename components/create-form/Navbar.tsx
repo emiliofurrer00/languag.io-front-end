@@ -2,7 +2,7 @@ import { Sparkles, ArrowLeft, Save } from 'lucide-react';
 import { NeoButton } from '../ui/NeoButton';
 import Link from 'next/link';
 import { useTransition } from 'react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar({
   handleSave,
@@ -12,6 +12,8 @@ export default function Navbar({
   isEditMode: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b-3">
       <div className="mx-auto px-4 py-4 flex items-center justify-between">
@@ -40,10 +42,12 @@ export default function Navbar({
             className="cursor-pointer"
             onClick={() => {
               startTransition(async () => {
-                (await isEditMode) ? handleSave(false) : handleSave(true);
+                const didSave = await handleSave(!isEditMode);
+
+                if (didSave) {
+                  router.push('/decks');
+                }
               });
-              // TODO: Handle it gracefully after a successful save (e.g., show a toast notification) instead of an immediate redirect
-              redirect('/decks');
             }}
             disabled={isPending}
           >

@@ -1,5 +1,5 @@
-import { DeckDetails } from '@/app/decks/editor/[slug]/page';
 import { Globe, Layers, Lock } from 'lucide-react';
+import { DeckDetails } from '@/lib/decks/types';
 
 export default function DeckPreview({ deckDetails }: { deckDetails: DeckDetails }) {
   return (

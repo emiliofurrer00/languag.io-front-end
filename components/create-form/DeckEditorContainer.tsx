@@ -4,8 +4,9 @@ import Navbar from '@/components/create-form/Navbar';
 import DeckDetailsEdit from '@/components/create-form/DeckDetails';
 import DeckPreview from '@/components/create-form/DeckPreview';
 import CardsEditorContainer from '@/components/create-form/CardsEditorContainer';
+import { saveDeck } from '@/lib/decks/client';
+import { DeckDetails } from '@/lib/decks/types';
 import { useState } from 'react';
-import { DeckDetails } from '@/app/decks/editor/[slug]/page';
 
 export default function DeckEditorContainer({
   defaultDeckDetails,
@@ -15,26 +16,10 @@ export default function DeckEditorContainer({
   const [deckDetails, setDeckDetails] = useState<DeckDetails>(defaultDeckDetails);
 
   async function handleSave(submitNewDeck: boolean) {
-    console.log('Saving deck with details:', deckDetails);
-    const payload = {
-      title: deckDetails.title,
-      description: deckDetails.description,
-      category: deckDetails.category || 'Language',
-      color: deckDetails.color,
-      visibility: deckDetails.visibility,
-      cards: deckDetails.cards || [],
-    };
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/decks${submitNewDeck ? '' : `/${defaultDeckDetails.id}`}`,
-      {
-        method: submitNewDeck ? 'POST' : 'PUT', // Use POST for new decks and PUT for updates
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      }
-    );
-    return response.ok;
+    return saveDeck({
+      deck: deckDetails,
+      isNew: submitNewDeck,
+    });
   }
 
   return (
@@ -45,7 +30,7 @@ export default function DeckEditorContainer({
           <DeckDetailsEdit deckDetails={deckDetails} setDeckDetails={setDeckDetails} />
           <CardsEditorContainer
             cards={deckDetails.cards || []}
-            setCards={(newCards: any) => setDeckDetails({ ...deckDetails, cards: newCards })}
+            setCards={(newCards) => setDeckDetails({ ...deckDetails, cards: newCards })}
           />
         </div>
         <DeckPreview deckDetails={deckDetails} />

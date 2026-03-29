@@ -3,13 +3,14 @@ import { NeoButton } from '../ui/NeoButton';
 import { useState } from 'react';
 import CardPreview from './CardPreview';
 import CardsEditor from './CardsEditor';
+import { DeckCard } from '@/lib/decks/types';
 
 export default function CardsEditorContainer({
   cards,
   setCards,
 }: {
-  cards: any[];
-  setCards: (newCards: any[]) => void;
+  cards: DeckCard[];
+  setCards: (newCards: DeckCard[]) => void;
 }) {
   const [isEditCardMode, setIsEditCardMode] = useState(false);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);

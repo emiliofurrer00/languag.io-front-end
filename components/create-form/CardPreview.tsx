@@ -1,14 +1,21 @@
 import { Edit2, GripVertical, Trash2 } from 'lucide-react';
+import { DeckCard } from '@/lib/decks/types';
+
+type CardPreviewProps = {
+  card: DeckCard;
+  index: number;
+  onEdit?: (card: DeckCard) => void;
+  onDelete?: () => void;
+};
 
 export default function CardPreview({
   card,
   index,
   onEdit = () => {},
-  onDelete = (): any => {},
-}: any) {
+  onDelete = () => {},
+}: CardPreviewProps) {
   return (
     <div
-      key={card.id}
       className="group flex items-center gap-3 p-4 bg-card rounded-xl border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
     >
       {/* Drag Handle */}
@@ -42,7 +49,7 @@ export default function CardPreview({
           <Edit2 className="w-4 h-4" />
         </button>
         <button
-          onClick={() => onDelete(card.id)}
+          onClick={onDelete}
           className="p-2 hover:bg-destructive hover:text-destructive-foreground rounded-lg transition-colors border-2 border-transparent hover:border-foreground cursor-pointer"
         >
           <Trash2 className="w-4 h-4" />

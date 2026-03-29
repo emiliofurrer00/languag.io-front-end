@@ -1,19 +1,11 @@
-import Link from 'next/link';
 import DeckCard from './DeckCard';
 import Navbar from './Navbar';
+import { DeckSummary } from '@/lib/decks/types';
 
 export default function DeskListContainer({
   decks,
 }: {
-  decks: Array<{
-    title: string;
-    description: string;
-    category: string;
-    color: string;
-    visibility: number;
-    id: string;
-    cards: any[];
-  }>;
+  decks: DeckSummary[];
 }) {
   return (
     <>

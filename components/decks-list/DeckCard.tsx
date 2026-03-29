@@ -1,18 +1,11 @@
 import { Globe, Layers, User, Lock } from 'lucide-react';
 import Link from 'next/link';
+import { DeckSummary } from '@/lib/decks/types';
 
 export default function DeckCard({
   deckData,
 }: {
-  deckData: {
-    title: string;
-    description: string;
-    category: string;
-    color: string;
-    visibility: number;
-    id: string;
-    cards: any[];
-  };
+  deckData: DeckSummary;
 }) {
   const viewMode = 'grid'; // will be toggable in UI later on
   const { title, description, category, color, visibility, id, cards } = deckData;
@@ -20,7 +13,7 @@ export default function DeckCard({
     <div
       className={`hover:translate-0.5 transition-all duration-50 flex-1 border-3 w-full bg-neo-${color} bg-card rounded-xl hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] shadow-[5px_5px_0_0_hsl(var(--foreground))] p-6 flex flex-col justify-between`}
     >
-      <Link href={`/decks/editor/${id}`} key={id}>
+      <Link href={`/study/${id}`} key={id}>
         <div className="flex justify-between mb-3">
           <span className="px-3 py-1 bg-background/80 rounded-full text-xs font-semibold border-[2px] border-foreground">
             {category}

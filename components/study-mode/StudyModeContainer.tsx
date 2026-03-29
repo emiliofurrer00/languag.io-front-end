@@ -1,18 +1,64 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import { NeoButton } from '../ui/NeoButton';
-import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { DeckDetails } from '@/lib/decks/types';
+import { NeoButton } from '../ui/NeoButton';
 import FlipCardView from './FlipCardView';
-import { DeckDetails } from '@/app/decks/editor/[slug]/page';
+import Header, { colorMap } from './Header';
+import StudyComplete from './StudyComplete';
+import MultipleChoiceView from './MultiChoiceCard';
+import {
+  isMultipleChoiceCard,
+  StudyCard,
+  StudyDeck,
+  StudyFlashCard,
+  StudyMultipleChoiceCard,
+} from './types';
 
-export default function StudyModeContainer({ deck }: { deck: DeckDetails }) {
+const mockMCQ: StudyMultipleChoiceCard = {
+  id: '5',
+  type: 'multiple-choice',
+  question: "How do you say 'Good morning' in Spanish?",
+  options: ['Buenas noches', 'Buenos días', 'Buenas tardes', 'Buen provecho'],
+  correctIndex: 1,
+  explanation: "'Buenos días' literally means 'Good days' and is used as a morning greeting.",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+const mockConversation: StudyMultipleChoiceCard = {
+  id: '6',
+  type: 'multiple-choice',
+  question: 'What do you feel like ordering for dinner?',
+  options: ['Steak', 'RIP my granny', 'Carbonara', 'Culito'],
+  correctIndex: 1,
+  explanation: "'Buenos días' literally means 'Good days' and is used as a morning greeting.",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+function normalizeStudyDeck(deck: DeckDetails): StudyDeck {
+  const normalizedCards: StudyFlashCard[] = deck.cards.map((card, index) => ({
+    id: `${deck.id ?? 'deck'}-flash-${index}`,
+    frontText: card.frontText,
+    backText: card.backText,
+  }));
+
+  return {
+    ...deck,
+    cards: [...normalizedCards, mockMCQ, mockConversation],
+  };
+}
+
+export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails }) {
+  const deck = normalizeStudyDeck(mockDeck);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [knownCards, setKnownCards] = useState<Set<string>>(new Set());
   const [learningCards, setLearningCards] = useState<Set<string>>(new Set());
   const [isComplete, setIsComplete] = useState(false);
-  const [shuffledCards, setShuffledCards] = useState<any[]>(deck.cards);
+  const [shuffledCards, setShuffledCards] = useState<StudyCard[]>(deck.cards);
 
   const currentCard = shuffledCards[currentIndex];
   const totalCards = shuffledCards.length;
@@ -124,13 +170,36 @@ export default function StudyModeContainer({ deck }: { deck: DeckDetails }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isComplete, handleFlip, goToPrev, goToNext, currentCard]);
 
+  if (isComplete) {
+    return (
+      <StudyComplete
+        deck={deck}
+        totalCards={totalCards}
+        knownCount={knownCards.size}
+        learningCount={learningCards.size}
+        onStudyLearning={handleStudyLearning}
+        onShuffle={handleShuffle}
+        onRestart={handleRestart}
+      />
+    );
+  }
+
   return (
     <div className="md:min-h-screen bg-background flex flex-col">
-      {/* Header */}
+      <Header
+        deck={deck}
+        currentIndex={currentIndex}
+        totalCards={totalCards}
+        knownCards={knownCards}
+        learningCards={learningCards}
+        progressPercent={progressPercent}
+        handleShuffle={handleShuffle}
+        handleRestart={handleRestart}
+      />
       {/* Card Area */}
       <main className="flex-1 container mx-auto px-4 py-8 flex flex-col items-center justify-center max-w-2xl">
         {/* Render based on card type */}
-        {true ? (
+        {!isMultipleChoiceCard(currentCard) ? (
           <>
             <FlipCardView
               card={currentCard}
@@ -191,15 +260,14 @@ export default function StudyModeContainer({ deck }: { deck: DeckDetails }) {
               </NeoButton>
             </div>
           </>
-        ) : // ) : isMultipleChoiceCard(currentCard) ? (
-        //   <MultipleChoiceView
-        //     key={currentCard.id}
-        //     card={currentCard}
-        //     colorClass={colorMap[deck.color]}
-        //     onAnswer={handleMCQAnswer}
-        //   />
-        // )
-        null}
+        ) : (
+          <MultipleChoiceView
+            key={currentCard.id}
+            card={currentCard}
+            colorClass={colorMap[deck.color]}
+            onAnswer={handleMCQAnswer}
+          />
+        )}
 
         {/* Card indicator dots */}
         <div className="mt-6 flex items-center gap-1.5 flex-wrap justify-center max-w-md">

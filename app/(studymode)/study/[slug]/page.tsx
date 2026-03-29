@@ -1,15 +1,15 @@
-import { getDefaultDeckDetails } from '@/app/decks/editor/[slug]/page';
-import Navbar from '@/components/study-mode/Navbar';
 import StudyModeContainer from '@/components/study-mode/StudyModeContainer';
+import { getDeckDetails } from '@/lib/decks/server';
 
-export default async function StudyMode({ params }: any) {
+type StudyModePageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function StudyMode({ params }: StudyModePageProps) {
   const { slug } = await params;
-  const defaultData = await getDefaultDeckDetails(slug);
+  const defaultData = await getDeckDetails(slug);
 
-  return (
-    <>
-      <Navbar deckName={defaultData.title} deckColor={defaultData.color} />
-      <StudyModeContainer deck={defaultData} />
-    </>
-  );
+  return <StudyModeContainer mockDeck={defaultData} />;
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { ClerkProvider } from '@clerk/nextjs';
+import { AuthProvider } from './AuthProvider';
 import './globals.css';
 
 const geistSans = Geist({
@@ -18,18 +18,18 @@ export const metadata: Metadata = {
   description: 'Language learning web app',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="h-full">
-        <body className="h-full">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
+      <body className="h-full">
+        <AuthProvider>
           <div className="h-full bg-neutral-50">{children}</div>
-        </body>
-      </html>
-    </ClerkProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }

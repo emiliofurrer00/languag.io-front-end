@@ -1,4 +1,5 @@
-import { Users, Layers, BookOpen, GraduationCap } from 'lucide-react';
+import { BookOpen, GraduationCap, Layers, Users } from 'lucide-react';
+import { ReactNode } from 'react';
 
 export default function StatsSection() {
   return (
@@ -41,7 +42,7 @@ function StatsCard({
   text,
   iconBgColor,
 }: {
-  icon?: any;
+  icon?: ReactNode;
   title: string;
   text: string;
   iconBgColor?: string;

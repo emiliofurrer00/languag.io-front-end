@@ -1,51 +1,30 @@
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import DeckEditorContainer from '@/components/create-form/DeckEditorContainer';
+import { getDeckDetailsOrDefault } from '@/lib/decks/server';
+import { redirect } from 'next/navigation';
 
-export type DeckDetails = {
-  title: string;
-  description: string;
-  category: string;
-  color: string;
-  visibility: number;
-  id?: string;
-  cards: {
-    frontText: string;
-    backText: string;
-  }[];
+type CreateDeckPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
 };
 
-export async function getDefaultDeckDetails(slug: string): Promise<DeckDetails> {
-  if (slug === 'new') {
-    return {
-      title: '',
-      description: '',
-      category: '',
-      color: 'teal',
-      visibility: 1,
-      cards: [],
-    };
+export default async function CreateDeckPage({ params }: CreateDeckPageProps) {
+  const { slug } = await params;
+  const { isAuthenticated, getAccessTokenRaw } = getKindeServerSession();
+
+  if (!(await isAuthenticated())) {
+    redirect(`/api/auth/login?post_login_redirect_url=${encodeURIComponent(`/decks/editor/${slug}`)}`);
   }
 
-  const deck: DeckDetails = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/decks/${slug}`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    cache: 'no-store',
-  }).then((res) => res.json());
-  console.log('Fetched deck details:', deck);
+  const accessToken = await getAccessTokenRaw();
+  if (!accessToken) {
+    throw new Error(
+      'Authenticated Kinde session is missing an API access token. Set KINDE_AUDIENCE to your backend API audience.'
+    );
+  }
 
-  return {
-    title: deck.title || '',
-    description: deck.description || '',
-    category: deck.category || '',
-    color: deck.color || 'teal',
-    visibility: deck.visibility, // Assuming visibility 0 means private
-    id: deck.id,
-    cards: deck.cards || [],
-  };
-}
-
-export default async function CreateDeckPage({ params }: any) {
-  const { slug } = await params;
-  const defaultData = await getDefaultDeckDetails(slug);
+  const defaultData = await getDeckDetailsOrDefault(slug);
 
   return <DeckEditorContainer defaultDeckDetails={defaultData} />;
 }

@@ -1,8 +1,6 @@
 'use client';
 
-import {
-  useKindeBrowserClient,
-} from '@kinde-oss/kinde-auth-nextjs';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '@/components/ui/NeoButton';
@@ -52,7 +50,13 @@ export default function Navbar() {
               >
                 Loading...
               </NeoButton>
-              <NeoButton variant="primary" size="sm" className="cursor-progress" type="button" disabled>
+              <NeoButton
+                variant="primary"
+                size="sm"
+                className="cursor-progress"
+                type="button"
+                disabled
+              >
                 Please wait
               </NeoButton>
             </>
@@ -88,7 +92,7 @@ export default function Navbar() {
                   My Decks
                 </NeoButton>
               </Link>
-              <Link href="/decks" className="hidden sm:inline-flex">
+              <Link href="/profile" className="hidden sm:inline-flex">
                 <NeoButton variant="primary" size="sm" className="cursor-pointer">
                   {`Hi, ${displayName}!`}
                 </NeoButton>

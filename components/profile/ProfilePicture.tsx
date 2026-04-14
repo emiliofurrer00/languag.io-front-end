@@ -1,3 +1,4 @@
+import type { ProfileAccentColor } from '@/lib/profile/types';
 import NeoBox from '../ui/NeoBox';
 
 export default function ProfilePicture({
@@ -6,7 +7,7 @@ export default function ProfilePicture({
   className,
 }: {
   initials: string;
-  color: string;
+  color: ProfileAccentColor;
   className?: string;
 }) {
   return (

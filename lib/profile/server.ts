@@ -278,9 +278,15 @@ function normalizeProfileResponse(response: unknown): ProfileData {
     emailLocalPart ||
     'User';
   const handle = username || emailLocalPart;
-  const bio = readFirstString(sources, ['bio', 'about', 'description']);
+  const bio = readFirstString(sources, ['bio', 'about', 'profileDescription', 'description']);
   const visibilityLabel = normalizeVisibility(
-    readFirstValue(sources, ['visibility', 'profileVisibility', 'isPublic', 'public'])
+    readFirstValue(sources, [
+      'visibility',
+      'profileVisibility',
+      'isPublic',
+      'public',
+      'isPublicProfile',
+    ])
   );
   const joinedLabel = formatDateLabel(
     readFirstValue(sources, ['joinedAt', 'createdAt', 'registeredAt', 'memberSince'])
@@ -289,6 +295,7 @@ function normalizeProfileResponse(response: unknown): ProfileData {
   const avatarColor = normalizeAccentColor(
     readFirstValue(avatarSources, ['avatarColor', 'accentColor', 'themeColor', 'color'])
   );
+  const decks = readFirstArray(sources, ['decks']);
 
   return {
     name,
@@ -306,7 +313,7 @@ function normalizeProfileResponse(response: unknown): ProfileData {
           'createdDeckCount',
           'deckCount',
           'decksCount',
-        ]) ?? 0,
+        ]) ?? decks.length,
       cardsStudied:
         readFirstNumber(statsSources, ['cardsStudied', 'studiedCards', 'studiedCardCount']) ?? 0,
       masteredDecks:
@@ -326,12 +333,57 @@ function normalizeProfileResponse(response: unknown): ProfileData {
   };
 }
 
+function isNotFoundError(error: unknown) {
+  return error instanceof Error && error.message.includes('Not Found');
+}
+
+function buildPublicProfileEndpointPath(userId: string) {
+  return `/Users/${encodeURIComponent(userId)}`;
+}
+
 export async function getMyProfile() {
   const accessToken = await getRequiredApiAccessToken();
-  const response = await apiFetch<unknown>('/me', {
+  const response = await apiFetch<unknown>('/Users/me', {
     cache: 'no-store',
     accessToken,
   });
 
   return normalizeProfileResponse(response);
+}
+
+export async function getPublicProfile(userId: string) {
+  try {
+    const response = await apiFetch<unknown>(buildPublicProfileEndpointPath(userId), {
+      cache: 'no-store',
+    });
+
+    return normalizeProfileResponse(response);
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export function buildPendingPublicProfile(userId: string): ProfileData {
+  const normalizedHandle = userId.trim();
+
+  return {
+    name: 'Public Profile',
+    handle: normalizedHandle,
+    bio: 'This public profile page is ready, and it will populate once the backend public-profile endpoint is added.',
+    visibilityLabel: 'Public Profile',
+    initials: buildInitials(normalizedHandle),
+    avatarColor: 'blue',
+    stats: {
+      decksCreated: 0,
+      cardsStudied: 0,
+      masteredDecks: 0,
+      studyStreakDays: 0,
+    },
+    preferences: [],
+    recentActivity: [],
+  };
 }

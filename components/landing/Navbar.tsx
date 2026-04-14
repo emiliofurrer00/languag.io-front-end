@@ -141,7 +141,7 @@ export default function Navbar() {
                     My Decks
                   </NeoButton>
                 </Link>
-                <Link href="/profile" className="hidden sm:inline-flex">
+                <Link href="/profile/me" className="hidden sm:inline-flex">
                   <NeoButton variant="primary" size="sm" className="cursor-pointer">
                     {`Hi, ${displayName}!`}
                   </NeoButton>
@@ -302,7 +302,7 @@ export default function Navbar() {
                   </span>
                 </Link>
                 <Link
-                  href="/profile"
+                  href="/profile/me"
                   onClick={closeMobileMenu}
                   className={cn(
                     mobileDrawerItemClassName,

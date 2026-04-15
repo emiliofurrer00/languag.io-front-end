@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { apiFetch } from '@/lib/api';
-import { getRequiredApiAccessToken } from '@/lib/kinde-server';
+import { getOptionalApiAccessToken, getRequiredApiAccessToken } from '@/lib/kinde-server';
 import type { ProfileAccentColor, ProfileActivity, ProfileData } from '@/lib/profile/types';
 
 type JsonRecord = Record<string, unknown>;
@@ -266,6 +266,7 @@ function normalizeProfileResponse(response: unknown): ProfileData {
   const avatarSources = [...collectRecords(sources, ['avatar', 'profilePicture']), ...sources];
 
   const email = readFirstString(sources, ['email']);
+  const userId = firstString(root.id, payload.id);
   const username = readFirstString(sources, ['username', 'userName', 'handle', 'login']);
   const firstName = readFirstString(sources, ['firstName', 'givenName', 'given_name']);
   const lastName = readFirstString(sources, ['lastName', 'familyName', 'family_name']);
@@ -278,7 +279,14 @@ function normalizeProfileResponse(response: unknown): ProfileData {
     emailLocalPart ||
     'User';
   const handle = username || emailLocalPart;
-  const bio = readFirstString(sources, ['bio', 'about', 'profileDescription', 'description']);
+  const tagline = readFirstString(sources, ['tagline', 'profileDescription', 'bio', 'description']);
+  const about = readFirstString(sources, ['about', 'aboutMe']);
+  const bio = about || tagline;
+  const hasBeenOnboarded = Boolean(readFirstValue(sources, ['hasBeenOnboarded']));
+  const isPublicProfile = Boolean(
+    readFirstValue(sources, ['isPublicProfile', 'isPublic', 'public'])
+  );
+  const dailyCardsGoal = readFirstNumber(sources, ['dailyCardsGoal', 'dailyGoal']) ?? 0;
   const visibilityLabel = normalizeVisibility(
     readFirstValue(sources, [
       'visibility',
@@ -298,10 +306,17 @@ function normalizeProfileResponse(response: unknown): ProfileData {
   const decks = readFirstArray(sources, ['decks']);
 
   return {
+    id: userId,
     name,
+    username,
     handle,
+    tagline,
+    about,
     bio,
     email,
+    hasBeenOnboarded,
+    isPublicProfile,
+    dailyCardsGoal,
     visibilityLabel,
     joinedLabel,
     initials,
@@ -343,6 +358,21 @@ function buildPublicProfileEndpointPath(userId: string) {
 
 export async function getMyProfile() {
   const accessToken = await getRequiredApiAccessToken();
+  const response = await apiFetch<unknown>('/Users/me', {
+    cache: 'no-store',
+    accessToken,
+  });
+
+  return normalizeProfileResponse(response);
+}
+
+export async function getMyProfileIfAuthenticated() {
+  const accessToken = await getOptionalApiAccessToken();
+
+  if (!accessToken) {
+    return null;
+  }
+
   const response = await apiFetch<unknown>('/Users/me', {
     cache: 'no-store',
     accessToken,

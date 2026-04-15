@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components';
+import { buildAuthContinuePath } from '@/lib/auth-flow';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { BookOpen, LogIn, LogOut, Menu, Sparkles, UserRound, UserPlus, X } from 'lucide-react';
@@ -17,6 +18,7 @@ const landingLinks = [
 export default function Navbar() {
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const postLoginRedirectUrl = buildAuthContinuePath('/decks');
   const displayName = user?.given_name || user?.family_name || user?.email || 'User';
   const authButtonClassName = cn(
     'inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground font-semibold transition-all font-display',
@@ -114,7 +116,7 @@ export default function Navbar() {
             {!isLoading && !isAuthenticated ? (
               <>
                 <LoginLink
-                  postLoginRedirectURL="/decks"
+                  postLoginRedirectURL={postLoginRedirectUrl}
                   className={cn(
                     authButtonClassName,
                     'hidden cursor-pointer bg-transparent text-foreground hover:bg-muted sm:inline-flex'
@@ -123,7 +125,7 @@ export default function Navbar() {
                   Log In
                 </LoginLink>
                 <RegisterLink
-                  postLoginRedirectURL="/decks"
+                  postLoginRedirectURL={postLoginRedirectUrl}
                   className={cn(
                     authButtonClassName,
                     'cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90'
@@ -249,7 +251,7 @@ export default function Navbar() {
             {!isLoading && !isAuthenticated ? (
               <>
                 <LoginLink
-                  postLoginRedirectURL="/decks"
+                  postLoginRedirectURL={postLoginRedirectUrl}
                   onClick={closeMobileMenu}
                   className={cn(
                     mobileDrawerItemClassName,
@@ -265,7 +267,7 @@ export default function Navbar() {
                   </span>
                 </LoginLink>
                 <RegisterLink
-                  postLoginRedirectURL="/decks"
+                  postLoginRedirectURL={postLoginRedirectUrl}
                   onClick={closeMobileMenu}
                   className={cn(
                     mobileDrawerItemClassName,

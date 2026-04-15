@@ -2,10 +2,12 @@
 
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink, LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
+import { buildAuthContinuePath } from '@/lib/auth-flow';
 import Link from 'next/link';
 
 function Navigation() {
   const { isAuthenticated, isLoading } = useKindeBrowserClient();
+  const postLoginRedirectUrl = buildAuthContinuePath('/decks');
 
   return (
     <nav>
@@ -13,7 +15,7 @@ function Navigation() {
         {isLoading ? <li>Loading...</li> : null}
         {!isLoading && !isAuthenticated ? (
           <li>
-            <LoginLink postLoginRedirectURL="/decks">Sign in</LoginLink>
+            <LoginLink postLoginRedirectURL={postLoginRedirectUrl}>Sign in</LoginLink>
           </li>
         ) : null}
         {!isLoading && isAuthenticated ? (

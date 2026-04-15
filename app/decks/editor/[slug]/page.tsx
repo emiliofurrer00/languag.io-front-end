@@ -1,6 +1,8 @@
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import DeckEditorContainer from '@/components/create-form/DeckEditorContainer';
+import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import { getDeckDetailsOrDefault } from '@/lib/decks/server';
+import { getMyProfile } from '@/lib/profile/server';
 import { redirect } from 'next/navigation';
 
 type CreateDeckPageProps = {
@@ -12,9 +14,16 @@ type CreateDeckPageProps = {
 export default async function CreateDeckPage({ params }: CreateDeckPageProps) {
   const { slug } = await params;
   const { isAuthenticated, getAccessTokenRaw } = getKindeServerSession();
+  const editorPath = `/decks/editor/${slug}`;
 
   if (!(await isAuthenticated())) {
-    redirect(`/api/auth/login?post_login_redirect_url=${encodeURIComponent(`/decks/editor/${slug}`)}`);
+    redirect(buildLoginRedirectPath(editorPath));
+  }
+
+  const profile = await getMyProfile();
+
+  if (!profile.hasBeenOnboarded) {
+    redirect(buildOnboardingPath(editorPath));
   }
 
   const accessToken = await getAccessTokenRaw();

@@ -16,10 +16,17 @@ export type ProfileActivity = {
 };
 
 export type ProfileData = {
+  id?: string;
   name: string;
+  username?: string;
   handle?: string;
+  tagline?: string;
+  about?: string;
   bio?: string;
   email?: string;
+  hasBeenOnboarded?: boolean;
+  isPublicProfile?: boolean;
+  dailyCardsGoal?: number;
   visibilityLabel?: string;
   joinedLabel?: string;
   initials: string;

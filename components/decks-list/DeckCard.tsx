@@ -2,11 +2,7 @@ import { Globe, Layers, User, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { DeckSummary } from '@/lib/decks/types';
 
-export default function DeckCard({
-  deckData,
-}: {
-  deckData: DeckSummary;
-}) {
+export default function DeckCard({ deckData }: { deckData: DeckSummary }) {
   const viewMode = 'grid'; // will be toggable in UI later on
   const { title, description, category, color, visibility, id, cards } = deckData;
   return (
@@ -32,7 +28,7 @@ export default function DeckCard({
           </div>
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span>Emilio</span>
+            <span>{deckData.ownerName}</span>
           </div>
         </div>
       </Link>

@@ -11,6 +11,7 @@ export type DeckDetails = {
   visibility: number;
   id?: string;
   cards: DeckCard[];
+  ownerName?: string;
 };
 
 export type DeckSummary = DeckDetails & {

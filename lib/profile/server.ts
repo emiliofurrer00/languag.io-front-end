@@ -279,7 +279,7 @@ function normalizeProfileResponse(response: unknown): ProfileData {
     emailLocalPart ||
     'User';
   const handle = username || emailLocalPart;
-  const tagline = readFirstString(sources, ['tagline', 'profileDescription', 'bio', 'description']);
+  const tagline = readFirstString(sources, ['profileDescription', 'tagline', 'bio', 'description']);
   const about = readFirstString(sources, ['about', 'aboutMe']);
   const bio = about || tagline;
   const hasBeenOnboarded = Boolean(readFirstValue(sources, ['hasBeenOnboarded']));

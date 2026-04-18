@@ -64,7 +64,8 @@ function getActivityIcon(type: string) {
 
 export default function ProfilePageContainer({ profile }: { profile: ProfileData }) {
   const metaItems = [profile.email, profile.visibilityLabel].filter(Boolean);
-  // const aboutCopy = profile.bio || 'Your profile details from the /me endpoint will appear here.';
+  const taglineCopy = profile.tagline || profile.bio || 'Your profile details appear here.';
+  const aboutCopy = profile.about || profile.bio || 'No profile details have been added yet.';
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -78,7 +79,7 @@ export default function ProfilePageContainer({ profile }: { profile: ProfileData
           {profile.handle ? (
             <p className="mb-2 text-sm text-gray-500">{formatHandle(profile.handle)}</p>
           ) : null}
-          <p className="mb-4 text-sm">{profile.tagline}</p>
+          <p className="mb-4 text-sm">{taglineCopy}</p>
           <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-500 md:justify-start">
             {metaItems.length > 0 ? metaItems.map((item) => <p key={item}>{item}</p>) : null}
           </div>
@@ -120,7 +121,7 @@ export default function ProfilePageContainer({ profile }: { profile: ProfileData
             <User className="w-6 h-6" />
             <h6 className="text-left font-semibold text-xl">About</h6>
           </div>
-          <p className="text-sm">{profile.about}</p>
+          <p className="text-sm">{aboutCopy}</p>
           {profile.joinedLabel ? (
             <div className="mt-3 flex items-center gap-1">
               <Calendar className="w-4 h-4" />

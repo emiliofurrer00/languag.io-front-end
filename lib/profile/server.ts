@@ -5,6 +5,29 @@ import { getOptionalApiAccessToken, getRequiredApiAccessToken } from '@/lib/kind
 import type { ProfileAccentColor, ProfileActivity, ProfileData } from '@/lib/profile/types';
 
 type JsonRecord = Record<string, unknown>;
+type ApiProfileActivityResponse = {
+  id?: string;
+  type?: string;
+  title?: string;
+  description?: string | null;
+  occurredAt?: string;
+};
+
+type ApiUserMeResponse = {
+  id?: string;
+  externalId?: string;
+  username?: string | null;
+  name?: string | null;
+  email?: string | null;
+  hasBeenOnboarded?: boolean;
+  dailyCardsGoal?: number | null;
+  avatarColor?: string | null;
+  profileDescription?: string | null;
+  about?: string | null;
+  isPublicProfile?: boolean;
+  createdAtUtc?: string | null;
+  recentActivity?: ApiProfileActivityResponse[] | null;
+};
 
 const accentColors: ProfileAccentColor[] = ['yellow', 'teal', 'magenta', 'coral', 'blue'];
 
@@ -219,8 +242,15 @@ function normalizeActivities(value: unknown): ProfileActivity[] {
       'Recent activity';
     const description = firstString(record.description, record.details, record.subtitle);
     const type = firstString(record.type, record.kind, record.category) || 'activity';
+    const occurredAt = firstString(
+      record.occurredAt,
+      record.occurred_at,
+      record.createdAt,
+      record.timestamp,
+      record.updatedAt
+    );
     const timestampLabel = formatDateLabel(
-      firstString(record.occurredAt, record.createdAt, record.timestamp, record.updatedAt),
+      occurredAt,
       {
         month: 'short',
         day: 'numeric',
@@ -240,9 +270,46 @@ function normalizeActivities(value: unknown): ProfileActivity[] {
         title,
         description,
         timestampLabel,
+        occurredAt,
       },
     ];
   });
+}
+
+function normalizeCurrentUserProfileResponse(response: ApiUserMeResponse): ProfileData {
+  const email = firstString(response.email);
+  const username = firstString(response.username);
+  const emailLocalPart = email?.split('@')[0];
+  const name = firstString(response.name) || username || emailLocalPart || 'User';
+  const tagline = firstString(response.profileDescription);
+  const about = firstString(response.about);
+  const recentActivity = normalizeActivities(response.recentActivity ?? []);
+
+  return {
+    id: firstString(response.id),
+    name,
+    username,
+    handle: username || emailLocalPart,
+    tagline,
+    about,
+    bio: about || tagline,
+    email,
+    hasBeenOnboarded: Boolean(response.hasBeenOnboarded),
+    isPublicProfile: Boolean(response.isPublicProfile),
+    dailyCardsGoal: firstNumber(response.dailyCardsGoal) ?? 0,
+    visibilityLabel: normalizeVisibility(response.isPublicProfile),
+    joinedLabel: formatDateLabel(firstString(response.createdAtUtc)),
+    initials: buildInitials(name, email),
+    avatarColor: normalizeAccentColor(response.avatarColor),
+    stats: {
+      decksCreated: 0,
+      cardsStudied: 0,
+      masteredDecks: 0,
+      studyStreakDays: 0,
+    },
+    preferences: [],
+    recentActivity,
+  };
 }
 
 function normalizeProfileResponse(response: unknown): ProfileData {
@@ -358,12 +425,12 @@ function buildPublicProfileEndpointPath(userId: string) {
 
 export async function getMyProfile() {
   const accessToken = await getRequiredApiAccessToken();
-  const response = await apiFetch<unknown>('/Users/me', {
+  const response = await apiFetch<ApiUserMeResponse>('/Users/me', {
     cache: 'no-store',
     accessToken,
   });
 
-  return normalizeProfileResponse(response);
+  return normalizeCurrentUserProfileResponse(response);
 }
 
 export async function getMyProfileIfAuthenticated() {
@@ -373,12 +440,12 @@ export async function getMyProfileIfAuthenticated() {
     return null;
   }
 
-  const response = await apiFetch<unknown>('/Users/me', {
+  const response = await apiFetch<ApiUserMeResponse>('/Users/me', {
     cache: 'no-store',
     accessToken,
   });
 
-  return normalizeProfileResponse(response);
+  return normalizeCurrentUserProfileResponse(response);
 }
 
 export async function getPublicProfile(userId: string) {

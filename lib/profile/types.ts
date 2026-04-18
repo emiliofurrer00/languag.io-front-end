@@ -13,6 +13,7 @@ export type ProfileActivity = {
   title: string;
   description?: string;
   timestampLabel?: string;
+  occurredAt?: string;
 };
 
 export type ProfileData = {

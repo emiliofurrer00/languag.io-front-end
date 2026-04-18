@@ -62,6 +62,27 @@ type OnboardingFlowProps = {
   nextPath?: string | null;
 };
 
+type ApiErrorPayload = {
+  message?: string;
+  detail?: string;
+  title?: string;
+  errors?: Record<string, string[]>;
+} | null;
+
+function readApiErrorMessage(payload: ApiErrorPayload, fallback: string) {
+  if (!payload) {
+    return fallback;
+  }
+
+  const validationMessage = payload.errors
+    ? Object.values(payload.errors)
+        .flat()
+        .find((message) => typeof message === 'string' && message.trim())
+    : undefined;
+
+  return payload.message || payload.detail || validationMessage || payload.title || fallback;
+}
+
 export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlowProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
@@ -117,13 +138,20 @@ export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlow
             cache: 'no-store',
           }
         );
-        const payload = (await response.json().catch(() => null)) as {
-          available?: boolean;
-          message?: string;
-        } | null;
+        const payload = (await response.json().catch(() => null)) as
+          | {
+              available?: boolean;
+              message?: string;
+              detail?: string;
+              title?: string;
+              errors?: Record<string, string[]>;
+            }
+          | null;
 
         if (!response.ok) {
-          throw new Error(payload?.message || 'Unable to check username availability.');
+          throw new Error(
+            readApiErrorMessage(payload, 'Unable to check username availability.')
+          );
         }
 
         if (cancelled) {
@@ -203,10 +231,10 @@ export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlow
         }),
       });
 
-      const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+      const payload = (await response.json().catch(() => null)) as ApiErrorPayload;
 
       if (!response.ok) {
-        throw new Error(payload?.message || 'Unable to save your onboarding details.');
+        throw new Error(readApiErrorMessage(payload, 'Unable to save your onboarding details.'));
       }
 
       router.push(nextPath ?? '/decks');

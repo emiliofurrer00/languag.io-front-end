@@ -1,4 +1,12 @@
-import { ArrowLeft, RotateCcw, Shuffle, Trophy, Check, Brain } from 'lucide-react';
+import {
+  ArrowLeft,
+  Brain,
+  Check,
+  LoaderCircle,
+  RotateCcw,
+  Shuffle,
+  Trophy,
+} from 'lucide-react';
 import { NeoButton } from '../ui/NeoButton';
 import { Progress } from '@radix-ui/react-progress';
 import { NeoCard } from '../ui/NeoCard';
@@ -10,6 +18,10 @@ interface StudyCompleteProps {
   totalCards: number;
   knownCount: number;
   learningCount: number;
+  isSubmitting: boolean;
+  saveError: string | null;
+  studySessionId?: string;
+  onRetrySave: () => void;
   onStudyLearning: () => void;
   onShuffle: () => void;
   onRestart: () => void;
@@ -20,6 +32,10 @@ const StudyComplete = ({
   totalCards,
   knownCount,
   learningCount,
+  isSubmitting,
+  saveError,
+  studySessionId,
+  onRetrySave,
   onStudyLearning,
   onShuffle,
   onRestart,
@@ -76,6 +92,30 @@ const StudyComplete = ({
             </div>
             <Progress value={knownPercent} className="h-4 border-[2px] border-foreground" />
           </div>
+
+          {isSubmitting ? (
+            <div className="mb-6 flex items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-muted/60 px-4 py-3 text-sm">
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+              <span>Saving your study session...</span>
+            </div>
+          ) : null}
+
+          {!isSubmitting && studySessionId ? (
+            <div className="mb-6 rounded-xl border-[2px] border-foreground bg-neo-teal/40 px-4 py-3 text-sm">
+              Your study session has been saved.
+            </div>
+          ) : null}
+
+          {saveError ? (
+            <div className="mb-6 rounded-xl border-[2px] border-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <p>{saveError}</p>
+              <div className="mt-3 flex justify-center">
+                <NeoButton variant="outline" size="sm" onClick={onRetrySave}>
+                  Retry Save
+                </NeoButton>
+              </div>
+            </div>
+          ) : null}
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             {learningCount > 0 && (

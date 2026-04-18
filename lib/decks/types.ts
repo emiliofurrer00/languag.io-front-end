@@ -1,6 +1,8 @@
 export type DeckCard = {
+  id?: string;
   frontText: string;
   backText: string;
+  order?: number;
 };
 
 export type DeckDetails = {

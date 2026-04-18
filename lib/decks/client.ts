@@ -1,10 +1,32 @@
 import { apiFetch } from '@/lib/api';
-import { DeckDetails } from '@/lib/decks/types';
+import { DeckCard, DeckDetails } from '@/lib/decks/types';
 
 type SaveDeckOptions = {
   deck: DeckDetails;
   isNew: boolean;
 };
+
+type SubmitStudySessionResponsePayload = {
+  cardId: string;
+  wasCorrect: boolean;
+};
+
+type SubmitStudySessionOptions = {
+  deckId: string;
+  percentageCorrect: number;
+  responses: SubmitStudySessionResponsePayload[];
+};
+
+type SubmitStudySessionResult = {
+  studySessionId: string;
+};
+
+function normalizeDeckCardsForSave(cards: DeckCard[]) {
+  return (cards || []).map((card) => ({
+    frontText: card.frontText,
+    backText: card.backText,
+  }));
+}
 
 export async function saveDeck({ deck, isNew }: SaveDeckOptions) {
   const payload = {
@@ -13,7 +35,7 @@ export async function saveDeck({ deck, isNew }: SaveDeckOptions) {
     category: deck.category || 'Language',
     color: deck.color,
     visibility: deck.visibility,
-    cards: deck.cards || [],
+    cards: normalizeDeckCardsForSave(deck.cards || []),
   };
 
   const path = isNew ? '/api/decks' : `/api/decks/${deck.id}`;
@@ -25,4 +47,19 @@ export async function saveDeck({ deck, isNew }: SaveDeckOptions) {
   });
 
   return true;
+}
+
+export async function submitStudySession({
+  deckId,
+  percentageCorrect,
+  responses,
+}: SubmitStudySessionOptions) {
+  return apiFetch<SubmitStudySessionResult>(`/api/decks/${deckId}/study-sessions`, {
+    method: 'POST',
+    body: JSON.stringify({
+      percentageCorrect,
+      responses,
+    }),
+    useApiBaseUrl: false,
+  });
 }

@@ -4,7 +4,10 @@ import {
   Calendar,
   FileStack,
   FlameIcon,
+  Globe,
   Layers,
+  Lock,
+  Mail,
   ToolCase,
   Trophy,
   User,
@@ -81,7 +84,18 @@ export default function ProfilePageContainer({ profile }: { profile: ProfileData
           ) : null}
           <p className="mb-4 text-sm">{taglineCopy}</p>
           <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-500 md:justify-start">
-            {metaItems.length > 0 ? metaItems.map((item) => <p key={item}>{item}</p>) : null}
+            <div className="flex items-center gap-1">
+              <Mail width={12} height={12} />
+              <p key={profile.email}>{profile.email}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              {profile.visibilityLabel === 'Public' ? (
+                <Globe width={12} height={12} />
+              ) : (
+                <Lock width={12} height={12} />
+              )}
+              <p key={profile.visibilityLabel}>{profile.visibilityLabel}</p>
+            </div>
           </div>
         </div>
       </NeoBox>

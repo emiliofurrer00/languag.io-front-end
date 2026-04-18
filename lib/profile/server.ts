@@ -13,6 +13,13 @@ type ApiProfileActivityResponse = {
   occurredAt?: string;
 };
 
+type ApiProfileStatsResponse = {
+  decksCreated?: number | null;
+  cardsStudied?: number | null;
+  masteredDecks?: number | null;
+  studyStreakDays?: number | null;
+};
+
 type ApiUserMeResponse = {
   id?: string;
   externalId?: string;
@@ -25,7 +32,9 @@ type ApiUserMeResponse = {
   profileDescription?: string | null;
   about?: string | null;
   isPublicProfile?: boolean;
+  createdAt?: string | null;
   createdAtUtc?: string | null;
+  stats?: ApiProfileStatsResponse | null;
   recentActivity?: ApiProfileActivityResponse[] | null;
 };
 
@@ -249,14 +258,11 @@ function normalizeActivities(value: unknown): ProfileActivity[] {
       record.timestamp,
       record.updatedAt
     );
-    const timestampLabel = formatDateLabel(
-      occurredAt,
-      {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      }
-    );
+    const timestampLabel = formatDateLabel(occurredAt, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
     const idValue = record.id;
     const id =
       typeof idValue === 'string' || typeof idValue === 'number'
@@ -284,6 +290,7 @@ function normalizeCurrentUserProfileResponse(response: ApiUserMeResponse): Profi
   const tagline = firstString(response.profileDescription);
   const about = firstString(response.about);
   const recentActivity = normalizeActivities(response.recentActivity ?? []);
+  const stats = response.stats;
 
   return {
     id: firstString(response.id),
@@ -298,14 +305,14 @@ function normalizeCurrentUserProfileResponse(response: ApiUserMeResponse): Profi
     isPublicProfile: Boolean(response.isPublicProfile),
     dailyCardsGoal: firstNumber(response.dailyCardsGoal) ?? 0,
     visibilityLabel: normalizeVisibility(response.isPublicProfile),
-    joinedLabel: formatDateLabel(firstString(response.createdAtUtc)),
+    joinedLabel: formatDateLabel(firstString(response.createdAtUtc, response.createdAt)),
     initials: buildInitials(name, email),
     avatarColor: normalizeAccentColor(response.avatarColor),
     stats: {
-      decksCreated: 0,
-      cardsStudied: 0,
-      masteredDecks: 0,
-      studyStreakDays: 0,
+      decksCreated: firstNumber(stats?.decksCreated) ?? 0,
+      cardsStudied: firstNumber(stats?.cardsStudied) ?? 0,
+      masteredDecks: firstNumber(stats?.masteredDecks) ?? 0,
+      studyStreakDays: firstNumber(stats?.studyStreakDays) ?? 0,
     },
     preferences: [],
     recentActivity,

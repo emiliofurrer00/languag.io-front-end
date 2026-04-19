@@ -6,7 +6,17 @@ import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextj
 import { buildAuthContinuePath } from '@/lib/auth-flow';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '@/components/ui/NeoButton';
-import { BookOpen, LogIn, LogOut, Menu, Sparkles, UserRound, UserPlus, X } from 'lucide-react';
+import {
+  BookOpen,
+  LogIn,
+  LogOut,
+  Menu,
+  Sparkles,
+  UserRound,
+  UserPlus,
+  X,
+  Group,
+} from 'lucide-react';
 import Link from 'next/link';
 
 const landingLinks = [
@@ -15,7 +25,7 @@ const landingLinks = [
   { href: '#pricing', label: 'Pricing' },
 ];
 
-export default function Navbar() {
+export default function Navbar({ isLandingPage = false }: { isLandingPage?: boolean }) {
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const postLoginRedirectUrl = buildAuthContinuePath('/decks');
@@ -78,15 +88,16 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center gap-8 md:flex">
-            {landingLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="font-medium transition-colors hover:text-primary"
-              >
-                {link.label}
-              </a>
-            ))}
+            {isLandingPage &&
+              landingLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="font-medium transition-colors hover:text-primary"
+                >
+                  {link.label}
+                </a>
+              ))}
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -287,6 +298,22 @@ export default function Navbar() {
 
             {!isLoading && isAuthenticated ? (
               <>
+                <Link
+                  href="/feed"
+                  onClick={closeMobileMenu}
+                  className={cn(
+                    mobileDrawerItemClassName,
+                    'bg-transparent text-foreground hover:bg-muted'
+                  )}
+                >
+                  <span className="flex items-center gap-3">
+                    <Group className="h-4 w-4" />
+                    Feed
+                  </span>
+                  <span className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
+                    Open
+                  </span>
+                </Link>
                 <Link
                   href="/decks"
                   onClick={closeMobileMenu}

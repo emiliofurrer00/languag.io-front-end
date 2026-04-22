@@ -5,6 +5,16 @@ type ApiFetchOptions = RequestInit & {
   useApiBaseUrl?: boolean;
 };
 
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
 export function buildApiUrl(path: string) {
   const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
   const baseUrl = getApiBaseUrl();
@@ -16,7 +26,7 @@ export function buildApiUrl(path: string) {
 async function readErrorMessage(response: Response) {
   try {
     const data = await response.json();
-    return data?.message || data?.error || response.statusText;
+    return data?.message || data?.error || data?.detail || data?.title || response.statusText;
   } catch {
     return response.statusText;
   }
@@ -37,7 +47,7 @@ export async function apiFetch<T>(path: string, init?: ApiFetchOptions): Promise
 
   if (!response.ok) {
     const message = await readErrorMessage(response);
-    throw new Error(`API request failed for ${path}: ${message}`);
+    throw new ApiError(`API request failed for ${path}: ${message}`, response.status);
   }
 
   if (response.status === 204) {

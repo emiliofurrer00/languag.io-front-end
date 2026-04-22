@@ -41,7 +41,11 @@ type FriendsPageClientProps = {
   initialTab?: FriendsTab;
 };
 
-const tabs: Array<{ id: FriendsTab; label: string; icon: React.ComponentType<{ className?: string }> }> = [
+const tabs: Array<{
+  id: FriendsTab;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}> = [
   { id: 'friends', label: 'Friends', icon: UserCheck },
   { id: 'incoming', label: 'Incoming', icon: MailOpen },
   { id: 'outgoing', label: 'Outgoing', icon: UserPlus },
@@ -326,10 +330,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
             <SocialAvatar label={friend.displayName} />
             <div>
               {profilePath ? (
-                <Link
-                  href={profilePath}
-                  className="font-display text-lg font-bold hover:underline"
-                >
+                <Link href={profilePath} className="font-display text-lg font-bold hover:underline">
                   {friend.displayName}
                 </Link>
               ) : (
@@ -384,14 +385,14 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold">Friends</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Manage your current friends and every pending request from one place.
           </p>
         </div>
-        <div className="rounded-full border-2 border-foreground bg-secondary p-1 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+        <div className="rounded-md border-2 border-foreground bg-secondary p-1 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <div className="flex flex-wrap gap-1">
             {tabs.map(({ id, label, icon: Icon }) => (
               <button
@@ -456,21 +457,15 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
           />
         ) : null}
 
-        {!activeQuery.isLoading &&
-        !activeQuery.errorMessage &&
-        activeTab === 'friends'
+        {!activeQuery.isLoading && !activeQuery.errorMessage && activeTab === 'friends'
           ? friendsQuery.items.map(renderFriend)
           : null}
 
-        {!activeQuery.isLoading &&
-        !activeQuery.errorMessage &&
-        activeTab === 'incoming'
+        {!activeQuery.isLoading && !activeQuery.errorMessage && activeTab === 'incoming'
           ? incomingQuery.items.map(renderIncomingRequest)
           : null}
 
-        {!activeQuery.isLoading &&
-        !activeQuery.errorMessage &&
-        activeTab === 'outgoing'
+        {!activeQuery.isLoading && !activeQuery.errorMessage && activeTab === 'outgoing'
           ? outgoingQuery.items.map(renderOutgoingRequest)
           : null}
       </div>
@@ -482,9 +477,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
             onClick={() => void activeQuery.loadMore()}
             disabled={activeQuery.isLoadingMore}
           >
-            {activeQuery.isLoadingMore ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : null}
+            {activeQuery.isLoadingMore ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
             Load More
           </NeoButton>
         </div>

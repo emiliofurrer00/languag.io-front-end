@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { apiFetch } from '@/lib/api';
+import { ApiError, apiFetch } from '@/lib/api';
 import { getOptionalApiAccessToken, getRequiredApiAccessToken } from '@/lib/kinde-server';
 import type { ProfileAccentColor, ProfileActivity, ProfileData } from '@/lib/profile/types';
 
@@ -423,6 +423,10 @@ function normalizeProfileResponse(response: unknown): ProfileData {
 }
 
 function isNotFoundError(error: unknown) {
+  if (error instanceof ApiError) {
+    return error.status === 404;
+  }
+
   return error instanceof Error && error.message.includes('Not Found');
 }
 

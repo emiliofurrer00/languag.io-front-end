@@ -14,12 +14,18 @@ import { useInvalidateQueries } from '@/providers/QueryInvalidationProvider';
 
 type ProfileFriendshipActionsProps = {
   otherUserId: string;
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
 };
 
 const linkButtonClassName =
-  'inline-flex min-w-40 items-center justify-center gap-2 rounded-full border-[2px] border-foreground px-4 py-2 text-sm font-semibold font-display shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))]';
+  'inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground px-4 py-2 text-sm font-semibold font-display shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))]';
 
-export function ProfileFriendshipActions({ otherUserId }: ProfileFriendshipActionsProps) {
+export function ProfileFriendshipActions({
+  otherUserId,
+  size = 'sm',
+  className,
+}: ProfileFriendshipActionsProps) {
   const invalidateQueries = useInvalidateQueries();
   const [isMutating, setIsMutating] = React.useState(false);
   const statusQuery = useInvalidatedValueQuery(
@@ -89,7 +95,7 @@ export function ProfileFriendshipActions({ otherUserId }: ProfileFriendshipActio
 
   if (statusQuery.isLoading) {
     return (
-      <NeoButton variant="secondary" size="sm" disabled className="min-w-40">
+      <NeoButton variant="secondary" size={size} disabled className={cn('min-w-40', className)}>
         <LoaderCircle className="h-4 w-4 animate-spin" />
         Checking status
       </NeoButton>
@@ -98,7 +104,7 @@ export function ProfileFriendshipActions({ otherUserId }: ProfileFriendshipActio
 
   if (statusQuery.errorMessage && !statusQuery.data) {
     return (
-      <NeoButton variant="secondary" size="sm" onClick={statusQuery.refetch}>
+      <NeoButton variant="secondary" size={size} onClick={statusQuery.refetch} className={className}>
         <UserRoundSearch className="h-4 w-4" />
         Retry friendship check
       </NeoButton>
@@ -109,10 +115,10 @@ export function ProfileFriendshipActions({ otherUserId }: ProfileFriendshipActio
     return (
       <NeoButton
         variant="secondary"
-        size="sm"
+        size={size}
         disabled={isMutating}
         onClick={handleRemoveFriend}
-        className="min-w-40"
+        className={cn('min-w-40', className)}
       >
         {isMutating ? (
           <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -128,7 +134,7 @@ export function ProfileFriendshipActions({ otherUserId }: ProfileFriendshipActio
     return (
       <Link
         href="/friends?tab=incoming"
-        className={cn(linkButtonClassName, 'bg-accent text-accent-foreground')}
+        className={cn(linkButtonClassName, 'min-w-40 bg-accent text-accent-foreground', className)}
       >
         <UserCheck className="h-4 w-4" />
         Review Request
@@ -140,7 +146,11 @@ export function ProfileFriendshipActions({ otherUserId }: ProfileFriendshipActio
     return (
       <Link
         href="/friends?tab=outgoing"
-        className={cn(linkButtonClassName, 'bg-secondary text-secondary-foreground')}
+        className={cn(
+          linkButtonClassName,
+          'min-w-40 bg-secondary text-secondary-foreground',
+          className
+        )}
       >
         <UserCheck className="h-4 w-4" />
         Request Sent
@@ -151,10 +161,10 @@ export function ProfileFriendshipActions({ otherUserId }: ProfileFriendshipActio
   return (
     <NeoButton
       variant="primary"
-      size="sm"
+      size={size}
       disabled={isMutating || statusQuery.isRefreshing}
       onClick={handleSendRequest}
-      className="min-w-40"
+      className={cn('min-w-40', className)}
     >
       {isMutating || statusQuery.isRefreshing ? (
         <LoaderCircle className="h-4 w-4 animate-spin" />

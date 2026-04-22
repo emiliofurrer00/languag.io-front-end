@@ -66,7 +66,6 @@ function getActivityIcon(type: string) {
 }
 
 export default function ProfilePageContainer({ profile }: { profile: ProfileData }) {
-  const metaItems = [profile.email, profile.visibilityLabel].filter(Boolean);
   const taglineCopy = profile.tagline || profile.bio || 'Your profile details appear here.';
   const aboutCopy = profile.about || profile.bio || 'No profile details have been added yet.';
 

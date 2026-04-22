@@ -1,26 +1,24 @@
-import { NeoCard } from '@/components/ui/NeoCard';
-import { NeoButton } from '@/components/ui/NeoButton';
-import { Progress } from '@/components/ui/Progress';
-import FollowButton from '@/components/ui/FollowButton';
-import Navbar from '@/components/landing/Navbar';
+import Link from 'next/link';
 import {
-  Flame,
-  Trophy,
-  Layers,
   BookOpen,
-  Zap,
-  Heart,
   ChevronRight,
   Crown,
-  Target,
-  Calendar,
-  User,
+  Flame,
+  Heart,
+  Layers,
   Sparkles,
+  Target,
   TrendingUp,
   UserPlus,
+  Zap,
 } from 'lucide-react';
+
+import Navbar from '@/components/landing/Navbar';
+import FollowButton from '@/components/ui/FollowButton';
+import { NeoButton } from '@/components/ui/NeoButton';
+import { NeoCard } from '@/components/ui/NeoCard';
+import { Progress } from '@/components/ui/Progress';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 const STREAK_DAYS = [
   { day: 'Mon', done: true },
@@ -40,7 +38,6 @@ const ACTIVITY_FEED = [
     action: 'mastered',
     target: 'Spanish Basics',
     time: '2h ago',
-    icon: Trophy,
     followsYou: true,
     isFollowing: true,
   },
@@ -51,7 +48,6 @@ const ACTIVITY_FEED = [
     action: 'created',
     target: 'React Hooks 101',
     time: '4h ago',
-    icon: Sparkles,
     followsYou: true,
     isFollowing: false,
   },
@@ -62,7 +58,6 @@ const ACTIVITY_FEED = [
     action: 'completed a 30-day streak in',
     target: 'French Vocabulary',
     time: '6h ago',
-    icon: Flame,
     followsYou: false,
     isFollowing: true,
   },
@@ -73,7 +68,6 @@ const ACTIVITY_FEED = [
     action: 'studied 50 cards in',
     target: 'Biology Terms',
     time: '1d ago',
-    icon: Zap,
     followsYou: false,
     isFollowing: false,
   },
@@ -110,118 +104,137 @@ const CONTINUE_DECKS = [
   },
 ];
 
-const Feed = () => {
+const SUGGESTED_PEOPLE = [
+  {
+    name: 'Lena P.',
+    handle: 'lenap',
+    avatar: 'LP',
+    color: 'bg-neo-yellow',
+    bio: 'Polyglot - 8 languages',
+  },
+  {
+    name: 'Diego F.',
+    handle: 'diegof',
+    avatar: 'DF',
+    color: 'bg-neo-coral',
+    bio: 'CS student - loves algorithms',
+  },
+  {
+    name: 'Yuki T.',
+    handle: 'yukit',
+    avatar: 'YT',
+    color: 'bg-neo-blue',
+    bio: 'Med school flashcard fanatic',
+  },
+];
+
+export default function Feed() {
   const dailyGoal = 20;
   const dailyProgress = 14;
-  const xp = 1420;
+  const dailyGoalPercentage = (dailyProgress / dailyGoal) * 100;
   const streak = 4;
   const league = 'Gold';
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
       <Navbar />
-      <main className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
-        {/* Daily Goal Card */}
+      <main className="container mx-auto max-w-2xl space-y-6 px-4 py-6">
         <NeoCard className="p-5">
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl border-2 border-foreground bg-primary flex items-center justify-center shadow-[3px_3px_0_0_hsl(var(--foreground))]">
-                <Target className="w-5 h-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-foreground bg-primary shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+                <Target className="h-5 w-5" />
               </div>
               <div>
-                <p className="font-display font-bold text-sm">Daily Goal</p>
+                <p className="font-display text-sm font-bold">Daily Goal</p>
                 <p className="text-xs text-muted-foreground">
                   {dailyProgress}/{dailyGoal} cards today
                 </p>
               </div>
             </div>
-            <span className="font-display font-bold text-2xl text-primary">
-              {Math.round((dailyProgress / dailyGoal) * 100)}%
+            <span className="font-display text-2xl font-bold text-primary">
+              {Math.round(dailyGoalPercentage)}%
             </span>
           </div>
           <div className="relative">
             <Progress
-              value={(dailyProgress / dailyGoal) * 100}
-              className="h-4 border-2 border-foreground rounded-full bg-secondary"
+              value={dailyGoalPercentage}
+              className="h-4 rounded-full border-2 border-foreground bg-secondary"
             />
           </div>
         </NeoCard>
 
-        {/* Streak Tracker */}
         <NeoCard className="p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Flame className="w-5 h-5 text-neo-coral" />
+              <Flame className="h-5 w-5 text-neo-coral" />
               <span className="font-display font-bold">{streak} day streak!</span>
             </div>
-            <span className="text-xs text-muted-foreground font-medium">Keep it up 🔥</span>
+            <span className="text-xs font-medium text-muted-foreground">Keep it up</span>
           </div>
           <div className="flex justify-between">
-            {STREAK_DAYS.map((d) => (
-              <div key={d.day} className="flex flex-col items-center gap-1.5">
+            {STREAK_DAYS.map((day) => (
+              <div key={day.day} className="flex flex-col items-center gap-1.5">
                 <div
                   className={cn(
-                    'w-9 h-9 rounded-xl border-2 flex items-center justify-center transition-all',
-                    d.done
+                    'flex h-9 w-9 items-center justify-center rounded-xl border-2 transition-all',
+                    day.done
                       ? 'border-foreground bg-neo-teal shadow-[2px_2px_0_0_hsl(var(--foreground))]'
                       : 'border-foreground/30 bg-secondary'
                   )}
                 >
-                  {d.done ? (
-                    <Zap className="w-4 h-4" />
+                  {day.done ? (
+                    <Zap className="h-4 w-4" />
                   ) : (
-                    <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
+                    <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
                   )}
                 </div>
                 <span
                   className={cn(
                     'text-[10px] font-semibold',
-                    d.done ? 'text-foreground' : 'text-muted-foreground'
+                    day.done ? 'text-foreground' : 'text-muted-foreground'
                   )}
                 >
-                  {d.day}
+                  {day.day}
                 </span>
               </div>
             ))}
           </div>
         </NeoCard>
 
-        {/* Quick Stats Row */}
         <div className="grid grid-cols-3 gap-3">
           <NeoCard size="sm" className="p-3 text-center">
-            <div className="w-8 h-8 rounded-lg border-2 border-foreground bg-neo-yellow flex items-center justify-center mx-auto mb-1 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
-              <Crown className="w-4 h-4" />
+            <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg border-2 border-foreground bg-neo-yellow shadow-[2px_2px_0_0_hsl(var(--foreground))]">
+              <Crown className="h-4 w-4" />
             </div>
-            <p className="font-display font-bold text-sm">{league}</p>
+            <p className="font-display text-sm font-bold">{league}</p>
             <p className="text-[10px] text-muted-foreground">League</p>
           </NeoCard>
           <NeoCard size="sm" className="p-3 text-center">
-            <div className="w-8 h-8 rounded-lg border-2 border-foreground bg-neo-magenta flex items-center justify-center mx-auto mb-1 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
-              <Layers className="w-4 h-4" />
+            <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg border-2 border-foreground bg-neo-magenta shadow-[2px_2px_0_0_hsl(var(--foreground))]">
+              <Layers className="h-4 w-4" />
             </div>
-            <p className="font-display font-bold text-sm">12</p>
+            <p className="font-display text-sm font-bold">12</p>
             <p className="text-[10px] text-muted-foreground">Decks</p>
           </NeoCard>
           <NeoCard size="sm" className="p-3 text-center">
-            <div className="w-8 h-8 rounded-lg border-2 border-foreground bg-neo-teal flex items-center justify-center mx-auto mb-1 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
-              <TrendingUp className="w-4 h-4" />
+            <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg border-2 border-foreground bg-neo-teal shadow-[2px_2px_0_0_hsl(var(--foreground))]">
+              <TrendingUp className="h-4 w-4" />
             </div>
-            <p className="font-display font-bold text-sm">847</p>
+            <p className="font-display text-sm font-bold">847</p>
             <p className="text-[10px] text-muted-foreground">Cards</p>
           </NeoCard>
         </div>
 
-        {/* Continue Studying */}
-        {CONTINUE_DECKS.length > 0 && (
+        {CONTINUE_DECKS.length > 0 ? (
           <section>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="font-display font-bold text-lg">Continue Studying</h2>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-display text-lg font-bold">Continue Studying</h2>
               <Link
                 href="/decks"
-                className="text-xs text-muted-foreground font-semibold hover:text-foreground transition-colors"
+                className="text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
               >
-                See all →
+                See all {'->'}
               </Link>
             </div>
             <div className="space-y-3">
@@ -229,34 +242,34 @@ const Feed = () => {
                 <Link key={deck.id} href={`/study/${deck.id}`}>
                   <NeoCard
                     size="sm"
-                    className="p-4 hover:translate-x-1 hover:-translate-y-1 transition-transform cursor-pointer"
+                    className="cursor-pointer p-4 transition-transform hover:-translate-y-1 hover:translate-x-1"
                   >
                     <div className="flex items-center gap-3">
                       <div
                         className={cn(
-                          'w-12 h-12 rounded-xl border-2 border-foreground flex items-center justify-center shadow-[3px_3px_0_0_hsl(var(--foreground))] shrink-0',
+                          'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))]',
                           deck.color
                         )}
                       >
-                        <BookOpen className="w-5 h-5" />
+                        <BookOpen className="h-5 w-5" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-display font-bold text-sm truncate">{deck.title}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-display text-sm font-bold">{deck.title}</p>
                         <p className="text-xs text-muted-foreground">
-                          {deck.cards} cards · {deck.lastStudied}
+                          {deck.cards} cards - {deck.lastStudied}
                         </p>
                         <div className="mt-1.5">
                           <Progress
                             value={deck.progress}
-                            className="h-2 border border-foreground/30 rounded-full"
+                            className="h-2 rounded-full border border-foreground/30"
                           />
                         </div>
                       </div>
                       <div className="shrink-0 text-right">
-                        <span className="font-display font-bold text-sm text-primary">
+                        <span className="font-display text-sm font-bold text-primary">
                           {deck.progress}%
                         </span>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground mx-auto mt-0.5" />
+                        <ChevronRight className="mx-auto mt-0.5 h-4 w-4 text-muted-foreground" />
                       </div>
                     </div>
                   </NeoCard>
@@ -264,38 +277,37 @@ const Feed = () => {
               ))}
             </div>
           </section>
-        )}
+        ) : null}
 
-        {/* Activity Feed */}
         <section>
-          <h2 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
-            <Heart className="w-4 h-4 text-neo-coral" />
+          <h2 className="mb-3 flex items-center gap-2 font-display text-lg font-bold">
+            <Heart className="h-4 w-4 text-neo-coral" />
             Friends Activity
           </h2>
           <NeoCard className="divide-y-2 divide-foreground/10">
-            {ACTIVITY_FEED.map((item, i) => (
-              <div key={i} className="p-4 flex items-start gap-3">
+            {ACTIVITY_FEED.map((item) => (
+              <div key={`${item.user}-${item.target}`} className="flex items-start gap-3 p-4">
                 <div
                   className={cn(
-                    'w-9 h-9 rounded-xl border-2 border-foreground flex items-center justify-center shrink-0 shadow-[2px_2px_0_0_hsl(var(--foreground))]',
+                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
                     item.color
                   )}
                 >
-                  <span className="font-display font-bold text-[10px]">{item.avatar}</span>
+                  <span className="font-display text-[10px] font-bold">{item.avatar}</span>
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-sm">
                     <span className="font-bold">{item.user}</span>{' '}
                     <span className="text-muted-foreground">{item.action}</span>{' '}
                     <span className="font-semibold">{item.target}</span>
                   </p>
-                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                  <div className="mt-0.5 flex flex-wrap items-center gap-2">
                     <p className="text-[10px] text-muted-foreground">{item.time}</p>
-                    {item.followsYou && !item.isFollowing && (
-                      <span className="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full border border-foreground/30 bg-secondary">
+                    {item.followsYou && !item.isFollowing ? (
+                      <span className="rounded-full border border-foreground/30 bg-secondary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide">
                         Follows you
                       </span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <FollowButton followsYou={item.followsYou} initialFollowing={item.isFollowing} />
@@ -304,49 +316,26 @@ const Feed = () => {
           </NeoCard>
         </section>
 
-        {/* Suggested People */}
         <section>
-          <h2 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
-            <UserPlus className="w-4 h-4 text-primary" />
+          <h2 className="mb-3 flex items-center gap-2 font-display text-lg font-bold">
+            <UserPlus className="h-4 w-4 text-primary" />
             People to Follow
           </h2>
           <NeoCard className="divide-y-2 divide-foreground/10">
-            {[
-              {
-                name: 'Lena P.',
-                handle: 'lenap',
-                avatar: 'LP',
-                color: 'bg-neo-yellow',
-                bio: 'Polyglot · 8 languages',
-              },
-              {
-                name: 'Diego F.',
-                handle: 'diegof',
-                avatar: 'DF',
-                color: 'bg-neo-coral',
-                bio: 'CS student · loves algorithms',
-              },
-              {
-                name: 'Yuki T.',
-                handle: 'yukit',
-                avatar: 'YT',
-                color: 'bg-neo-blue',
-                bio: 'Med school flashcard fanatic',
-              },
-            ].map((p) => (
-              <div key={p.handle} className="p-4 flex items-center gap-3">
+            {SUGGESTED_PEOPLE.map((person) => (
+              <div key={person.handle} className="flex items-center gap-3 p-4">
                 <div
                   className={cn(
-                    'w-10 h-10 rounded-xl border-2 border-foreground flex items-center justify-center shrink-0 shadow-[2px_2px_0_0_hsl(var(--foreground))]',
-                    p.color
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
+                    person.color
                   )}
                 >
-                  <span className="font-display font-bold text-xs">{p.avatar}</span>
+                  <span className="font-display text-xs font-bold">{person.avatar}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm truncate">{p.name}</p>
-                  <p className="text-[11px] text-muted-foreground truncate">
-                    @{p.handle} · {p.bio}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold">{person.name}</p>
+                  <p className="truncate text-[11px] text-muted-foreground">
+                    @{person.handle} - {person.bio}
                   </p>
                 </div>
                 <FollowButton />
@@ -355,32 +344,31 @@ const Feed = () => {
           </NeoCard>
         </section>
 
-        {/* Suggested Decks */}
         <section>
-          <h2 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-primary" />
+          <h2 className="mb-3 flex items-center gap-2 font-display text-lg font-bold">
+            <Sparkles className="h-4 w-4 text-primary" />
             Recommended for You
           </h2>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-            {SUGGESTED_DECKS.map((deck, i) => (
+          <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide">
+            {SUGGESTED_DECKS.map((deck) => (
               <NeoCard
-                key={i}
+                key={deck.title}
                 size="sm"
-                className="p-4 min-w-40 shrink-0 cursor-pointer hover:-translate-y-1 transition-transform"
+                className="min-w-40 shrink-0 cursor-pointer p-4 transition-transform hover:-translate-y-1"
               >
                 <div
                   className={cn(
-                    'w-10 h-10 rounded-xl border-2 border-foreground flex items-center justify-center mb-2 shadow-[2px_2px_0_0_hsl(var(--foreground))]',
+                    'mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
                     deck.color
                   )}
                 >
-                  <BookOpen className="w-5 h-5" />
+                  <BookOpen className="h-5 w-5" />
                 </div>
-                <p className="font-display font-bold text-sm">{deck.title}</p>
+                <p className="font-display text-sm font-bold">{deck.title}</p>
                 <p className="text-[10px] text-muted-foreground">
-                  {deck.cards} cards · {deck.category}
+                  {deck.cards} cards - {deck.category}
                 </p>
-                <NeoButton variant="primary" size="sm" className="w-full mt-3 text-xs">
+                <NeoButton variant="primary" size="sm" className="mt-3 w-full text-xs">
                   Start
                 </NeoButton>
               </NeoCard>
@@ -388,16 +376,15 @@ const Feed = () => {
           </div>
         </section>
 
-        {/* Bottom CTA */}
         <div className="pb-6">
           <Link href="/create-deck">
             <NeoCard
               variant="teal"
-              className="p-5 text-center cursor-pointer hover:-translate-y-1 transition-transform"
+              className="cursor-pointer p-5 text-center transition-transform hover:-translate-y-1"
             >
-              <Sparkles className="w-6 h-6 mx-auto mb-2" />
+              <Sparkles className="mx-auto mb-2 h-6 w-6" />
               <p className="font-display font-bold">Create Your Own Deck</p>
-              <p className="text-xs text-foreground/70 mt-1">
+              <p className="mt-1 text-xs text-foreground/70">
                 Share your knowledge with the community
               </p>
             </NeoCard>
@@ -406,6 +393,4 @@ const Feed = () => {
       </main>
     </div>
   );
-};
-
-export default Feed;
+}

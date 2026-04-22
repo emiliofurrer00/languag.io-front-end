@@ -10,9 +10,11 @@ export type FriendRequestStatus = 'Pending' | 'Accepted' | 'Rejected' | 'Cancell
 export type FriendRequest = {
   id: string;
   senderId: string;
+  senderUsername?: string | null;
   senderDisplayName: string;
   senderAvatarUrl?: string | null;
   receiverId: string;
+  receiverUsername?: string | null;
   receiverDisplayName: string;
   receiverAvatarUrl?: string | null;
   status: FriendRequestStatus;
@@ -22,6 +24,7 @@ export type FriendRequest = {
 
 export type FriendSummary = {
   userId: string;
+  username?: string | null;
   displayName: string;
   avatarUrl?: string | null;
   friendsSinceUtc: string;
@@ -34,6 +37,7 @@ export type NotificationItem = {
   id: string;
   type: NotificationType;
   actorUserId?: string | null;
+  actorUsername?: string | null;
   actorDisplayName?: string | null;
   actorAvatarUrl?: string | null;
   entityType?: string | null;
@@ -109,12 +113,14 @@ export function normalizeFriendRequest(value: unknown): FriendRequest {
   return {
     id: typeof record.id === 'string' ? record.id : '',
     senderId: typeof record.senderId === 'string' ? record.senderId : '',
+    senderUsername: typeof record.senderUsername === 'string' ? record.senderUsername : null,
     senderDisplayName:
       typeof record.senderDisplayName === 'string' && record.senderDisplayName.trim()
         ? record.senderDisplayName
         : 'Unknown user',
     senderAvatarUrl: typeof record.senderAvatarUrl === 'string' ? record.senderAvatarUrl : null,
     receiverId: typeof record.receiverId === 'string' ? record.receiverId : '',
+    receiverUsername: typeof record.receiverUsername === 'string' ? record.receiverUsername : null,
     receiverDisplayName:
       typeof record.receiverDisplayName === 'string' && record.receiverDisplayName.trim()
         ? record.receiverDisplayName
@@ -136,6 +142,7 @@ export function normalizeFriendSummary(value: unknown): FriendSummary {
 
   return {
     userId: typeof record.userId === 'string' ? record.userId : '',
+    username: typeof record.username === 'string' ? record.username : null,
     displayName:
       typeof record.displayName === 'string' && record.displayName.trim()
         ? record.displayName
@@ -167,6 +174,7 @@ export function normalizeNotificationItem(value: unknown): NotificationItem {
         ? (record.type as NotificationType)
         : 'FriendRequestReceived',
     actorUserId: typeof record.actorUserId === 'string' ? record.actorUserId : null,
+    actorUsername: typeof record.actorUsername === 'string' ? record.actorUsername : null,
     actorDisplayName:
       typeof record.actorDisplayName === 'string' ? record.actorDisplayName : null,
     actorAvatarUrl: typeof record.actorAvatarUrl === 'string' ? record.actorAvatarUrl : null,

@@ -19,6 +19,7 @@ import { SocialAvatar } from '@/components/social/SocialAvatar';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { toast } from '@/hooks/useToast';
+import { buildProfilePath } from '@/lib/profile/paths';
 import {
   acceptFriendRequest,
   cancelFriendRequest,
@@ -179,6 +180,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
 
   function renderIncomingRequest(request: FriendRequest) {
     const actionIdPrefix = `incoming:${request.id}`;
+    const senderProfilePath = buildProfilePath(request.senderUsername);
 
     return (
       <NeoCard key={request.id} className="p-5">
@@ -186,12 +188,16 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
           <div className="flex items-center gap-4">
             <SocialAvatar label={request.senderDisplayName} />
             <div>
-              <Link
-                href={`/profile/${request.senderId}`}
-                className="font-display text-lg font-bold hover:underline"
-              >
-                {request.senderDisplayName}
-              </Link>
+              {senderProfilePath ? (
+                <Link
+                  href={senderProfilePath}
+                  className="font-display text-lg font-bold hover:underline"
+                >
+                  {request.senderDisplayName}
+                </Link>
+              ) : (
+                <p className="font-display text-lg font-bold">{request.senderDisplayName}</p>
+              )}
               <p className="text-sm text-muted-foreground">Sent {request.createdAtLabel}</p>
             </div>
           </div>
@@ -257,6 +263,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
 
   function renderOutgoingRequest(request: FriendRequest) {
     const actionId = `outgoing:${request.id}`;
+    const receiverProfilePath = buildProfilePath(request.receiverUsername);
 
     return (
       <NeoCard key={request.id} className="p-5">
@@ -264,12 +271,16 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
           <div className="flex items-center gap-4">
             <SocialAvatar label={request.receiverDisplayName} />
             <div>
-              <Link
-                href={`/profile/${request.receiverId}`}
-                className="font-display text-lg font-bold hover:underline"
-              >
-                {request.receiverDisplayName}
-              </Link>
+              {receiverProfilePath ? (
+                <Link
+                  href={receiverProfilePath}
+                  className="font-display text-lg font-bold hover:underline"
+                >
+                  {request.receiverDisplayName}
+                </Link>
+              ) : (
+                <p className="font-display text-lg font-bold">{request.receiverDisplayName}</p>
+              )}
               <p className="text-sm text-muted-foreground">Sent {request.createdAtLabel}</p>
             </div>
           </div>
@@ -306,6 +317,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
 
   function renderFriend(friend: FriendSummary) {
     const actionId = `friend:${friend.userId}`;
+    const profilePath = buildProfilePath(friend.username);
 
     return (
       <NeoCard key={friend.userId} className="p-5">
@@ -313,25 +325,31 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
           <div className="flex items-center gap-4">
             <SocialAvatar label={friend.displayName} />
             <div>
-              <Link
-                href={`/profile/${friend.userId}`}
-                className="font-display text-lg font-bold hover:underline"
-              >
-                {friend.displayName}
-              </Link>
+              {profilePath ? (
+                <Link
+                  href={profilePath}
+                  className="font-display text-lg font-bold hover:underline"
+                >
+                  {friend.displayName}
+                </Link>
+              ) : (
+                <p className="font-display text-lg font-bold">{friend.displayName}</p>
+              )}
               <p className="text-sm text-muted-foreground">
                 Friends since {friend.friendsSinceLabel}
               </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link
-              href={`/profile/${friend.userId}`}
-              className={cn(linkButtonClassName, 'bg-accent text-accent-foreground')}
-            >
-              <ArrowRight className="h-4 w-4" />
-              View Profile
-            </Link>
+            {profilePath ? (
+              <Link
+                href={profilePath}
+                className={cn(linkButtonClassName, 'bg-accent text-accent-foreground')}
+              >
+                <ArrowRight className="h-4 w-4" />
+                View Profile
+              </Link>
+            ) : null}
             <NeoButton
               variant="secondary"
               size="sm"

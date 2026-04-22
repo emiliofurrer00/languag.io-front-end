@@ -8,6 +8,7 @@ import { SocialAvatar } from '@/components/social/SocialAvatar';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { toast } from '@/hooks/useToast';
+import { buildProfilePath } from '@/lib/profile/paths';
 import {
   getNotifications,
   getUnreadNotificationCount,
@@ -32,8 +33,9 @@ function notificationActionHref(notification: NotificationItem) {
     return '/friends?tab=incoming';
   }
 
-  if (notification.actorUserId) {
-    return `/profile/${notification.actorUserId}`;
+  const actorProfilePath = buildProfilePath(notification.actorUsername);
+  if (actorProfilePath) {
+    return actorProfilePath;
   }
 
   return '/friends';
@@ -44,7 +46,7 @@ function notificationActionLabel(notification: NotificationItem) {
     return 'Review request';
   }
 
-  if (notification.actorUserId) {
+  if (notification.actorUsername) {
     return 'View profile';
   }
 

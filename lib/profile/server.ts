@@ -430,8 +430,8 @@ function isNotFoundError(error: unknown) {
   return error instanceof Error && error.message.includes('Not Found');
 }
 
-function buildPublicProfileEndpointPath(userId: string) {
-  return `/Users/${encodeURIComponent(userId)}`;
+function buildPublicProfileEndpointPath(username: string) {
+  return `/Users/by-username/${encodeURIComponent(username)}`;
 }
 
 export async function getMyProfile() {
@@ -459,9 +459,9 @@ export async function getMyProfileIfAuthenticated() {
   return normalizeCurrentUserProfileResponse(response);
 }
 
-export async function getPublicProfile(userId: string) {
+export async function getPublicProfile(username: string) {
   try {
-    const response = await apiFetch<unknown>(buildPublicProfileEndpointPath(userId), {
+    const response = await apiFetch<unknown>(buildPublicProfileEndpointPath(username), {
       cache: 'no-store',
     });
 
@@ -473,25 +473,4 @@ export async function getPublicProfile(userId: string) {
 
     throw error;
   }
-}
-
-export function buildPendingPublicProfile(userId: string): ProfileData {
-  const normalizedHandle = userId.trim();
-
-  return {
-    name: 'Public Profile',
-    handle: normalizedHandle,
-    bio: 'This public profile page is ready, and it will populate once the backend public-profile endpoint is added.',
-    visibilityLabel: 'Public Profile',
-    initials: buildInitials(normalizedHandle),
-    avatarColor: 'blue',
-    stats: {
-      decksCreated: 0,
-      cardsStudied: 0,
-      masteredDecks: 0,
-      studyStreakDays: 0,
-    },
-    preferences: [],
-    recentActivity: [],
-  };
 }

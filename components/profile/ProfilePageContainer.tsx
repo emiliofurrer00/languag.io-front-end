@@ -92,18 +92,22 @@ export default function ProfilePageContainer({
           <p className="mb-4 text-sm">{taglineCopy}</p>
           {headerAction ? <div className="mb-4 flex justify-center md:justify-start">{headerAction}</div> : null}
           <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-500 md:justify-start">
-            <div className="flex items-center gap-1">
-              <Mail width={12} height={12} />
-              <p key={profile.email}>{profile.email}</p>
-            </div>
-            <div className="flex items-center gap-1">
-              {profile.visibilityLabel === 'Public' ? (
-                <Globe width={12} height={12} />
-              ) : (
-                <Lock width={12} height={12} />
-              )}
-              <p key={profile.visibilityLabel}>{profile.visibilityLabel}</p>
-            </div>
+            {profile.email ? (
+              <div className="flex items-center gap-1">
+                <Mail width={12} height={12} />
+                <p>{profile.email}</p>
+              </div>
+            ) : null}
+            {profile.visibilityLabel ? (
+              <div className="flex items-center gap-1">
+                {profile.visibilityLabel === 'Public' ? (
+                  <Globe width={12} height={12} />
+                ) : (
+                  <Lock width={12} height={12} />
+                )}
+                <p>{profile.visibilityLabel}</p>
+              </div>
+            ) : null}
           </div>
         </div>
       </NeoBox>

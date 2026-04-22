@@ -1,7 +1,12 @@
 import Navbar from '@/components/profile/Navbar';
 import ProfilePageContainer from '@/components/profile/ProfilePageContainer';
+import { ProfileFriendshipActions } from '@/components/social/ProfileFriendshipActions';
 import NeoBox from '@/components/ui/NeoBox';
-import { buildPendingPublicProfile, getPublicProfile } from '@/lib/profile/server';
+import {
+  buildPendingPublicProfile,
+  getMyProfileIfAuthenticated,
+  getPublicProfile,
+} from '@/lib/profile/server';
 
 type PublicProfilePageProps = {
   params: Promise<{
@@ -11,8 +16,12 @@ type PublicProfilePageProps = {
 
 export default async function PublicProfilePage({ params }: PublicProfilePageProps) {
   const { userId } = await params;
-  const publicProfile = await getPublicProfile(userId);
+  const [publicProfile, viewerProfile] = await Promise.all([
+    getPublicProfile(userId),
+    getMyProfileIfAuthenticated(),
+  ]);
   const profile = publicProfile ?? buildPendingPublicProfile(userId);
+  const isOwnProfile = viewerProfile?.id === userId;
 
   return (
     <div className="bg-background min-h-screen w-full">
@@ -37,7 +46,10 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
           </NeoBox>
         </div>
       ) : null}
-      <ProfilePageContainer profile={profile} />
+      <ProfilePageContainer
+        profile={profile}
+        headerAction={!isOwnProfile ? <ProfileFriendshipActions otherUserId={userId} /> : null}
+      />
     </div>
   );
 }

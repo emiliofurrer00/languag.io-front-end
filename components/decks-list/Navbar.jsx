@@ -1,3 +1,4 @@
+import { SocialNavActions } from '@/components/social/SocialNavActions';
 import { Sparkles, Plus } from 'lucide-react';
 import { NeoButton } from '../ui/NeoButton';
 import Link from 'next/link';
@@ -19,6 +20,7 @@ export default function Navbar() {
 
         {/* CTA Buttons */}
         <div className="flex items-center gap-3">
+          <SocialNavActions />
           <Link href={'/decks/editor/new'}>
             <NeoButton variant="primary" className="cursor-pointer">
               <Plus className="w-4 h-4" />

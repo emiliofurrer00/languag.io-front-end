@@ -1,5 +1,6 @@
 'use client';
 
+import { SocialNavActions } from '@/components/social/SocialNavActions';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { ArrowLeft, PencilLine } from 'lucide-react';
 import Link from 'next/link';
@@ -29,6 +30,7 @@ export default function Navbar({ canEdit = false, title = 'Profile' }: ProfileNa
 
         {/* CTA Buttons */}
         <div className="flex items-center gap-3">
+          <SocialNavActions />
           {canEdit ? (
             <NeoButton variant="primary" className="cursor-pointer" size="sm">
               <PencilLine className="w-4 h-4" />

@@ -78,12 +78,16 @@ function NotificationCard({
 }) {
   return (
     <NeoCard
-      className={cn(
-        'p-5 transition-colors',
-        notification.isRead ? 'bg-card' : 'bg-neo-yellow/30'
-      )}
+      className={cn('p-5 transition-colors', notification.isRead ? 'bg-card' : 'bg-neo-yellow/30')}
     >
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+      <div
+        className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between"
+        onClick={() => {
+          if (!notification.isRead) {
+            void onMarkRead();
+          }
+        }}
+      >
         <div className="flex items-start gap-4">
           <SocialAvatar label={notification.actorDisplayName ?? notification.title} />
           <div>
@@ -118,7 +122,12 @@ function NotificationCard({
             {notificationActionLabel(notification)}
           </Link>
           {!notification.isRead ? (
-            <NeoButton variant="secondary" size="sm" disabled={isBusy} onClick={() => void onMarkRead()}>
+            <NeoButton
+              variant="secondary"
+              size="sm"
+              disabled={isBusy}
+              onClick={() => void onMarkRead()}
+            >
               {isBusy ? (
                 <LoaderCircle className="h-4 w-4 animate-spin" />
               ) : (
@@ -153,15 +162,9 @@ export function NotificationsPageClient() {
 
     try {
       await markNotificationRead(notificationId);
-      invalidateQueries([
-        socialQueryKeys.notifications,
-        socialQueryKeys.unreadNotificationCount,
-      ]);
+      invalidateQueries([socialQueryKeys.notifications, socialQueryKeys.unreadNotificationCount]);
     } catch (error) {
-      invalidateQueries([
-        socialQueryKeys.notifications,
-        socialQueryKeys.unreadNotificationCount,
-      ]);
+      invalidateQueries([socialQueryKeys.notifications, socialQueryKeys.unreadNotificationCount]);
       toast({
         title: 'Could not mark notification as read',
         description: getApiErrorMessage(error, 'Please try again in a moment.'),
@@ -177,10 +180,7 @@ export function NotificationsPageClient() {
 
     try {
       const result = await markAllNotificationsRead();
-      invalidateQueries([
-        socialQueryKeys.notifications,
-        socialQueryKeys.unreadNotificationCount,
-      ]);
+      invalidateQueries([socialQueryKeys.notifications, socialQueryKeys.unreadNotificationCount]);
       toast({
         title: 'Notifications updated',
         description:
@@ -189,10 +189,7 @@ export function NotificationsPageClient() {
             : 'Everything was already up to date.',
       });
     } catch (error) {
-      invalidateQueries([
-        socialQueryKeys.notifications,
-        socialQueryKeys.unreadNotificationCount,
-      ]);
+      invalidateQueries([socialQueryKeys.notifications, socialQueryKeys.unreadNotificationCount]);
       toast({
         title: 'Could not mark all notifications as read',
         description: getApiErrorMessage(error, 'Please try again in a moment.'),
@@ -215,7 +212,8 @@ export function NotificationsPageClient() {
           </div>
           <h1 className="mt-4 font-display text-3xl font-bold">Notifications</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Friend requests and friendship updates land here first. The unread count refreshes automatically.
+            Friend requests and friendship updates land here first. The unread count refreshes
+            automatically.
           </p>
         </div>
         <NeoButton
@@ -223,7 +221,11 @@ export function NotificationsPageClient() {
           onClick={handleMarkAllRead}
           disabled={isMarkingAll || unreadCount === 0}
         >
-          {isMarkingAll ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <CheckCheck className="h-4 w-4" />}
+          {isMarkingAll ? (
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+          ) : (
+            <CheckCheck className="h-4 w-4" />
+          )}
           Mark All Read
         </NeoButton>
       </div>
@@ -253,7 +255,12 @@ export function NotificationsPageClient() {
         <NeoCard className="mt-8 p-6">
           <p className="font-semibold">We could not load your notifications.</p>
           <p className="mt-2 text-sm text-muted-foreground">{notificationsQuery.errorMessage}</p>
-          <NeoButton variant="secondary" size="sm" onClick={notificationsQuery.refetch} className="mt-4">
+          <NeoButton
+            variant="secondary"
+            size="sm"
+            onClick={notificationsQuery.refetch}
+            className="mt-4"
+          >
             Try Again
           </NeoButton>
         </NeoCard>

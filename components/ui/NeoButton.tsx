@@ -42,6 +42,7 @@ function NeoButton({
         variants[variant],
         sizes[size],
         'shadow-[4px_4px_0_0_hsl(var(--foreground))] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]',
+        'disabled:pointer-events-none disabled:opacity-50',
         className
       )}
       {...props}

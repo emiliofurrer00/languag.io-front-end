@@ -42,8 +42,19 @@ const CardItem = ({ card, index, scrollYProgress, isFlipped, onFlip }: CardItemP
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="cursor-pointer"
+      className="cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4"
+      role="button"
+      tabIndex={0}
+      aria-label={
+        isFlipped ? `Show front of sample card ${index + 1}` : `Flip sample card ${index + 1}`
+      }
       onClick={onFlip}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onFlip();
+        }
+      }}
     >
       <motion.div
         className="relative w-full aspect-[3/4] transform-style-3d"
@@ -93,7 +104,7 @@ const CardShowcaseSection = () => {
           className="max-w-2xl mb-20"
         >
           <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
-            01 — The card
+            01 - The card
           </p>
           <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight mb-6">
             One question.
@@ -101,8 +112,8 @@ const CardShowcaseSection = () => {
             <span className="text-muted-foreground">One answer.</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Tap any card to flip it. That's the whole interaction — simple enough that it gets out
-            of the way.
+            Tap any card to flip it. That&apos;s the whole interaction - simple enough that it gets
+            out of the way.
           </p>
         </motion.div>
 

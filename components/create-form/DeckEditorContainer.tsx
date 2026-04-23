@@ -25,7 +25,7 @@ export default function DeckEditorContainer({
   return (
     <div className="bg-background min-h-screen w-full">
       <Navbar handleSave={handleSave} isEditMode={Boolean(defaultDeckDetails.id)} />
-      <section className="px-3 md:grid-cols-[2fr_1fr] grid gap-6">
+      <section className="mx-auto grid w-full max-w-7xl gap-6 px-4 pb-10 md:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
         <div className="flex flex-col gap-4">
           <DeckDetailsEdit deckDetails={deckDetails} setDeckDetails={setDeckDetails} />
           <CardsEditorContainer

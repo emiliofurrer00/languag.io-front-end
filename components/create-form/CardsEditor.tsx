@@ -27,26 +27,39 @@ export default function CardsEditor({
 
   const [frontText, setFrontText] = useState(defaultData.frontText);
   const [backText, setBackText] = useState(defaultData.backText);
+  const trimmedFrontText = frontText.trim();
+  const trimmedBackText = backText.trim();
+  const canSave = trimmedFrontText.length > 0 && trimmedBackText.length > 0;
 
   return (
     <div className="mt-4 p-4 bg-neo-black/10 rounded-xl border-2 border-foreground">
       <h4 className="font-display font-semibold mb-2">{isNewCard ? 'New Card' : 'Edit Card'}</h4>
       <div className="flex flex-col gap-3">
-        <input
-          value={frontText}
-          type="text"
-          className="font-normal block w-full rounded-md border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
-          placeholder="Front side (e.g., 'What is the capital of France?')"
-          onChange={(e) => setFrontText(e.target.value)}
-        />
-        <input
-          value={backText}
-          type="text"
-          className="font-normal block w-full rounded-md border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
-          placeholder="Back side (e.g., 'Paris')"
-          onChange={(e) => setBackText(e.target.value)}
-        />
-        <div className="flex justify-end gap-2">
+        <label className="text-sm font-bold" htmlFor="card-front-text">
+          Front
+          <input
+            id="card-front-text"
+            value={frontText}
+            type="text"
+            className="mt-1 block w-full rounded-md border-2 border-foreground bg-background px-3 py-2 font-normal shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+            placeholder="What is the capital of France?"
+            onChange={(e) => setFrontText(e.target.value)}
+            required
+          />
+        </label>
+        <label className="text-sm font-bold" htmlFor="card-back-text">
+          Back
+          <input
+            id="card-back-text"
+            value={backText}
+            type="text"
+            className="mt-1 block w-full rounded-md border-2 border-foreground bg-background px-3 py-2 font-normal shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+            placeholder="Paris"
+            onChange={(e) => setBackText(e.target.value)}
+            required
+          />
+        </label>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <NeoButton variant="outline" size="sm" onClick={handleCloseEditor}>
             Cancel
           </NeoButton>
@@ -54,13 +67,18 @@ export default function CardsEditor({
             variant="primary"
             size="sm"
             onClick={() => {
+              if (!canSave) {
+                return;
+              }
+
               if (isNewCard) {
-                setCards([...cards, { frontText, backText }]);
+                setCards([...cards, { frontText: trimmedFrontText, backText: trimmedBackText }]);
               } else {
                 const updatedCards = [...cards];
                 updatedCards[editingCardIndex] = {
-                  frontText,
-                  backText,
+                  ...updatedCards[editingCardIndex],
+                  frontText: trimmedFrontText,
+                  backText: trimmedBackText,
                 };
                 setCards(updatedCards);
               }
@@ -68,6 +86,7 @@ export default function CardsEditor({
               setBackText('');
               handleCloseEditor();
             }}
+            disabled={!canSave}
             className="cursor-pointer"
           >
             {isNewCard ? 'Add Card' : 'Save Changes'}

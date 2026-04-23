@@ -11,7 +11,19 @@ interface FlipCardViewProps {
 
 const FlipCardView = ({ card, isFlipped, onFlip, colorClass }: FlipCardViewProps) => {
   return (
-    <div className="perspective-1000 w-full mb-8 cursor-pointer" onClick={onFlip}>
+    <div
+      className="perspective-1000 mb-8 w-full cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4"
+      role="button"
+      tabIndex={0}
+      aria-label={isFlipped ? 'Show the front of this card' : 'Reveal the answer'}
+      onClick={onFlip}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onFlip();
+        }
+      }}
+    >
       <div
         className={cn(
           'relative w-full min-h-[320px] sm:min-h-[380px] transition-transform duration-500 transform-style-3d',

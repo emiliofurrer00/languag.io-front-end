@@ -1,4 +1,6 @@
 import type { ProfileAccentColor } from '@/lib/profile/types';
+import { getNeoColorClass } from '@/lib/theme/neo-colors';
+import { cn } from '@/lib/utils';
 import NeoBox from '../ui/NeoBox';
 
 export default function ProfilePicture({
@@ -11,7 +13,7 @@ export default function ProfilePicture({
   className?: string;
 }) {
   return (
-    <NeoBox className={`bg-neo-${color} ${className}`}>
+    <NeoBox className={cn(getNeoColorClass(color), className)}>
       <span className="text-3xl font-bold">{initials}</span>
     </NeoBox>
   );

@@ -26,7 +26,7 @@ const moments = [
 
 const StudyFlowSection = () => {
   return (
-    <section className="py-32 relative">
+    <section className="py-32 relative w-full overflow-hidden">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

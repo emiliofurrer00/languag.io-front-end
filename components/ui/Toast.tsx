@@ -28,10 +28,19 @@ function ToastViewport({ className, ref, ...props }: React.ComponentPropsWithRef
   );
 }
 
-function Toast({ className, variant = 'default', open = true, ref, ...props }: ToastRootProps) {
+function Toast({
+  className,
+  variant = 'default',
+  open = true,
+  ref,
+  ...props
+}: ToastRootProps) {
   if (!open) {
     return null;
   }
+
+  const { onOpenChange, ...divProps } = props;
+  void onOpenChange;
 
   return (
     <div
@@ -43,7 +52,7 @@ function Toast({ className, variant = 'default', open = true, ref, ...props }: T
           : 'border-border bg-background text-foreground',
         className
       )}
-      {...props}
+      {...divProps}
     />
   );
 }

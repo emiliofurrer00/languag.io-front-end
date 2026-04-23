@@ -395,6 +395,8 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
           {shuffledCards.map((card, idx) => (
             <button
               key={card.id}
+              type="button"
+              aria-label={`Go to card ${idx + 1}`}
               onClick={() => {
                 setCurrentIndex(idx);
                 setIsFlipped(false);

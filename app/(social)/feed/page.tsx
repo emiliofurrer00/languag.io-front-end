@@ -28,13 +28,7 @@ import { cn } from '@/lib/utils';
 const inlineLinkClassName =
   'inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground px-4 py-2 text-sm font-semibold font-display shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))]';
 
-function EmptySection({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
+function EmptySection({ title, description }: { title: string; description: string }) {
   return (
     <NeoCard className="p-5">
       <p className="font-display text-base font-bold">{title}</p>
@@ -218,7 +212,10 @@ export default async function Feed() {
                 const profilePath = buildProfilePath(item.username);
 
                 return (
-                  <div key={`${item.userId}-${item.occurredAtUtc}`} className="flex items-start gap-3 p-4">
+                  <div
+                    key={`${item.userId}-${item.occurredAtUtc}`}
+                    className="flex items-start gap-3 p-4"
+                  >
                     <div
                       className={cn(
                         'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
@@ -367,7 +364,7 @@ export default async function Feed() {
         </section>
 
         <div className="pb-6">
-          <Link href="/create-deck">
+          <Link href="/decks/editor/new">
             <NeoCard
               variant="teal"
               className="cursor-pointer p-5 text-center transition-transform hover:-translate-y-1"

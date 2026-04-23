@@ -34,7 +34,7 @@ const QuietCTASection = () => {
                 <ArrowRight className="w-5 h-5" />
               </NeoButton>
             </Link>
-            <Link href="/create-deck">
+            <Link href="/decks/editor/new">
               <NeoButton variant="secondary" size="lg">
                 Make one
               </NeoButton>

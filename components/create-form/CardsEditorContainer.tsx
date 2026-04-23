@@ -20,9 +20,14 @@ export default function CardsEditorContainer({
     setEditingCardIndex(null);
   }
 
+  function handleCreateCard() {
+    setEditingCardIndex(null);
+    setIsEditCardMode(true);
+  }
+
   return (
     <div className="border-3 rounded-lg shadow-[5px_5px_0_0_hsl(var(--foreground))] p-5">
-      <div className="flex justify-between mb-3">
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-lg font-bold mb-1">Cards</h2>
           <span className="text-sm text-gray-600">
@@ -37,9 +42,10 @@ export default function CardsEditorContainer({
           }
           variant="primary"
           size="sm"
-          onClick={() => setIsEditCardMode(true)}
+          onClick={handleCreateCard}
         >
-          <Plus></Plus>Add Card
+          <Plus className="h-4 w-4" />
+          Add Card
         </NeoButton>
       </div>
       {isEditCardMode ? (
@@ -51,20 +57,29 @@ export default function CardsEditorContainer({
         />
       ) : (
         <div className="flex flex-col gap-3">
-          {cards.map((card, index) => (
-            <CardPreview
-              key={index}
-              card={card}
-              index={index}
-              onEdit={() => {
-                setIsEditCardMode(true);
-                setEditingCardIndex(index);
-              }}
-              onDelete={() => {
-                setCards(cards.filter((c, i) => i !== index));
-              }}
-            />
-          ))}
+          {cards.length > 0 ? (
+            cards.map((card, index) => (
+              <CardPreview
+                key={card.id ?? index}
+                card={card}
+                index={index}
+                onEdit={() => {
+                  setIsEditCardMode(true);
+                  setEditingCardIndex(index);
+                }}
+                onDelete={() => {
+                  setCards(cards.filter((_, i) => i !== index));
+                }}
+              />
+            ))
+          ) : (
+            <div className="rounded-xl border-2 border-dashed border-foreground/40 bg-secondary/60 p-6 text-center">
+              <p className="font-display text-base font-bold">No cards yet</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add a prompt and answer when you are ready to start building this deck.
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

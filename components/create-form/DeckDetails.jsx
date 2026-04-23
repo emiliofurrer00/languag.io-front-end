@@ -19,79 +19,93 @@ const CATEGORIES = [
 
 export default function DeckDetails({ deckDetails, setDeckDetails }) {
   const { title, description, category, color, visibility } = deckDetails;
+  const isPublic = Boolean(visibility);
+
   return (
-    <div className="border-3 rounded-lg shadow-[5px_5px_0_0_hsl(var(--foreground))] p-5">
-      <h2 className="text-lg font-bold mb-5">Deck Details</h2>
+    <div className="rounded-lg border-[3px] border-foreground p-5 shadow-[5px_5px_0_0_hsl(var(--foreground))]">
+      <h2 className="mb-5 text-lg font-bold">Deck Details</h2>
       <div className="flex flex-col gap-5">
-        <label className="text-sm font-bold">
+        <label className="text-sm font-bold" htmlFor="deck-title">
           Deck Title *
           <input
+            id="deck-title"
             type="text"
-            className="font-normal mt-1 block w-full rounded-md border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            className="mt-1 block w-full rounded-md border-2 border-foreground bg-background px-3 py-2 font-normal shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
             placeholder="e.g., Spanish Basics"
-            onChange={(e) => setDeckDetails({ ...deckDetails, title: e.target.value })}
-            defaultValue={title}
+            onChange={(event) => setDeckDetails({ ...deckDetails, title: event.target.value })}
+            value={title ?? ''}
+            maxLength={80}
+            required
           />
         </label>
-        <label className="text-sm font-bold">
+
+        <label className="text-sm font-bold" htmlFor="deck-description">
           Description
           <textarea
-            className="font-normal mt-1 block w-full rounded-md h-24 border-2 border-foreground px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            id="deck-description"
+            className="mt-1 block h-24 w-full resize-y rounded-md border-2 border-foreground bg-background px-3 py-2 font-normal shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
             placeholder="A brief description of your deck."
-            onChange={(e) => setDeckDetails({ ...deckDetails, description: e.target.value })}
-            defaultValue={description}
+            onChange={(event) =>
+              setDeckDetails({ ...deckDetails, description: event.target.value })
+            }
+            value={description ?? ''}
+            maxLength={280}
           />
         </label>
-        <label className="text-sm font-bold">
+
+        <label className="text-sm font-bold" htmlFor="deck-category">
           Category
           <CategorySelect
-            defaultValue={category}
-            onChange={(e) => setDeckDetails({ ...deckDetails, category: e.target.value })}
+            id="deck-category"
+            value={category || 'Language'}
+            onChange={(event) => setDeckDetails({ ...deckDetails, category: event.target.value })}
           />
         </label>
-        <div className="h-20">
+
+        <div>
           <DeckColors
-            selectedColor={color}
-            onColorSelect={(color) => setDeckDetails({ ...deckDetails, color })}
+            selectedColor={color ?? 'teal'}
+            onColorSelect={(nextColor) => setDeckDetails({ ...deckDetails, color: nextColor })}
           />
         </div>
-        <div className="flex items-center justify-between bg-neo-black/10 py-5 px-5 border-3 rounded gap-4">
+
+        <div className="flex items-center justify-between gap-4 rounded border-[3px] border-foreground bg-neo-black/10 px-5 py-5">
           <div className="flex items-center gap-3">
             <div>
-              {visibility ? (
-                <LockIcon className="text-black/60 w-5 h-5"></LockIcon>
+              {isPublic ? (
+                <Globe className="h-5 w-5 text-neo-teal" />
               ) : (
-                <Globe className="text-neo-teal w-5 h-5"></Globe>
+                <LockIcon className="h-5 w-5 text-black/60" />
               )}
             </div>
             <div>
-              <span className="text-md font-bold mb-4">
-                {!visibility ? 'Private Deck' : 'Public Deck'}
+              <span className="mb-4 text-base font-bold">
+                {isPublic ? 'Public Deck' : 'Private Deck'}
               </span>
-              <p className="text-black/50 text-sm">
-                {!visibility ? 'Only you can see this deck.' : 'Everyone can see this deck.'}
+              <p className="text-sm text-black/50">
+                {isPublic ? 'Everyone can see this deck.' : 'Only you can see this deck.'}
               </p>
             </div>
           </div>
-          <div>
-            <Switch
-              checked={visibility === 1}
-              onCheckedChange={(visibility) =>
-                setDeckDetails({ ...deckDetails, visibility: visibility ? 1 : 0 })
-              }
-            />
-          </div>
+          <Switch
+            checked={isPublic}
+            aria-label="Toggle public deck visibility"
+            onCheckedChange={(nextVisibility) =>
+              setDeckDetails({ ...deckDetails, visibility: nextVisibility ? 1 : 0 })
+            }
+          />
         </div>
       </div>
     </div>
   );
 }
 
-function CategorySelect({ defaultValue, onChange }) {
+function CategorySelect({ id, value, onChange }) {
   return (
     <select
-      className="font-normal mt-1 block w-fit rounded-md border-2 border-foreground px-3 py-2 shadow-sm bg-neo-yellow"
-      defaultValue={defaultValue}
+      id={id}
+      className="mt-1 block w-full rounded-md border-2 border-foreground bg-neo-yellow px-3 py-2 font-normal shadow-sm focus:outline-none focus:ring-2 focus:ring-ring sm:w-fit"
+      value={value}
       onChange={onChange}
     >
       {CATEGORIES.map((category) => (

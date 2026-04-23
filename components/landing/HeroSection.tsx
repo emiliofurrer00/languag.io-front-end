@@ -77,7 +77,7 @@ const HeroSection = () => {
                 <ArrowRight className="w-5 h-5" />
               </NeoButton>
             </Link>
-            <Link href="/create-deck">
+            <Link href="/decks/editor/new">
               <NeoButton variant="secondary" size="lg">
                 Create your first
               </NeoButton>
@@ -96,7 +96,7 @@ const HeroSection = () => {
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               className="text-xs uppercase tracking-widest text-muted-foreground"
             >
-              Scroll to see it in action ↓
+              Scroll to see it in action
             </motion.div>
           </motion.div>
         </div>

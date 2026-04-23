@@ -9,7 +9,7 @@ import { useInvalidatedValueQuery } from '@/lib/social/hooks';
 import { socialQueryKeys } from '@/lib/social/query-keys';
 
 const actionLinkClassName =
-  'relative inline-flex h-11 w-11 items-center justify-center rounded-full border-[2px] border-foreground bg-secondary text-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))]';
+  'relative inline-flex h-9 w-9 items-center justify-center rounded-full border-[2px] border-foreground bg-secondary text-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))]';
 
 function formatUnreadCount(count: number) {
   if (count > 99) {
@@ -30,14 +30,14 @@ export function SocialNavActions() {
   return (
     <div className="flex items-center gap-3">
       <Link href="/friends" className={actionLinkClassName} aria-label="Open friends">
-        <Users className="h-5 w-5" />
+        <Users className="h-4 w-4" />
       </Link>
       <Link
         href="/notifications"
         className={actionLinkClassName}
         aria-label={`Open notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
       >
-        <Bell className="h-5 w-5" />
+        <Bell className="h-4 w-4" />
         {unreadCountQuery.isRefreshing ? (
           <LoaderCircle className="absolute -right-1 -top-1 h-3.5 w-3.5 animate-spin rounded-full bg-background" />
         ) : null}

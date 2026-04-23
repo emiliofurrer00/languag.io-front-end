@@ -17,19 +17,16 @@ export default function Navbar({
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b-3">
       <div className="mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex gap-6">
+        <div className="flex gap-4 items-center">
           <Link href="/decks">
             <NeoButton variant="secondary" className="py-2 px-4 text-sm cursor-pointer">
               <ArrowLeft className="w-4 h-4" />
-              Back
+              <span className="hidden md:block">Back</span>
             </NeoButton>
           </Link>
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary border-2 border-foreground flex items-center justify-center shadow-[3px_3px_0_0_hsl(var(--foreground))]">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <span className="font-display font-bold text-xl">
+            <span className="font-display font-bold text:sm md:text-xl">
               {isEditMode ? 'Edit Deck' : 'Create Deck'}
             </span>
           </div>
@@ -39,7 +36,7 @@ export default function Navbar({
         <div className="flex items-center gap-3">
           <NeoButton
             variant="primary"
-            className="cursor-pointer"
+            className="cursor-pointer text-sm md:text-base"
             onClick={() => {
               startTransition(async () => {
                 const didSave = await handleSave(!isEditMode);

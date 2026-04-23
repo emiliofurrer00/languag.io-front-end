@@ -22,7 +22,6 @@ import Link from 'next/link';
 const landingLinks = [
   { href: '#features', label: 'Features' },
   { href: '#how-it-works', label: 'How It Works' },
-  { href: '#pricing', label: 'Pricing' },
 ];
 
 export default function Navbar({ isLandingPage = false }: { isLandingPage?: boolean }) {

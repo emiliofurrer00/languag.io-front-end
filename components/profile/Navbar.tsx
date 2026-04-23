@@ -20,11 +20,11 @@ export default function Navbar({ canEdit = false, title = 'Profile' }: ProfileNa
               <Link href="/decks">
                 <NeoButton variant="secondary" className="py-2 px-4 text-sm cursor-pointer">
                   <ArrowLeft className="w-4 h-4" />
-                  Back
+                  <span className="hidden md:block">Back</span>
                 </NeoButton>
               </Link>
             </div>
-            <span className="font-display font-bold text-xl">{title}</span>
+            <span className="font-display font-bold text-md md:text-xl">{title}</span>
           </div>
         </div>
 

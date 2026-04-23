@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
-      <body className="h-full">
+      <body className="">
         <AuthProvider>
           <div className="h-full bg-neutral-50">{children}</div>
         </AuthProvider>

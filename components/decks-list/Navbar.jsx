@@ -14,7 +14,7 @@ export default function Navbar() {
                 <Sparkles className="w-5 h-5" />
               </Link>
             </div>
-            <span className="font-display font-bold text-xl">My Decks</span>
+            <span className="font-display font-bold md:text-xl">My Decks</span>
           </div>
         </div>
 
@@ -22,7 +22,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <SocialNavActions />
           <Link href={'/decks/editor/new'}>
-            <NeoButton variant="primary" className="cursor-pointer">
+            <NeoButton variant="primary" className="cursor-pointer text-sm">
               <Plus className="w-4 h-4" />
               Create Deck
             </NeoButton>

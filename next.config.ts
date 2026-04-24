@@ -1,7 +1,8 @@
 import type { NextConfig } from 'next';
 
-const profileImageCdnBaseUrl = process.env.NEXT_PUBLIC_PROFILE_IMAGE_CDN_BASE_URL;
-console.log('Profile Image CDN Base URL:', profileImageCdnBaseUrl);
+const profileImageCdnBaseUrl =
+  process.env.NEXT_PUBLIC_PROFILE_IMAGE_CDN_BASE_URL ?? process.env.PROFILE_IMAGE_CDN_BASE_URL;
+
 const profileImageRemotePattern = profileImageCdnBaseUrl
   ? (() => {
       try {
@@ -18,7 +19,7 @@ const profileImageRemotePattern = profileImageCdnBaseUrl
       }
     })()
   : null;
-console.log('Profile Image Remote Pattern:', profileImageRemotePattern);
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [

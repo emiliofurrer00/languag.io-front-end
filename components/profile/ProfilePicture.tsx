@@ -31,7 +31,14 @@ export default function ProfilePicture({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={imageUrl} alt="Profile picture" className="h-full w-full object-cover" />
       ) : imageUrl ? (
-        <Image src={imageUrl} alt="Profile picture" fill sizes="128px" className="object-cover" />
+        <Image
+          src={imageUrl}
+          alt="Profile picture"
+          fill
+          sizes="128px"
+          className="object-cover"
+          unoptimized
+        />
       ) : (
         <span className="text-3xl font-bold">{initials}</span>
       )}

@@ -216,33 +216,65 @@ export default async function Feed() {
                     key={`${item.userId}-${item.occurredAtUtc}`}
                     className="flex items-start gap-3 p-4"
                   >
-                    <div
-                      className={cn(
-                        'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
-                        item.color
-                      )}
-                    >
-                      <span className="font-display text-[10px] font-bold">{item.avatar}</span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm">
-                        {profilePath ? (
-                          <Link href={profilePath} className="font-bold hover:underline">
-                            {item.user}
-                          </Link>
-                        ) : (
-                          <span className="font-bold">{item.user}</span>
-                        )}{' '}
-                        <span className="text-muted-foreground">{item.action}</span>{' '}
-                        {item.target ? <span className="font-semibold">{item.target}</span> : null}
-                      </p>
-                      <div className="mt-0.5 flex flex-wrap items-center gap-2">
-                        <p className="text-[10px] text-muted-foreground">{item.time}</p>
-                        <span className="rounded-full border border-foreground/30 bg-secondary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide">
-                          Friend
-                        </span>
+                    {profilePath ? (
+                      <Link
+                        href={profilePath}
+                        aria-label={`View ${item.user}'s profile`}
+                        className="group -m-2 flex min-w-0 flex-1 items-start gap-3 rounded-2xl p-2 transition-colors hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+                      >
+                        <div
+                          className={cn(
+                            'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
+                            item.color
+                          )}
+                        >
+                          <span className="font-display text-[10px] font-bold">{item.avatar}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm">
+                            <span className="font-bold transition-colors group-hover:text-primary group-hover:underline">
+                              {item.user}
+                            </span>{' '}
+                            <span className="text-muted-foreground">{item.action}</span>{' '}
+                            {item.target ? (
+                              <span className="font-semibold">{item.target}</span>
+                            ) : null}
+                          </p>
+                          <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                            <p className="text-[10px] text-muted-foreground">{item.time}</p>
+                            <span className="rounded-full border border-foreground/30 bg-secondary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide">
+                              Friend
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    ) : (
+                      <div className="flex min-w-0 flex-1 items-start gap-3">
+                        <div
+                          className={cn(
+                            'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
+                            item.color
+                          )}
+                        >
+                          <span className="font-display text-[10px] font-bold">{item.avatar}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm">
+                            <span className="font-bold">{item.user}</span>{' '}
+                            <span className="text-muted-foreground">{item.action}</span>{' '}
+                            {item.target ? (
+                              <span className="font-semibold">{item.target}</span>
+                            ) : null}
+                          </p>
+                          <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                            <p className="text-[10px] text-muted-foreground">{item.time}</p>
+                            <span className="rounded-full border border-foreground/30 bg-secondary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide">
+                              Friend
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     {profilePath ? (
                       <Link
                         href={profilePath}

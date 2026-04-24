@@ -29,6 +29,8 @@ type ApiUserMeResponse = {
   hasBeenOnboarded?: boolean;
   dailyCardsGoal?: number | null;
   avatarColor?: string | null;
+  profilePictureUrl?: string | null;
+  profilePictureObjectKey?: string | null;
   profileDescription?: string | null;
   about?: string | null;
   isPublicProfile?: boolean;
@@ -301,6 +303,7 @@ function normalizeCurrentUserProfileResponse(response: ApiUserMeResponse): Profi
     about,
     bio: about || tagline,
     email,
+    profilePictureUrl: firstString(response.profilePictureUrl),
     hasBeenOnboarded: Boolean(response.hasBeenOnboarded),
     isPublicProfile: Boolean(response.isPublicProfile),
     dailyCardsGoal: firstNumber(response.dailyCardsGoal) ?? 0,
@@ -377,6 +380,12 @@ function normalizeProfileResponse(response: unknown): ProfileData {
   const avatarColor = normalizeAccentColor(
     readFirstValue(avatarSources, ['avatarColor', 'accentColor', 'themeColor', 'color'])
   );
+  const profilePictureUrl = readFirstString(avatarSources, [
+    'profilePictureUrl',
+    'avatarUrl',
+    'imageUrl',
+    'url',
+  ]);
   const decks = readFirstArray(sources, ['decks']);
 
   return {
@@ -388,6 +397,7 @@ function normalizeProfileResponse(response: unknown): ProfileData {
     about,
     bio,
     email,
+    profilePictureUrl,
     hasBeenOnboarded,
     isPublicProfile,
     dailyCardsGoal,

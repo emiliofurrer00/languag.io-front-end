@@ -68,11 +68,13 @@ function getActivityIcon(type: string) {
 type ProfilePageContainerProps = {
   profile: ProfileData;
   headerAction?: React.ReactNode;
+  profilePictureSlot?: React.ReactNode;
 };
 
 export default function ProfilePageContainer({
   profile,
   headerAction,
+  profilePictureSlot,
 }: ProfilePageContainerProps) {
   const taglineCopy = profile.tagline || profile.bio || 'Your profile details appear here.';
   const aboutCopy = profile.about || profile.bio || 'No profile details have been added yet.';
@@ -81,8 +83,14 @@ export default function ProfilePageContainer({
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Profile Header */}
       <NeoBox className="flex flex-col gap-4 text-center md:flex-row md:items-start md:gap-8 md:text-left">
-        <div>
-          <ProfilePicture initials={profile.initials} color={profile.avatarColor} />
+        <div className="flex justify-center md:justify-start">
+          {profilePictureSlot ?? (
+            <ProfilePicture
+              initials={profile.initials}
+              color={profile.avatarColor}
+              imageUrl={profile.profilePictureUrl}
+            />
+          )}
         </div>
         <div className="flex-1">
           <h2 className="text-2xl font-semibold">{profile.name}</h2>
@@ -90,7 +98,9 @@ export default function ProfilePageContainer({
             <p className="mb-2 text-sm text-gray-500">{formatHandle(profile.handle)}</p>
           ) : null}
           <p className="mb-4 text-sm">{taglineCopy}</p>
-          {headerAction ? <div className="mb-4 flex justify-center md:justify-start">{headerAction}</div> : null}
+          {headerAction ? (
+            <div className="mb-4 flex justify-center md:justify-start">{headerAction}</div>
+          ) : null}
           <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-500 md:justify-start">
             {profile.email ? (
               <div className="flex items-center gap-1">

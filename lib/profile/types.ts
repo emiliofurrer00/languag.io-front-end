@@ -25,6 +25,7 @@ export type ProfileData = {
   about?: string;
   bio?: string;
   email?: string;
+  profilePictureUrl?: string;
   hasBeenOnboarded?: boolean;
   isPublicProfile?: boolean;
   dailyCardsGoal?: number;

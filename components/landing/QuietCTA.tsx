@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 const QuietCTASection = () => {
   return (
-    <section className="py-32 relative">
+    <section className="py-32 relative w-full">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

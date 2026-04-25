@@ -6,6 +6,7 @@ import {
   readAccessTokenDiagnostics,
 } from '@/lib/kinde-server';
 import { NextResponse } from 'next/server';
+import { rejectCrossOriginMutation } from '../request-guards';
 
 function buildUnauthorizedResponse() {
   return NextResponse.json(
@@ -41,6 +42,11 @@ export async function proxyAuthorizedUserRequest(
   path: string,
   method: 'GET' | 'PUT'
 ) {
+  const crossOriginRejection = rejectCrossOriginMutation(request);
+  if (crossOriginRejection) {
+    return crossOriginRejection;
+  }
+
   let accessToken: string;
 
   try {

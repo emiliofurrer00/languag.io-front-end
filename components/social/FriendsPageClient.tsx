@@ -190,7 +190,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
       <NeoCard key={request.id} className="p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
-            <SocialAvatar label={request.senderDisplayName} />
+            <SocialAvatar label={request.senderDisplayName} imageUrl={request.senderAvatarUrl} />
             <div>
               {senderProfilePath ? (
                 <Link
@@ -273,7 +273,10 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
       <NeoCard key={request.id} className="p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
-            <SocialAvatar label={request.receiverDisplayName} />
+            <SocialAvatar
+              label={request.receiverDisplayName}
+              imageUrl={request.receiverAvatarUrl}
+            />
             <div>
               {receiverProfilePath ? (
                 <Link
@@ -327,7 +330,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
       <NeoCard key={friend.userId} className="p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
-            <SocialAvatar label={friend.displayName} />
+            <SocialAvatar label={friend.displayName} imageUrl={friend.avatarUrl} />
             <div>
               {profilePath ? (
                 <Link href={profilePath} className="font-display text-lg font-bold hover:underline">

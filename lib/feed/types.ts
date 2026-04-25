@@ -35,6 +35,7 @@ export type FeedActivity = {
   username?: string | null;
   user: string;
   avatar: string;
+  profilePictureUrl?: string | null;
   color: string;
   action: string;
   target?: string | null;
@@ -50,6 +51,7 @@ export type FeedSuggestedPerson = {
   name: string;
   handle: string;
   avatar: string;
+  profilePictureUrl?: string | null;
   color: string;
   bio: string;
   friendshipStatus: string;

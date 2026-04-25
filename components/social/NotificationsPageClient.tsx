@@ -89,7 +89,10 @@ function NotificationCard({
         }}
       >
         <div className="flex items-start gap-4">
-          <SocialAvatar label={notification.actorDisplayName ?? notification.title} />
+          <SocialAvatar
+            label={notification.actorDisplayName ?? notification.title}
+            imageUrl={notification.actorAvatarUrl}
+          />
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-display text-lg font-bold">

@@ -17,6 +17,7 @@ import { redirect } from 'next/navigation';
 
 import Navbar from '@/components/profile/Navbar';
 import { ProfileFriendshipActions } from '@/components/social/ProfileFriendshipActions';
+import { SocialAvatar } from '@/components/social/SocialAvatar';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { Progress } from '@/components/ui/Progress';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
@@ -222,14 +223,13 @@ export default async function Feed() {
                         aria-label={`View ${item.user}'s profile`}
                         className="group -m-2 flex min-w-0 flex-1 items-start gap-3 rounded-2xl p-2 transition-colors hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
                       >
-                        <div
-                          className={cn(
-                            'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
-                            item.color
-                          )}
-                        >
-                          <span className="font-display text-[10px] font-bold">{item.avatar}</span>
-                        </div>
+                        <SocialAvatar
+                          label={item.user}
+                          imageUrl={item.profilePictureUrl}
+                          fallbackClassName={item.color}
+                          className="h-9 w-9 rounded-xl text-[10px] shadow-[2px_2px_0_0_hsl(var(--foreground))]"
+                          sizes="36px"
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="text-sm">
                             <span className="font-bold transition-colors group-hover:text-primary group-hover:underline">
@@ -250,14 +250,13 @@ export default async function Feed() {
                       </Link>
                     ) : (
                       <div className="flex min-w-0 flex-1 items-start gap-3">
-                        <div
-                          className={cn(
-                            'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
-                            item.color
-                          )}
-                        >
-                          <span className="font-display text-[10px] font-bold">{item.avatar}</span>
-                        </div>
+                        <SocialAvatar
+                          label={item.user}
+                          imageUrl={item.profilePictureUrl}
+                          fallbackClassName={item.color}
+                          className="h-9 w-9 rounded-xl text-[10px] shadow-[2px_2px_0_0_hsl(var(--foreground))]"
+                          sizes="36px"
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="text-sm">
                             <span className="font-bold">{item.user}</span>{' '}
@@ -310,14 +309,13 @@ export default async function Feed() {
 
                 return (
                   <div key={person.userId} className="flex items-center gap-3 p-4">
-                    <div
-                      className={cn(
-                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]',
-                        person.color
-                      )}
-                    >
-                      <span className="font-display text-xs font-bold">{person.avatar}</span>
-                    </div>
+                    <SocialAvatar
+                      label={person.name}
+                      imageUrl={person.profilePictureUrl}
+                      fallbackClassName={person.color}
+                      className="h-10 w-10 rounded-xl text-xs shadow-[2px_2px_0_0_hsl(var(--foreground))]"
+                      sizes="40px"
+                    />
                     <div className="min-w-0 flex-1">
                       {profilePath ? (
                         <Link

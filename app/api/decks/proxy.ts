@@ -6,8 +6,14 @@ import {
   readAccessTokenDiagnostics,
 } from '@/lib/kinde-server';
 import { NextResponse } from 'next/server';
+import { rejectCrossOriginMutation } from '../request-guards';
 
 export async function proxyAuthorizedDeckWrite(request: Request, path: string, method: 'POST' | 'PUT') {
+  const crossOriginRejection = rejectCrossOriginMutation(request);
+  if (crossOriginRejection) {
+    return crossOriginRejection;
+  }
+
   let accessToken: string;
 
   try {

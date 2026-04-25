@@ -16,7 +16,7 @@ export default function Navbar({ canEdit = false, title = 'Profile' }: ProfileNa
       <div className="mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex gap-6">
           <div className="flex items-center gap-3">
-            <div className="h-10 rounded-full bg-primary border-2 border-foreground flex items-center justify-center shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+            <div>
               <Link href="/decks">
                 <NeoButton variant="secondary" className="py-2 px-4 text-sm cursor-pointer">
                   <ArrowLeft className="w-4 h-4" />

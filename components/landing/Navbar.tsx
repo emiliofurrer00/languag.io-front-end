@@ -27,7 +27,7 @@ const landingLinks = [
 export default function Navbar({ isLandingPage = false }: { isLandingPage?: boolean }) {
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const postLoginRedirectUrl = buildAuthContinuePath('/decks');
+  const postLoginRedirectUrl = buildAuthContinuePath('/feed');
   const displayName = user?.given_name || user?.family_name || user?.email || 'User';
   const authButtonClassName = cn(
     'inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground font-semibold transition-all font-display',

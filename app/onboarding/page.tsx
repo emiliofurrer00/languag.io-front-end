@@ -22,7 +22,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
   const profile = await getMyProfile();
 
   if (profile.hasBeenOnboarded) {
-    redirect(nextPath ?? '/decks');
+    redirect(nextPath ?? '/feed');
   }
 
   return (

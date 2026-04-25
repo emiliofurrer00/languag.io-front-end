@@ -24,5 +24,5 @@ export default async function AuthContinuePage({ searchParams }: AuthContinuePag
     redirect(buildOnboardingPath(nextPath));
   }
 
-  redirect(nextPath ?? '/decks');
+  redirect(nextPath ?? '/feed');
 }

@@ -4,8 +4,16 @@ import CardShowcaseSection from '@/components/landing/CardShowcase';
 import DeckShowcaseSection from '@/components/landing/DeckShowcase';
 import StudyFlowSection from '@/components/landing/StudyFlow';
 import QuietCTASection from '@/components/landing/QuietCTA';
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+export default async function Home() {
+  const { isAuthenticated } = getKindeServerSession();
+
+  if (await isAuthenticated()) {
+    redirect('/feed');
+  }
+
   return (
     <div className="flex flex-col items-center justify-center bg-background font-sans dark:bg-black">
       <Navbar isLandingPage={true} />

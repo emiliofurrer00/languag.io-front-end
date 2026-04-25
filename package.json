@@ -12,13 +12,13 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@kinde-oss/kinde-auth-nextjs": "^2.11.0",
+    "@kinde-oss/kinde-auth-nextjs": "^2.12.1",
     "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-switch": "^1.2.6",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.562.0",
-    "next": "^16.0.3",
+    "next": "^16.2.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-speech-recognition": "^4.0.1",
@@ -32,7 +32,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9.39.1",
-    "eslint-config-next": "^16.0.3",
+    "eslint-config-next": "^16.2.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "husky": "^9.1.7",
@@ -40,5 +40,28 @@
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "postcss": "^8.5.10",
+    "@eslint/eslintrc/minimatch": "3.1.5",
+    "@eslint/config-array/minimatch": "3.1.5",
+    "eslint/minimatch": "3.1.5",
+    "eslint-plugin-import/minimatch": "3.1.5",
+    "eslint-plugin-jsx-a11y/minimatch": "3.1.5",
+    "eslint-plugin-react/minimatch": "3.1.5",
+    "@typescript-eslint/typescript-estree/minimatch": "9.0.8",
+    "@eslint/eslintrc/minimatch/brace-expansion": "1.1.14",
+    "@eslint/config-array/minimatch/brace-expansion": "1.1.14",
+    "eslint/minimatch/brace-expansion": "1.1.14",
+    "eslint-plugin-import/minimatch/brace-expansion": "1.1.14",
+    "eslint-plugin-jsx-a11y/minimatch/brace-expansion": "1.1.14",
+    "eslint-plugin-react/minimatch/brace-expansion": "1.1.14",
+    "ajv": "6.14.0",
+    "flatted": "3.4.2",
+    "micromatch/picomatch": "2.3.2",
+    "**/micromatch/picomatch": "2.3.2",
+    "tinyglobby/picomatch": "4.0.4",
+    "**/tinyglobby/picomatch": "4.0.4",
+    "eslint-import-resolver-typescript/tinyglobby/picomatch": "4.0.4"
   }
 }

@@ -94,7 +94,7 @@ const CardShowcaseSection = () => {
   const [flipped, setFlipped] = useState<number | null>(null);
 
   return (
-    <section ref={ref} className="py-32 relative overflow-hidden">
+    <section ref={ref} className="py-32 relative overflow-hidden w-full">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

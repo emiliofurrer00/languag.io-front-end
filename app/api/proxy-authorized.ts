@@ -6,6 +6,7 @@ import {
   readAccessTokenDiagnostics,
 } from '@/lib/kinde-server';
 import { NextResponse } from 'next/server';
+import { rejectCrossOriginMutation } from './request-guards';
 
 type ProxyMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -49,6 +50,11 @@ export async function proxyAuthorizedApiRequest(
   method: ProxyMethod,
   options?: ProxyOptions
 ) {
+  const crossOriginRejection = rejectCrossOriginMutation(request);
+  if (crossOriginRejection) {
+    return crossOriginRejection;
+  }
+
   let accessToken: string;
 
   try {

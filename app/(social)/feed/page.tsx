@@ -214,7 +214,7 @@ export default async function Feed() {
 
                 return (
                   <div
-                    key={`${item.userId}-${item.occurredAtUtc}`}
+                    key={`${item.userId}-${item.occurredAtUtc} ${item.action}`}
                     className="flex items-start gap-3 p-4"
                   >
                     {profilePath ? (

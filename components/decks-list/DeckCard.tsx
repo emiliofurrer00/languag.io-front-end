@@ -1,17 +1,17 @@
-import { Globe, Layers, User, Lock } from 'lucide-react';
+import { Globe, Layers, User, Lock, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { DeckSummary } from '@/lib/decks/types';
 import { getNeoColorClass } from '@/lib/theme/neo-colors';
 import { cn } from '@/lib/utils';
+import { NeoButton } from '../ui/NeoButton';
 
 export default function DeckCard({ deckData }: { deckData: DeckSummary }) {
-  const { title, description, category, color, visibility, id, cards } = deckData;
+  const { title, description, category, color, visibility, cards } = deckData;
   const cardCount = cards?.length ?? 0;
   const isPublic = Boolean(visibility);
 
   return (
-    <Link
-      href={`/study/${id}`}
+    <div
       aria-label={`Study ${title || 'Untitled deck'}`}
       className={cn(
         'group flex min-h-64 w-full flex-col justify-between rounded-xl border-[3px] border-foreground p-6 shadow-[5px_5px_0_0_hsl(var(--foreground))] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4',
@@ -47,7 +47,21 @@ export default function DeckCard({ deckData }: { deckData: DeckSummary }) {
           <User className="h-4 w-4 shrink-0" />
           <span className="truncate">{deckData.ownerName || 'Unknown creator'}</span>
         </div>
+        {/* Action Buttons */}
+        <div className="flex gap-2 w-full justify-between">
+          <Link href={`/study/${deckData.id}`} className="flex-1">
+            <NeoButton variant="dark" size="sm" className="w-full">
+              <BookOpen className="w-4 h-4" />
+              Study
+            </NeoButton>
+          </Link>
+          <Link href={`/decks/editor/${deckData.id}`} className="flex-1">
+            <NeoButton variant="outline" size="sm" className="w-full bg-background/80">
+              Edit
+            </NeoButton>
+          </Link>
+        </div>
       </div>
-    </Link>
+    </div>
   );
 }

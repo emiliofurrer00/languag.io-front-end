@@ -8,9 +8,11 @@ import { DeckCard } from '@/lib/decks/types';
 export default function CardsEditorContainer({
   cards,
   setCards,
+  errorMessage,
 }: {
   cards: DeckCard[];
   setCards: (newCards: DeckCard[]) => void;
+  errorMessage?: string;
 }) {
   const [isEditCardMode, setIsEditCardMode] = useState(false);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
@@ -26,13 +28,20 @@ export default function CardsEditorContainer({
   }
 
   return (
-    <div className="border-3 rounded-lg shadow-[5px_5px_0_0_hsl(var(--foreground))] p-5">
+    <div
+      className={`rounded-lg border-3 p-5 shadow-[5px_5px_0_0_hsl(var(--foreground))] ${
+        errorMessage ? 'border-destructive' : 'border-foreground'
+      }`}
+    >
       <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-lg font-bold mb-1">Cards</h2>
           <span className="text-sm text-gray-600">
             {cards.length} {cards.length === 1 ? 'card' : 'cards'} in this deck.
           </span>
+          {errorMessage ? (
+            <p className="mt-2 text-sm font-semibold text-destructive">{errorMessage}</p>
+          ) : null}
         </div>
         <NeoButton
           className={

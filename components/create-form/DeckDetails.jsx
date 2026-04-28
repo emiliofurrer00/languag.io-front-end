@@ -3,6 +3,7 @@
 import { Globe, LockIcon } from 'lucide-react';
 import DeckColors from './DeckColors';
 import { Switch } from '../ui/Switch';
+import { cn } from '@/lib/utils';
 
 const CATEGORIES = [
   'Language',
@@ -17,7 +18,7 @@ const CATEGORIES = [
   'Sports',
 ];
 
-export default function DeckDetails({ deckDetails, setDeckDetails }) {
+export default function DeckDetails({ deckDetails, setDeckDetails, titleError }) {
   const { title, description, category, color, visibility } = deckDetails;
   const isPublic = Boolean(visibility);
 
@@ -30,13 +31,25 @@ export default function DeckDetails({ deckDetails, setDeckDetails }) {
           <input
             id="deck-title"
             type="text"
-            className="mt-1 block w-full rounded-md border-2 border-foreground bg-background px-3 py-2 font-normal shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+            className={cn(
+              'mt-1 block w-full rounded-md border-2 bg-background px-3 py-2 font-normal shadow-sm focus:outline-none focus:ring-2 focus:ring-ring',
+              titleError
+                ? 'border-destructive focus:border-destructive'
+                : 'border-foreground focus:border-primary'
+            )}
             placeholder="e.g., Spanish Basics"
             onChange={(event) => setDeckDetails({ ...deckDetails, title: event.target.value })}
             value={title ?? ''}
             maxLength={80}
             required
+            aria-invalid={titleError ? 'true' : undefined}
+            aria-describedby={titleError ? 'deck-title-error' : undefined}
           />
+          {titleError ? (
+            <span id="deck-title-error" className="mt-2 block text-sm font-semibold text-destructive">
+              {titleError}
+            </span>
+          ) : null}
         </label>
 
         <label className="text-sm font-bold" htmlFor="deck-description">

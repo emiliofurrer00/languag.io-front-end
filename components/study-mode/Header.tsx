@@ -4,6 +4,7 @@ import { Progress } from './Progress';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { StudyDeck } from './types';
+import { MobileNavigationMenu } from '@/components/layout/MobileNavigationMenu';
 
 export const colorMap: Record<string, string> = {
   magenta: 'bg-neo-magenta',
@@ -40,7 +41,7 @@ export default function Header({
             <Link href="/decks">
               <NeoButton variant="outline" size="sm">
                 <ArrowLeft className="w-4 h-4" />
-                Back
+                <span className="hidden sm:inline">Back</span>
               </NeoButton>
             </Link>
             <div className="flex items-center gap-2">
@@ -63,6 +64,7 @@ export default function Header({
               <RotateCcw className="w-4 h-4" />
               <span className="hidden sm:inline">Restart</span>
             </NeoButton>
+            <MobileNavigationMenu />
           </div>
         </div>
 

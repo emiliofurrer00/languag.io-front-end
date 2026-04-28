@@ -24,6 +24,7 @@ export default async function MyProfilePage() {
       <Navbar canEdit />
       <ProfilePageContainer
         profile={profile}
+        createdDecksHref="/decks"
         profilePictureSlot={<ProfilePictureUploader profile={profile} />}
       />
     </div>

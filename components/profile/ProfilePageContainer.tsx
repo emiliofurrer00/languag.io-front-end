@@ -15,6 +15,7 @@ import {
 import type { ProfileData } from '@/lib/profile/types';
 import NeoBox from '../ui/NeoBox';
 import ProfilePicture from './ProfilePicture';
+import Link from 'next/link';
 
 const statCards = [
   {
@@ -67,12 +68,14 @@ function getActivityIcon(type: string) {
 
 type ProfilePageContainerProps = {
   profile: ProfileData;
+  createdDecksHref?: string;
   headerAction?: React.ReactNode;
   profilePictureSlot?: React.ReactNode;
 };
 
 export default function ProfilePageContainer({
   profile,
+  createdDecksHref,
   headerAction,
   profilePictureSlot,
 }: ProfilePageContainerProps) {
@@ -127,11 +130,9 @@ export default function ProfilePageContainer({
         {statCards.map((card) => {
           const Icon = card.icon;
           const value = profile.stats[card.key];
-
-          return (
+          const content = (
             <NeoBox
-              key={card.key}
-              className="flex flex-col items-center gap-2 text-center"
+              className="flex h-full flex-col items-center gap-2 text-center"
               shadowOffset="3px"
             >
               <NeoBox
@@ -148,6 +149,21 @@ export default function ProfilePageContainer({
               </div>
             </NeoBox>
           );
+
+          if (card.key === 'decksCreated' && createdDecksHref) {
+            return (
+              <Link
+                key={card.key}
+                href={createdDecksHref}
+                className="block rounded-2xl transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label={`View decks created by ${profile.name}`}
+              >
+                {content}
+              </Link>
+            );
+          }
+
+          return <div key={card.key}>{content}</div>;
         })}
       </div>
       {/* About & Preferences */}

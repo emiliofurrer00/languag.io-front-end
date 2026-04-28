@@ -8,6 +8,12 @@ import {
 } from '@/lib/kinde-server';
 import { DeckDetails, DeckSummary, emptyDeckDetails } from '@/lib/decks/types';
 
+export type DeckListFilters = {
+  searchQuery?: string;
+  username?: string;
+  owner?: string;
+};
+
 function isUnauthorizedError(error: unknown) {
   return error instanceof Error && error.message.includes('Unauthorized');
 }
@@ -36,47 +42,72 @@ function tokenMatchesConfiguredAudience(token: string) {
   };
 }
 
-async function getPublicDecks() {
-  return apiFetch<DeckSummary[]>('/decks/public', {
+function buildDeckListPath(basePath: string, filters: DeckListFilters = {}) {
+  const searchParams = new URLSearchParams();
+  const searchQuery = filters.searchQuery?.trim();
+  const ownerUsername = filters.username?.trim() || filters.owner?.trim();
+
+  if (searchQuery) {
+    searchParams.set('searchQuery', searchQuery);
+  }
+
+  if (ownerUsername) {
+    searchParams.set('username', ownerUsername);
+  }
+
+  const queryString = searchParams.toString();
+
+  return queryString ? `${basePath}?${queryString}` : basePath;
+}
+
+async function getPublicDecks(filters?: DeckListFilters) {
+  return apiFetch<DeckSummary[]>(buildDeckListPath('/decks/public', filters), {
     cache: 'no-store',
   });
 }
 
-export async function getDecks() {
+export async function getDecks(filters: DeckListFilters = {}) {
+  if (filters.username?.trim() || filters.owner?.trim()) {
+    return getPublicDecks(filters);
+  }
+
   let accessToken: string | null;
 
   try {
     accessToken = await getOptionalApiAccessToken();
   } catch (error) {
     console.warn('Unable to read the Kinde access token, falling back to public decks.', error);
-    return getPublicDecks();
+    return getPublicDecks(filters);
   }
 
   if (!accessToken) {
-    return getPublicDecks();
+    return getPublicDecks(filters);
   }
 
   const audienceCheck = tokenMatchesConfiguredAudience(accessToken);
   if (!audienceCheck.matches) {
-    console.warn('Kinde access token is missing the configured API audience, falling back to public decks.', {
-      configuredAudiences: audienceCheck.configuredAudiences,
-      tokenAudiences: audienceCheck.tokenAudiences,
-      authorizedParty: audienceCheck.authorizedParty,
-      issuer: audienceCheck.issuer,
-    });
+    console.warn(
+      'Kinde access token is missing the configured API audience, falling back to public decks.',
+      {
+        configuredAudiences: audienceCheck.configuredAudiences,
+        tokenAudiences: audienceCheck.tokenAudiences,
+        authorizedParty: audienceCheck.authorizedParty,
+        issuer: audienceCheck.issuer,
+      }
+    );
 
-    return getPublicDecks();
+    return getPublicDecks(filters);
   }
 
   try {
-    return apiFetch<DeckSummary[]>('/decks', {
+    return apiFetch<DeckSummary[]>(buildDeckListPath('/decks', filters), {
       cache: 'no-store',
       accessToken,
     });
   } catch (error) {
     console.warn('Authenticated deck fetch failed, falling back to public decks.', error);
 
-    return getPublicDecks();
+    return getPublicDecks(filters);
   }
 }
 

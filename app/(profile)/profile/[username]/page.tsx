@@ -34,7 +34,10 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
       <Navbar />
       <ProfilePageContainer
         profile={publicProfile}
-        headerAction={publicProfile.id ? <ProfileFriendshipActions otherUserId={publicProfile.id} /> : null}
+        createdDecksHref={`/decks?${new URLSearchParams({ username: normalizedUsername }).toString()}`}
+        headerAction={
+          publicProfile.id ? <ProfileFriendshipActions otherUserId={publicProfile.id} /> : null
+        }
       />
     </div>
   );

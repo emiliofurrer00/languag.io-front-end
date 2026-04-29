@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { StudyDeck } from './types';
 import { MobileNavigationMenu } from '@/components/layout/MobileNavigationMenu';
+import { buildProfilePath } from '@/lib/profile/paths';
 
 export const colorMap: Record<string, string> = {
   magenta: 'bg-neo-magenta',
@@ -33,6 +34,9 @@ export default function Header({
   handleShuffle: () => void;
   handleRestart: () => void;
 }) {
+  const creatorUsername = deck.ownerUsername || deck.ownerName;
+  const creatorProfilePath = buildProfilePath(creatorUsername);
+
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b-[3px] border-foreground">
       <div className="container mx-auto px-4 py-4">
@@ -51,7 +55,25 @@ export default function Header({
                   colorMap[deck.color]
                 )}
               />
-              <span className="font-display font-bold text-lg hidden sm:inline">{deck.title}</span>
+              <div className="min-w-0">
+                <span className="hidden truncate font-display text-lg font-bold sm:block">
+                  {deck.title}
+                </span>
+                {creatorUsername ? (
+                  creatorProfilePath ? (
+                    <Link
+                      href={creatorProfilePath}
+                      className="block max-w-[9rem] truncate text-xs font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline sm:max-w-[18rem]"
+                    >
+                      by @{creatorUsername}
+                    </Link>
+                  ) : (
+                    <span className="block max-w-[9rem] truncate text-xs font-semibold text-muted-foreground sm:max-w-[18rem]">
+                      by {creatorUsername}
+                    </span>
+                  )
+                ) : null}
+              </div>
             </div>
           </div>
 

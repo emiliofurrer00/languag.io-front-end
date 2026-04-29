@@ -1,6 +1,6 @@
 import { buildOnboardingPath } from '@/lib/auth-flow';
 import DeckListContainer from '@/components/decks-list/DeckListContainer';
-import { getDecks } from '@/lib/decks/server';
+import { getDecks, getStudyRecommendations } from '@/lib/decks/server';
 import { getMyProfileIfAuthenticated } from '@/lib/profile/server';
 import { redirect } from 'next/navigation';
 
@@ -28,10 +28,19 @@ export default async function DecksPage({ searchParams }: DecksPageProps) {
     redirect(buildOnboardingPath('/decks'));
   }
 
-  const decks = await getDecks({
-    searchQuery,
-    username: ownerUsername,
-  });
+  const [decks, studyRecommendations] = await Promise.all([
+    getDecks({
+      searchQuery,
+      username: ownerUsername,
+    }),
+    ownerUsername ? Promise.resolve([]) : getStudyRecommendations(),
+  ]);
 
-  return <DeckListContainer decks={decks} filters={{ searchQuery, ownerUsername }} />;
+  return (
+    <DeckListContainer
+      decks={decks}
+      studyRecommendations={studyRecommendations}
+      filters={{ searchQuery, ownerUsername }}
+    />
+  );
 }

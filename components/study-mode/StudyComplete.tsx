@@ -12,6 +12,7 @@ import { Progress } from '@radix-ui/react-progress';
 import { NeoCard } from '../ui/NeoCard';
 import Link from 'next/link';
 import { StudyDeck } from './types';
+import { buildProfilePath } from '@/lib/profile/paths';
 
 interface StudyCompleteProps {
   deck: StudyDeck;
@@ -41,6 +42,8 @@ const StudyComplete = ({
   onRestart,
 }: StudyCompleteProps) => {
   const knownPercent = totalCards > 0 ? Math.round((knownCount / totalCards) * 100) : 0;
+  const creatorUsername = deck.ownerUsername || deck.ownerName;
+  const creatorProfilePath = buildProfilePath(creatorUsername);
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,7 +55,23 @@ const StudyComplete = ({
               Back
             </NeoButton>
           </Link>
-          <span className="font-display font-bold text-xl">{deck.title}</span>
+          <div className="min-w-0">
+            <span className="block truncate font-display text-xl font-bold">{deck.title}</span>
+            {creatorUsername ? (
+              creatorProfilePath ? (
+                <Link
+                  href={creatorProfilePath}
+                  className="block truncate text-xs font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                >
+                  by @{creatorUsername}
+                </Link>
+              ) : (
+                <span className="block truncate text-xs font-semibold text-muted-foreground">
+                  by {creatorUsername}
+                </span>
+              )
+            ) : null}
+          </div>
         </div>
       </header>
 

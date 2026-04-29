@@ -6,7 +6,13 @@ import {
   getOptionalApiAccessToken,
   readAccessTokenDiagnostics,
 } from '@/lib/kinde-server';
-import { DeckDetails, DeckSummary, emptyDeckDetails } from '@/lib/decks/types';
+import {
+  DeckDetails,
+  DeckStudyRecommendation,
+  DeckSummary,
+  StudyPlanCard,
+  emptyDeckDetails,
+} from '@/lib/decks/types';
 
 export type DeckListFilters = {
   searchQuery?: string;
@@ -146,4 +152,49 @@ export async function getDeckDetailsOrDefault(slug: string) {
   }
 
   return getDeckDetails(slug);
+}
+
+export async function getDeckStudyPlan(deckId: string, limit = 20) {
+  const accessToken = await getOptionalApiAccessToken();
+
+  if (!accessToken) {
+    return null;
+  }
+
+  try {
+    return await apiFetch<StudyPlanCard[]>(`/decks/${deckId}/study-plan?limit=${limit}`, {
+      cache: 'no-store',
+      accessToken,
+    });
+  } catch (error) {
+    if (!isUnauthorizedError(error)) {
+      console.warn('Unable to fetch the deck study plan.', error);
+    }
+
+    return null;
+  }
+}
+
+export async function getStudyRecommendations(limit = 10) {
+  const accessToken = await getOptionalApiAccessToken();
+
+  if (!accessToken) {
+    return [] as DeckStudyRecommendation[];
+  }
+
+  try {
+    return await apiFetch<DeckStudyRecommendation[]>(
+      `/decks/study-recommendations?limit=${limit}`,
+      {
+        cache: 'no-store',
+        accessToken,
+      }
+    );
+  } catch (error) {
+    if (!isUnauthorizedError(error)) {
+      console.warn('Unable to fetch study recommendations.', error);
+    }
+
+    return [];
+  }
 }

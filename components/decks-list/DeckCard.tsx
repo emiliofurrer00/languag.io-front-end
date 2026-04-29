@@ -1,6 +1,7 @@
 import { Globe, Layers, User, Lock, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { DeckSummary } from '@/lib/decks/types';
+import { buildProfilePath } from '@/lib/profile/paths';
 import { getNeoColorClass } from '@/lib/theme/neo-colors';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '../ui/NeoButton';
@@ -9,6 +10,8 @@ export default function DeckCard({ deckData }: { deckData: DeckSummary }) {
   const { title, description, category, color, visibility, cards } = deckData;
   const cardCount = cards?.length ?? 0;
   const isPublic = Boolean(visibility);
+  const creatorLabel = deckData.ownerName || deckData.ownerUsername || 'Unknown creator';
+  const creatorProfilePath = buildProfilePath(deckData.ownerUsername ?? deckData.ownerName);
 
   return (
     <div
@@ -45,7 +48,16 @@ export default function DeckCard({ deckData }: { deckData: DeckSummary }) {
         </div>
         <div className="flex min-w-0 items-center gap-2">
           <User className="h-4 w-4 shrink-0" />
-          <span className="truncate">{deckData.ownerName || 'Unknown creator'}</span>
+          {creatorProfilePath ? (
+            <Link
+              href={creatorProfilePath}
+              className="truncate font-semibold underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+            >
+              {creatorLabel}
+            </Link>
+          ) : (
+            <span className="truncate">{creatorLabel}</span>
+          )}
         </div>
         {/* Action Buttons */}
         <div className="flex gap-2 w-full justify-between">

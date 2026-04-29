@@ -1,7 +1,8 @@
 import DeckCard from './DeckCard';
 import DeckFilters from './DeckFilters';
 import Navbar from './Navbar';
-import { DeckSummary } from '@/lib/decks/types';
+import StudyRecommendations from './StudyRecommendations';
+import { DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { Layers, Plus, X } from 'lucide-react';
 import Link from 'next/link';
@@ -13,13 +14,18 @@ type DeckListFilters = {
 
 type DeckListContainerProps = {
   decks: DeckSummary[];
+  studyRecommendations?: DeckStudyRecommendation[];
   filters?: DeckListFilters;
 };
 
 const secondaryActionClassName =
   'inline-flex h-12 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-secondary px-4 font-display text-sm font-semibold text-secondary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-secondary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
 
-export default function DeskListContainer({ decks, filters }: DeckListContainerProps) {
+export default function DeskListContainer({
+  decks,
+  studyRecommendations = [],
+  filters,
+}: DeckListContainerProps) {
   const searchQuery = filters?.searchQuery ?? '';
   const ownerUsername = filters?.ownerUsername?.trim();
   const isViewingOwnerDecks = Boolean(ownerUsername);
@@ -56,6 +62,10 @@ export default function DeskListContainer({ decks, filters }: DeckListContainerP
         </div>
 
         <DeckFilters searchQuery={searchQuery} ownerUsername={ownerUsername} />
+
+        {!isViewingOwnerDecks && !hasSearchQuery ? (
+          <StudyRecommendations recommendations={studyRecommendations} />
+        ) : null}
 
         {decks.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

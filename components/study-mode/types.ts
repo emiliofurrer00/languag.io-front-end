@@ -1,7 +1,14 @@
-import { DeckCard, DeckDetails } from '@/lib/decks/types';
+import { DeckCard, DeckDetails, StudyPlanReason } from '@/lib/decks/types';
 
 export type StudyFlashCard = DeckCard & {
   id: string;
+  isNew?: boolean;
+  isDue?: boolean;
+  dueAtUtc?: string | null;
+  intervalDays?: number;
+  accuracy?: number;
+  totalReviews?: number;
+  reason?: StudyPlanReason;
 };
 
 export type StudyMultipleChoiceCard = {

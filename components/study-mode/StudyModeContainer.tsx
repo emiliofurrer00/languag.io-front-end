@@ -28,6 +28,14 @@ function normalizeStudyDeck(deck: DeckDetails): StudyDeck {
             frontText: card.frontText,
             backText: card.backText,
             order: card.order,
+            exampleSentence: card.exampleSentence,
+            isNew: card.isNew,
+            isDue: card.isDue,
+            dueAtUtc: card.dueAtUtc,
+            intervalDays: card.intervalDays,
+            accuracy: card.accuracy,
+            totalReviews: card.totalReviews,
+            reason: card.reason,
           },
         ]
       : []

@@ -34,6 +34,8 @@ export type DeckDetails = {
   cards: DeckCard[];
   ownerName?: string;
   ownerUsername?: string | null;
+  isOwner?: boolean;
+  canEdit?: boolean;
 };
 
 export type DeckSummary = DeckDetails & {

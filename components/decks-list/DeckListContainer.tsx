@@ -26,6 +26,21 @@ function normalizeUsername(username?: string | null) {
   return username?.trim().replace(/^@/, '').toLowerCase();
 }
 
+function canEditDeck(deck: DeckSummary, currentUsername?: string) {
+  if (typeof deck.canEdit === 'boolean') {
+    return deck.canEdit;
+  }
+
+  if (typeof deck.isOwner === 'boolean') {
+    return deck.isOwner;
+  }
+
+  const deckOwnerUsername = normalizeUsername(deck.ownerUsername);
+  const normalizedCurrentUsername = normalizeUsername(currentUsername);
+
+  return Boolean(deckOwnerUsername && normalizedCurrentUsername === deckOwnerUsername);
+}
+
 export default function DeskListContainer({
   decks,
   studyRecommendations = [],
@@ -34,7 +49,6 @@ export default function DeskListContainer({
 }: DeckListContainerProps) {
   const searchQuery = filters?.searchQuery ?? '';
   const ownerUsername = filters?.ownerUsername?.trim();
-  const normalizedCurrentUsername = normalizeUsername(currentUsername);
   const isViewingOwnerDecks = Boolean(ownerUsername);
   const hasSearchQuery = Boolean(searchQuery.trim());
   // TODO: Move this / refactor into a utility function to keep the component cleaner and more focused on presentation logic
@@ -76,17 +90,13 @@ export default function DeskListContainer({
 
         {decks.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {decks.map((deck) => {
-              const deckOwnerUsername = normalizeUsername(deck.ownerUsername);
-              const canEdit = Boolean(
-                normalizedCurrentUsername &&
-                  (deckOwnerUsername
-                    ? deckOwnerUsername === normalizedCurrentUsername
-                    : !isViewingOwnerDecks)
-              );
-
-              return <DeckCard key={deck.id} deckData={deck} canEdit={canEdit} />;
-            })}
+            {decks.map((deck) => (
+              <DeckCard
+                key={deck.id}
+                deckData={deck}
+                canEdit={canEditDeck(deck, currentUsername)}
+              />
+            ))}
           </div>
         ) : (
           <NeoCard className="mx-auto max-w-xl p-8 text-center">

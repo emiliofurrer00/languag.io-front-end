@@ -8,10 +8,11 @@ import { cn } from '@/lib/utils';
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import FlipCardView from './FlipCardView';
 import Header, { colorMap } from './Header';
+import MultipleChoiceCardView from './MultipleChoiceCardView';
 import StudyComplete from './StudyComplete';
 import { NeoButton } from '../ui/NeoButton';
 import { NeoCard } from '../ui/NeoCard';
-import { StudyDeck, StudyFlashCard, StudySessionResponse } from './types';
+import { isMultipleChoiceCard, StudyCard, StudyDeck, StudySessionResponse } from './types';
 
 type SubmissionState = {
   isSubmitting: boolean;
@@ -20,15 +21,17 @@ type SubmissionState = {
 };
 
 function normalizeStudyDeck(deck: DeckDetails): StudyDeck {
-  const normalizedCards: StudyFlashCard[] = (deck.cards || []).flatMap((card) =>
+  const normalizedCards: StudyCard[] = (deck.cards || []).flatMap((card) =>
     card.id
       ? [
           {
             id: card.id,
+            type: card.type ?? 'flashcard',
             frontText: card.frontText,
             backText: card.backText,
             order: card.order,
             exampleSentence: card.exampleSentence,
+            choices: card.choices ?? [],
             isNew: card.isNew,
             isDue: card.isDue,
             dueAtUtc: card.dueAtUtc,
@@ -49,7 +52,7 @@ function normalizeStudyDeck(deck: DeckDetails): StudyDeck {
 }
 
 function findNextUnansweredCardIndex(
-  cards: StudyFlashCard[],
+  cards: StudyCard[],
   results: Record<string, boolean>,
   currentIndex: number
 ) {
@@ -64,7 +67,7 @@ function findNextUnansweredCardIndex(
 }
 
 function buildSessionResponses(
-  cards: StudyFlashCard[],
+  cards: StudyCard[],
   results: Record<string, boolean>
 ): StudySessionResponse[] {
   return cards.flatMap((card) =>
@@ -98,7 +101,7 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [shuffledCards, setShuffledCards] = useState<StudyFlashCard[]>(deck.cards);
+  const [shuffledCards, setShuffledCards] = useState<StudyCard[]>(deck.cards);
   const [cardResults, setCardResults] = useState<Record<string, boolean>>({});
   const [submissionState, setSubmissionState] = useState<SubmissionState>({
     isSubmitting: false,
@@ -143,7 +146,7 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
     setIsFlipped(false);
   }, [currentIndex]);
 
-  const resetSession = useCallback((nextCards: StudyFlashCard[]) => {
+  const resetSession = useCallback((nextCards: StudyCard[]) => {
     sessionVersionRef.current += 1;
     setShuffledCards(nextCards);
     setCurrentIndex(0);
@@ -156,61 +159,64 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
     });
   }, []);
 
-  const submitCurrentSession = useCallback(async (results: Record<string, boolean>) => {
-    const activeSessionVersion = sessionVersionRef.current;
-    const responses = buildSessionResponses(shuffledCards, results);
+  const submitCurrentSession = useCallback(
+    async (results: Record<string, boolean>) => {
+      const activeSessionVersion = sessionVersionRef.current;
+      const responses = buildSessionResponses(shuffledCards, results);
 
-    if (!deck.id) {
-      setSubmissionState({
-        isSubmitting: false,
-        error: 'This deck is missing an id, so the study session could not be saved.',
-      });
-      return;
-    }
-
-    if (responses.length === 0) {
-      setSubmissionState({
-        isSubmitting: false,
-        error: 'Answer at least one card before submitting your study session.',
-      });
-      return;
-    }
-
-    const correctCount = responses.filter((response) => response.wasCorrect).length;
-    const percentageCorrect = Math.round((correctCount / responses.length) * 100);
-
-    setSubmissionState({
-      isSubmitting: true,
-      error: null,
-    });
-
-    try {
-      const result = await submitStudySession({
-        deckId: deck.id,
-        percentageCorrect,
-        responses,
-      });
-
-      if (activeSessionVersion !== sessionVersionRef.current) {
+      if (!deck.id) {
+        setSubmissionState({
+          isSubmitting: false,
+          error: 'This deck is missing an id, so the study session could not be saved.',
+        });
         return;
       }
 
+      if (responses.length === 0) {
+        setSubmissionState({
+          isSubmitting: false,
+          error: 'Answer at least one card before submitting your study session.',
+        });
+        return;
+      }
+
+      const correctCount = responses.filter((response) => response.wasCorrect).length;
+      const percentageCorrect = Math.round((correctCount / responses.length) * 100);
+
       setSubmissionState({
-        isSubmitting: false,
+        isSubmitting: true,
         error: null,
-        studySessionId: result.studySessionId,
       });
-    } catch (error) {
-      if (activeSessionVersion !== sessionVersionRef.current) {
-        return;
-      }
 
-      setSubmissionState({
-        isSubmitting: false,
-        error: getSubmissionErrorMessage(error),
-      });
-    }
-  }, [deck.id, shuffledCards]);
+      try {
+        const result = await submitStudySession({
+          deckId: deck.id,
+          percentageCorrect,
+          responses,
+        });
+
+        if (activeSessionVersion !== sessionVersionRef.current) {
+          return;
+        }
+
+        setSubmissionState({
+          isSubmitting: false,
+          error: null,
+          studySessionId: result.studySessionId,
+        });
+      } catch (error) {
+        if (activeSessionVersion !== sessionVersionRef.current) {
+          return;
+        }
+
+        setSubmissionState({
+          isSubmitting: false,
+          error: getSubmissionErrorMessage(error),
+        });
+      }
+    },
+    [deck.id, shuffledCards]
+  );
 
   const markCard = useCallback(
     (wasCorrect: boolean) => {
@@ -274,7 +280,9 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
       switch (e.key) {
         case ' ':
           e.preventDefault();
-          handleFlip();
+          if (!isMultipleChoiceCard(currentCard)) {
+            handleFlip();
+          }
           break;
         case 'ArrowLeft':
           goToPrev();
@@ -340,12 +348,21 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
         handleRestart={handleRestart}
       />
       <main className="flex-1 container mx-auto px-4 py-8 flex flex-col items-center justify-center max-w-2xl">
-        <FlipCardView
-          card={currentCard}
-          isFlipped={isFlipped}
-          onFlip={handleFlip}
-          colorClass={colorMap[deck.color] || 'bg-neo-teal'}
-        />
+        {isMultipleChoiceCard(currentCard) ? (
+          <MultipleChoiceCardView
+            key={currentCard.id}
+            card={currentCard}
+            colorClass={colorMap[deck.color] || 'bg-neo-teal'}
+            onAnswer={markCard}
+          />
+        ) : (
+          <FlipCardView
+            card={currentCard}
+            isFlipped={isFlipped}
+            onFlip={handleFlip}
+            colorClass={colorMap[deck.color] || 'bg-neo-teal'}
+          />
+        )}
 
         <div className="w-full flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
           <NeoButton
@@ -361,29 +378,32 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
             <ChevronLeft className="w-5 h-5" />
           </NeoButton>
 
-          <NeoButton
-            variant="accent"
-            onClick={(e) => {
-              e.stopPropagation();
-              markAsLearning();
-            }}
-            className="flex-1 md:max-w-[180px]"
-          >
-            <X className="w-3 h-3 md:w-5 md:h-5" />
-            Still Learning
-          </NeoButton>
+          {!isMultipleChoiceCard(currentCard) ? (
+            <>
+              <NeoButton
+                variant="accent"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  markAsLearning();
+                }}
+                className="flex-1 md:max-w-[180px]"
+              >
+                <X className="w-3 h-3 md:w-5 md:h-5" />
+                Still Learning
+              </NeoButton>
 
-          <NeoButton
-            variant="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              markAsKnown();
-            }}
-            className="flex-1 max-w-[180px]"
-          >
-            <Check className="w-3 h-3 md:w-5 md:h-5" />
-            I Know This
-          </NeoButton>
+              <NeoButton
+                variant="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  markAsKnown();
+                }}
+                className="flex-1 max-w-[180px]"
+              >
+                <Check className="w-3 h-3 md:w-5 md:h-5" />I Know This
+              </NeoButton>
+            </>
+          ) : null}
 
           <NeoButton
             variant="outline"

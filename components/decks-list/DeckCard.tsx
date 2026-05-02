@@ -6,7 +6,13 @@ import { getNeoColorClass } from '@/lib/theme/neo-colors';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '../ui/NeoButton';
 
-export default function DeckCard({ deckData }: { deckData: DeckSummary }) {
+export default function DeckCard({
+  deckData,
+  canEdit = false,
+}: {
+  deckData: DeckSummary;
+  canEdit?: boolean;
+}) {
   const { title, description, category, color, visibility, cards } = deckData;
   const cardCount = cards?.length ?? 0;
   const isPublic = Boolean(visibility);
@@ -61,17 +67,19 @@ export default function DeckCard({ deckData }: { deckData: DeckSummary }) {
         </div>
         {/* Action Buttons */}
         <div className="flex gap-2 w-full justify-between">
-          <Link href={`/study/${deckData.id}`} className="flex-1">
+          <Link href={`/study/${deckData.id}`} className={canEdit ? 'flex-1' : 'w-full'}>
             <NeoButton variant="dark" size="sm" className="w-full">
               <BookOpen className="w-4 h-4" />
               Study
             </NeoButton>
           </Link>
-          <Link href={`/decks/editor/${deckData.id}`} className="flex-1">
-            <NeoButton variant="outline" size="sm" className="w-full bg-background/80">
-              Edit
-            </NeoButton>
-          </Link>
+          {canEdit ? (
+            <Link href={`/decks/editor/${deckData.id}`} className="flex-1">
+              <NeoButton variant="outline" size="sm" className="w-full bg-background/80">
+                Edit
+              </NeoButton>
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>

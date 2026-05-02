@@ -1,10 +1,5 @@
 import { apiFetch } from '@/lib/api';
-import {
-  DeckCard,
-  DeckDetails,
-  DeckStudyRecommendation,
-  StudyPlanCard,
-} from '@/lib/decks/types';
+import { DeckCard, DeckDetails, DeckStudyRecommendation, StudyPlanCard } from '@/lib/decks/types';
 
 type SaveDeckOptions = {
   deck: DeckDetails;
@@ -29,9 +24,19 @@ type SubmitStudySessionResult = {
 function normalizeDeckCardsForSave(cards: DeckCard[]) {
   return (cards || []).map((card, index) => ({
     ...(card.id ? { id: card.id } : {}),
+    type: card.type ?? 'flashcard',
     frontText: card.frontText,
     backText: card.backText,
     exampleSentence: card.exampleSentence,
+    choices:
+      card.type === 'multi-choice'
+        ? (card.choices || []).map((choice, choiceIndex) => ({
+            ...(choice.id ? { id: choice.id } : {}),
+            text: choice.text,
+            isCorrect: choice.isCorrect,
+            order: choice.order ?? choiceIndex,
+          }))
+        : [],
     order: card.order ?? index,
   }));
 }
@@ -80,11 +85,8 @@ export async function getDeckStudyPlan(deckId: string, limit = 20) {
 }
 
 export async function getStudyRecommendations(limit = 10) {
-  return apiFetch<DeckStudyRecommendation[]>(
-    `/api/decks/study-recommendations?limit=${limit}`,
-    {
-      method: 'GET',
-      useApiBaseUrl: false,
-    }
-  );
+  return apiFetch<DeckStudyRecommendation[]>(`/api/decks/study-recommendations?limit=${limit}`, {
+    method: 'GET',
+    useApiBaseUrl: false,
+  });
 }

@@ -29,6 +29,22 @@ function validateDeck(deckDetails: DeckDetails): DeckEditorValidationErrors {
     errors.cards = 'At least one card needs to be added.';
   }
 
+  const invalidMultiChoiceCard = (deckDetails.cards ?? []).find((card) => {
+    if ((card.type ?? 'flashcard') !== 'multi-choice') {
+      return false;
+    }
+
+    const filledChoices = (card.choices ?? []).filter((choice) => choice.text.trim().length > 0);
+    const correctChoices = filledChoices.filter((choice) => choice.isCorrect);
+
+    return filledChoices.length < 2 || correctChoices.length !== 1;
+  });
+
+  if (invalidMultiChoiceCard) {
+    errors.cards =
+      'Multiple choice cards need at least two choices and exactly one correct answer.';
+  }
+
   return errors;
 }
 

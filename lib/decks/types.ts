@@ -1,9 +1,20 @@
+export type CardType = 'flashcard' | 'multi-choice';
+
+export type CardChoice = {
+  id?: string;
+  text: string;
+  isCorrect: boolean;
+  order: number;
+};
+
 export type DeckCard = {
   id?: string;
+  type?: CardType;
   frontText: string;
   backText: string;
   order?: number;
   exampleSentence?: string | null;
+  choices?: CardChoice[];
   isNew?: boolean;
   isDue?: boolean;
   dueAtUtc?: string | null;
@@ -34,9 +45,11 @@ export type StudyPlanReason = 'Due' | 'Lapsed' | 'New' | 'Review';
 export type StudyPlanCard = {
   cardId: string;
   deckId: string;
+  type?: CardType;
   frontText: string;
   backText: string;
   exampleSentence?: string | null;
+  choices?: CardChoice[];
   order: number;
   isNew: boolean;
   isDue: boolean;

@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
-import { StudyFlashCard } from './types';
+import { StudyCard } from './types';
 import { Clock, Eye, EyeOff, RotateCcw, Sparkles, Target } from 'lucide-react';
 
 interface FlipCardViewProps {
-  card: StudyFlashCard;
+  card: StudyCard;
   isFlipped: boolean;
   onFlip: () => void;
   colorClass: string;

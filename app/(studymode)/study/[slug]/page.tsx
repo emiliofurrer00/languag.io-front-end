@@ -16,9 +16,11 @@ export default async function StudyMode({ params }: StudyModePageProps) {
         ...defaultData,
         cards: studyPlan.map((card) => ({
           id: card.cardId,
+          type: card.type ?? 'flashcard',
           frontText: card.frontText,
           backText: card.backText,
           exampleSentence: card.exampleSentence,
+          choices: card.choices ?? [],
           order: card.order,
           isNew: card.isNew,
           isDue: card.isDue,

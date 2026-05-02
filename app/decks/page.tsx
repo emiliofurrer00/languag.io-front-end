@@ -40,6 +40,7 @@ export default async function DecksPage({ searchParams }: DecksPageProps) {
     <DeckListContainer
       decks={decks}
       studyRecommendations={studyRecommendations}
+      currentUsername={profile?.username}
       filters={{ searchQuery, ownerUsername }}
     />
   );

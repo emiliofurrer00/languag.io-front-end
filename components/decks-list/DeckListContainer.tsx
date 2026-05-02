@@ -16,18 +16,25 @@ type DeckListContainerProps = {
   decks: DeckSummary[];
   studyRecommendations?: DeckStudyRecommendation[];
   filters?: DeckListFilters;
+  currentUsername?: string;
 };
 
 const secondaryActionClassName =
   'inline-flex h-12 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-secondary px-4 font-display text-sm font-semibold text-secondary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-secondary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
 
+function normalizeUsername(username?: string | null) {
+  return username?.trim().replace(/^@/, '').toLowerCase();
+}
+
 export default function DeskListContainer({
   decks,
   studyRecommendations = [],
   filters,
+  currentUsername,
 }: DeckListContainerProps) {
   const searchQuery = filters?.searchQuery ?? '';
   const ownerUsername = filters?.ownerUsername?.trim();
+  const normalizedCurrentUsername = normalizeUsername(currentUsername);
   const isViewingOwnerDecks = Boolean(ownerUsername);
   const hasSearchQuery = Boolean(searchQuery.trim());
   // TODO: Move this / refactor into a utility function to keep the component cleaner and more focused on presentation logic
@@ -69,9 +76,17 @@ export default function DeskListContainer({
 
         {decks.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {decks.map((deck) => (
-              <DeckCard key={deck.id} deckData={deck} />
-            ))}
+            {decks.map((deck) => {
+              const deckOwnerUsername = normalizeUsername(deck.ownerUsername);
+              const canEdit = Boolean(
+                normalizedCurrentUsername &&
+                  (deckOwnerUsername
+                    ? deckOwnerUsername === normalizedCurrentUsername
+                    : !isViewingOwnerDecks)
+              );
+
+              return <DeckCard key={deck.id} deckData={deck} canEdit={canEdit} />;
+            })}
           </div>
         ) : (
           <NeoCard className="mx-auto max-w-xl p-8 text-center">

@@ -1,5 +1,11 @@
 import { apiFetch } from '@/lib/api';
-import { DeckCard, DeckDetails, DeckStudyRecommendation, StudyPlanCard } from '@/lib/decks/types';
+import {
+  AiDeckGenerationJob,
+  DeckCard,
+  DeckDetails,
+  DeckStudyRecommendation,
+  StudyPlanCard,
+} from '@/lib/decks/types';
 
 type SaveDeckOptions = {
   deck: DeckDetails;
@@ -19,6 +25,18 @@ type SubmitStudySessionOptions = {
 
 type SubmitStudySessionResult = {
   studySessionId: string;
+};
+
+export type CreateAiDeckGenerationInput = {
+  prompt: string;
+  targetLanguage?: string;
+  nativeLanguage?: string;
+  difficulty: string;
+  cardCount: number;
+};
+
+type CreateAiDeckGenerationResult = {
+  jobId: string;
 };
 
 function normalizeDeckCardsForSave(cards: DeckCard[]) {
@@ -88,5 +106,21 @@ export async function getStudyRecommendations(limit = 10) {
   return apiFetch<DeckStudyRecommendation[]>(`/api/decks/study-recommendations?limit=${limit}`, {
     method: 'GET',
     useApiBaseUrl: false,
+  });
+}
+
+export async function createAiDeckGenerationJob(input: CreateAiDeckGenerationInput) {
+  return apiFetch<CreateAiDeckGenerationResult>('/api/ai/deck-generations', {
+    method: 'POST',
+    body: JSON.stringify(input),
+    useApiBaseUrl: false,
+  });
+}
+
+export async function getAiDeckGenerationJob(jobId: string) {
+  return apiFetch<AiDeckGenerationJob>(`/api/ai/deck-generations/${jobId}`, {
+    method: 'GET',
+    useApiBaseUrl: false,
+    cache: 'no-store',
   });
 }

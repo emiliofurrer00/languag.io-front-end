@@ -83,6 +83,19 @@ export type DeckStudyRecommendation = {
   priorityScore: number;
 };
 
+export type AiDeckGenerationStatus = 'Pending' | 'Processing' | 'Completed' | 'Failed';
+
+export type AiDeckGenerationJob = {
+  id: string;
+  status: AiDeckGenerationStatus;
+  createdDeckId?: string | null;
+  errorMessage?: string | null;
+  requestedCardCount: number;
+  createdAtUtc: string;
+  startedAtUtc?: string | null;
+  completedAtUtc?: string | null;
+};
+
 export const emptyDeckDetails: DeckDetails = {
   title: '',
   description: '',

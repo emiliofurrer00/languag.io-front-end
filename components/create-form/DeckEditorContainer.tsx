@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from '@/components/create-form/Navbar';
+import AiDeckGeneratorPanel from '@/components/create-form/AiDeckGeneratorPanel';
 import DeckDetailsEdit from '@/components/create-form/DeckDetails';
 import DeckPreview from '@/components/create-form/DeckPreview';
 import CardsEditorContainer from '@/components/create-form/CardsEditorContainer';
@@ -56,6 +57,7 @@ export default function DeckEditorContainer({
   const [deckDetails, setDeckDetails] = useState<DeckDetails>(defaultDeckDetails);
   const [activeTab, setActiveTab] = useState<DeckEditorTab>('details');
   const [validationErrors, setValidationErrors] = useState<DeckEditorValidationErrors>({});
+  const isEditMode = Boolean(defaultDeckDetails.id);
   const cardCount = deckDetails.cards?.length ?? 0;
   const detailsValid = Boolean(deckDetails.title.trim());
   const tabs: Array<{
@@ -104,48 +106,51 @@ export default function DeckEditorContainer({
 
   return (
     <div className="bg-background min-h-screen w-full">
-      <Navbar handleSave={handleSave} isEditMode={Boolean(defaultDeckDetails.id)} />
+      <Navbar handleSave={handleSave} isEditMode={isEditMode} />
       <section className="mx-auto grid w-full max-w-7xl gap-6 px-4 pb-10 md:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
         <div className="flex flex-col gap-4">
-          <div
-            role="tablist"
-            aria-label="Deck editor sections"
-            className="inline-flex w-full gap-2 rounded-2xl border-[3px] border-foreground bg-card p-1.5 shadow-[4px_4px_0_0_hsl(var(--foreground))] sm:w-fit"
-          >
-            {tabs.map(({ key, label, icon: Icon, badge }) => {
-              const isActive = activeTab === key;
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div
+              role="tablist"
+              aria-label="Deck editor sections"
+              className="inline-flex w-full gap-2 rounded-2xl border-[3px] border-foreground bg-card p-1.5 shadow-[4px_4px_0_0_hsl(var(--foreground))] sm:w-fit"
+            >
+              {tabs.map(({ key, label, icon: Icon, badge }) => {
+                const isActive = activeTab === key;
 
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  aria-controls={`deck-editor-panel-${key}`}
-                  id={`deck-editor-tab-${key}`}
-                  onClick={() => setActiveTab(key)}
-                  className={cn(
-                    'flex flex-1 items-center justify-center gap-2 rounded-xl border-[2px] px-4 py-2.5 font-display text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 sm:flex-none',
-                    isActive
-                      ? 'border-foreground bg-neo-yellow shadow-[3px_3px_0_0_hsl(var(--foreground))]'
-                      : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground'
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                  {badge ? (
-                    <span
-                      className={cn(
-                        'ml-1 inline-flex h-5 min-w-[22px] items-center justify-center rounded-full border-[2px] border-foreground px-1.5 text-xs font-bold',
-                        isActive ? 'bg-background' : 'bg-muted'
-                      )}
-                    >
-                      {badge}
-                    </span>
-                  ) : null}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls={`deck-editor-panel-${key}`}
+                    id={`deck-editor-tab-${key}`}
+                    onClick={() => setActiveTab(key)}
+                    className={cn(
+                      'flex flex-1 items-center justify-center gap-2 rounded-xl border-[2px] px-4 py-2.5 font-display text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 sm:flex-none',
+                      isActive
+                        ? 'border-foreground bg-neo-yellow shadow-[3px_3px_0_0_hsl(var(--foreground))]'
+                        : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                    {badge ? (
+                      <span
+                        className={cn(
+                          'ml-1 inline-flex h-5 min-w-[22px] items-center justify-center rounded-full border-[2px] border-foreground px-1.5 text-xs font-bold',
+                          isActive ? 'bg-background' : 'bg-muted'
+                        )}
+                      >
+                        {badge}
+                      </span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+            {!isEditMode ? <AiDeckGeneratorPanel /> : null}
           </div>
 
           {activeTab === 'details' ? (

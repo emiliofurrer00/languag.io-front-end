@@ -1,6 +1,7 @@
+import type { MouseEvent } from 'react';
 import { cn } from '@/lib/utils';
 import { StudyCard } from './types';
-import { Clock, Eye, EyeOff, RotateCcw, Sparkles, Target } from 'lucide-react';
+import { Clock, Eye, EyeOff, RotateCcw, Sparkles, Target, Volume2 } from 'lucide-react';
 
 interface FlipCardViewProps {
   card: StudyCard;
@@ -25,6 +26,17 @@ const reasonIcons = {
 
 const FlipCardView = ({ card, isFlipped, onFlip, colorClass }: FlipCardViewProps) => {
   const ReasonIcon = card.reason ? reasonIcons[card.reason] : null;
+  const hasFrontAudio = Boolean(card.frontAudioUrl);
+
+  function playFrontAudio(event: MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+
+    if (!card.frontAudioUrl) {
+      return;
+    }
+
+    void new Audio(card.frontAudioUrl).play();
+  }
 
   return (
     <div
@@ -58,6 +70,18 @@ const FlipCardView = ({ card, isFlipped, onFlip, colorClass }: FlipCardViewProps
             <span className="px-3 py-1 bg-background/80 rounded-full text-xs font-semibold border-[2px] border-foreground">
               FRONT
             </span>
+            {hasFrontAudio ? (
+              <button
+                type="button"
+                onClick={playFrontAudio}
+                onKeyDown={(event) => event.stopPropagation()}
+                aria-label="Play front-card audio"
+                title="Play front-card audio"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border-[2px] border-foreground bg-background/80 shadow-[2px_2px_0_0_hsl(var(--foreground))] transition hover:-translate-y-0.5 hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <Volume2 className="h-4 w-4" />
+              </button>
+            ) : null}
             {card.reason && ReasonIcon ? (
               <span
                 className={cn(

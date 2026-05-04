@@ -12,6 +12,9 @@ export type DeckCard = {
   type?: CardType;
   frontText: string;
   backText: string;
+  frontAudioAssetId?: string | null;
+  frontAudioUrl?: string | null;
+  frontAudioStatus?: 'Pending' | 'Processing' | 'Ready' | 'Failed' | null;
   order?: number;
   exampleSentence?: string | null;
   choices?: CardChoice[];
@@ -50,6 +53,9 @@ export type StudyPlanCard = {
   type?: CardType;
   frontText: string;
   backText: string;
+  frontAudioAssetId?: string | null;
+  frontAudioUrl?: string | null;
+  frontAudioStatus?: 'Pending' | 'Processing' | 'Ready' | 'Failed' | null;
   exampleSentence?: string | null;
   choices?: CardChoice[];
   order: number;
@@ -90,7 +96,9 @@ export type AiDeckGenerationJob = {
   status: AiDeckGenerationStatus;
   createdDeckId?: string | null;
   errorMessage?: string | null;
+  audioStatus?: 'NotRequested' | 'Pending' | 'Processing' | 'Ready' | 'Failed';
   requestedCardCount: number;
+  requestedMultiChoiceCount: number;
   createdAtUtc: string;
   startedAtUtc?: string | null;
   completedAtUtc?: string | null;

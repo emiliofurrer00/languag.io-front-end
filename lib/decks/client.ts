@@ -33,6 +33,8 @@ export type CreateAiDeckGenerationInput = {
   nativeLanguage?: string;
   difficulty: string;
   cardCount: number;
+  multiChoiceCount: number;
+  includeAudio: boolean;
 };
 
 type CreateAiDeckGenerationResult = {

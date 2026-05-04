@@ -2,16 +2,28 @@
 
 import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Sparkles, X } from 'lucide-react';
+import { ListChecks, Loader2, Sparkles, Volume2, X } from 'lucide-react';
 import {
   createAiDeckGenerationJob,
   getAiDeckGenerationJob,
 } from '@/lib/decks/client';
+import { Slider } from '@/components/ui/Slider';
+import { Switch } from '@/components/ui/Switch';
 import { cn } from '@/lib/utils';
 
 const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
+const minCardCount = 5;
+const maxCardCount = 20;
 
 type GenerationPhase = 'idle' | 'pending' | 'completed' | 'failed';
+
+function clampNumber(value: number, min: number, max: number) {
+  if (!Number.isFinite(value)) {
+    return min;
+  }
+
+  return Math.min(max, Math.max(min, value));
+}
 
 export default function AiDeckGeneratorPanel() {
   const router = useRouter();
@@ -23,13 +35,22 @@ export default function AiDeckGeneratorPanel() {
   const [nativeLanguage, setNativeLanguage] = useState('English');
   const [difficulty, setDifficulty] = useState(difficulties[0]);
   const [cardCount, setCardCount] = useState(12);
+  const [multiChoiceCount, setMultiChoiceCount] = useState(0);
+  const [includeAudio, setIncludeAudio] = useState(true);
   const [phase, setPhase] = useState<GenerationPhase>('idle');
   const [statusText, setStatusText] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const canSubmit = useMemo(
-    () => prompt.trim().length > 0 && prompt.trim().length <= 1000 && phase !== 'pending',
-    [phase, prompt]
+    () =>
+      prompt.trim().length > 0 &&
+      prompt.trim().length <= 1000 &&
+      cardCount >= minCardCount &&
+      cardCount <= maxCardCount &&
+      multiChoiceCount >= 0 &&
+      multiChoiceCount <= cardCount &&
+      phase !== 'pending',
+    [cardCount, multiChoiceCount, phase, prompt]
   );
 
   useEffect(() => {
@@ -110,6 +131,8 @@ export default function AiDeckGeneratorPanel() {
         nativeLanguage: nativeLanguage.trim() || undefined,
         difficulty,
         cardCount,
+        multiChoiceCount,
+        includeAudio,
       });
 
       setStatusText('Waiting for worker...');
@@ -247,12 +270,67 @@ export default function AiDeckGeneratorPanel() {
                   Cards
                   <input
                     type="number"
-                    min={5}
-                    max={20}
+                    min={minCardCount}
+                    max={maxCardCount}
                     value={cardCount}
-                    onChange={(event) => setCardCount(Number(event.target.value))}
+                    onChange={(event) => {
+                      const nextCardCount = clampNumber(
+                        Number(event.target.value),
+                        minCardCount,
+                        maxCardCount
+                      );
+                      setCardCount(nextCardCount);
+                      setMultiChoiceCount((current) => Math.min(current, nextCardCount));
+                    }}
                     className="h-10 rounded-lg border-[2px] border-foreground bg-background px-3 text-sm normal-case outline-none focus:ring-2 focus:ring-ring"
                     disabled={phase === 'pending'}
+                  />
+                </label>
+
+                <label className="grid gap-1 text-xs font-bold uppercase tracking-normal sm:col-span-2 lg:col-span-1">
+                  <span className="inline-flex items-center gap-2">
+                    <ListChecks className="h-4 w-4" />
+                    Multiple choice
+                  </span>
+                  <div className="grid gap-2 rounded-lg border-[2px] border-foreground bg-background px-3 py-2">
+                    <div className="flex items-center gap-3">
+                      <Slider
+                        min={0}
+                        max={cardCount}
+                        step={1}
+                        value={[multiChoiceCount]}
+                        onValueChange={([value]) => setMultiChoiceCount(value ?? 0)}
+                        disabled={phase === 'pending'}
+                        aria-label="Multiple-choice question count"
+                      />
+                      <input
+                        type="number"
+                        min={0}
+                        max={cardCount}
+                        value={multiChoiceCount}
+                        onChange={(event) =>
+                          setMultiChoiceCount(
+                            clampNumber(Number(event.target.value), 0, cardCount)
+                          )
+                        }
+                        className="h-8 w-14 rounded-md border-[2px] border-foreground bg-background px-2 text-center text-sm normal-case outline-none focus:ring-2 focus:ring-ring"
+                        disabled={phase === 'pending'}
+                        aria-label="Multiple-choice question count"
+                      />
+                    </div>
+                  </div>
+                </label>
+
+                <label className="flex h-11 items-center justify-between gap-3 rounded-full border-[2px] border-foreground bg-background px-3 sm:col-span-2 lg:col-span-1">
+                  <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-normal">
+                    <Volume2 className="h-4 w-4" />
+                    Audio
+                  </span>
+                  <Switch
+                    checked={includeAudio}
+                    onCheckedChange={setIncludeAudio}
+                    disabled={phase === 'pending'}
+                    aria-label="Generate target-language audio"
                   />
                 </label>
 

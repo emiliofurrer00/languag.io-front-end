@@ -1,5 +1,6 @@
+import type { MouseEvent } from 'react';
 import { useMemo, useState } from 'react';
-import { Check, HelpCircle, X } from 'lucide-react';
+import { Check, HelpCircle, Volume2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '../ui/NeoButton';
 import { StudyCard } from './types';
@@ -30,6 +31,17 @@ export default function MultipleChoiceCardView({
   const correctChoice = choices.find((choice) => choice.isCorrect);
   const explanation = card.backText.trim();
   const hasExplanation = Boolean(explanation && explanation !== correctChoice?.text.trim());
+  const hasFrontAudio = Boolean(card.frontAudioUrl);
+
+  function playFrontAudio(event: MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+
+    if (!card.frontAudioUrl) {
+      return;
+    }
+
+    void new Audio(card.frontAudioUrl).play();
+  }
 
   return (
     <div className="mb-8 w-full rounded-2xl border-[3px] border-foreground bg-card p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] sm:p-7">
@@ -44,6 +56,17 @@ export default function MultipleChoiceCardView({
             <HelpCircle className="h-3.5 w-3.5" />
             Multiple Choice
           </span>
+          {hasFrontAudio ? (
+            <button
+              type="button"
+              onClick={playFrontAudio}
+              aria-label="Play front-card audio"
+              title="Play front-card audio"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border-[2px] border-foreground bg-background/80 shadow-[2px_2px_0_0_hsl(var(--foreground))] transition hover:-translate-y-0.5 hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <Volume2 className="h-4 w-4" />
+            </button>
+          ) : null}
         </div>
         <p className="font-display text-2xl font-bold sm:text-3xl">{card.frontText}</p>
         {card.exampleSentence ? (

@@ -10,6 +10,7 @@ import { BookOpen, Group, LogOut, Sparkles, UserPlus, UserRound } from 'lucide-r
 import { buildAuthContinuePath } from '@/lib/auth-flow';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '@/components/ui/NeoButton';
+import { DesktopSideNav } from '@/components/layout/DesktopSideNav';
 import { MobileNavigationMenu } from '@/components/layout/MobileNavigationMenu';
 
 type DesktopNavLink = {
@@ -25,6 +26,7 @@ type AppNavbarProps = {
   actions?: ReactNode;
   mobileActions?: ReactNode;
   showDesktopAuthActions?: boolean;
+  showDesktopSideNav?: boolean;
   className?: string;
   contentClassName?: string;
 };
@@ -203,37 +205,42 @@ export default function AppNavbar({
   actions,
   mobileActions,
   showDesktopAuthActions = false,
+  showDesktopSideNav = false,
   className,
   contentClassName,
 }: AppNavbarProps) {
   return (
-    <nav
-      className={cn(
-        'fixed left-0 right-0 top-0 z-50 border-b-3 bg-background/80 backdrop-blur-sm',
-        className
-      )}
-    >
-      <div
+    <>
+      {showDesktopSideNav ? <DesktopSideNav /> : null}
+      <nav
         className={cn(
-          'mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-4',
-          contentClassName
+          'fixed left-0 right-0 top-0 z-50 border-b-3 bg-background/80 backdrop-blur-sm',
+          showDesktopSideNav ? 'lg:left-60' : null,
+          className
         )}
       >
-        <div className="min-w-0 flex-1">
-          {leftContent ?? <DefaultLeftContent brandHref={brandHref} title={title} />}
-        </div>
+        <div
+          className={cn(
+            'mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-4',
+            contentClassName
+          )}
+        >
+          <div className="min-w-0 flex-1">
+            {leftContent ?? <DefaultLeftContent brandHref={brandHref} title={title} />}
+          </div>
 
-        <DesktopLinks links={desktopLinks} />
+          <DesktopLinks links={desktopLinks} />
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          {mobileActions ? (
-            <div className="flex items-center gap-2 sm:hidden">{mobileActions}</div>
-          ) : null}
-          {actions ? <div className="hidden items-center gap-3 sm:flex">{actions}</div> : null}
-          {showDesktopAuthActions ? <DesktopAuthActions /> : null}
-          <MobileNavigationMenu />
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {mobileActions ? (
+              <div className="flex items-center gap-2 sm:hidden">{mobileActions}</div>
+            ) : null}
+            {actions ? <div className="hidden items-center gap-3 sm:flex">{actions}</div> : null}
+            {showDesktopAuthActions ? <DesktopAuthActions /> : null}
+            <MobileNavigationMenu />
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }

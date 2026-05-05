@@ -7,7 +7,6 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import type { LucideIcon } from 'lucide-react';
 import {
-  Bell,
   BookOpen,
   Group,
   Home,
@@ -15,7 +14,6 @@ import {
   LogIn,
   LogOut,
   Menu,
-  Plus,
   Sparkles,
   UserPlus,
   UserRound,

@@ -53,6 +53,7 @@ export default function Navbar({ canEdit = false, title = 'Profile' }: ProfileNa
         </>
       }
       mobileActions={mobileEditAction}
+      showDesktopSideNav
     />
   );
 }

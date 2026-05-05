@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 
 import { buildAuthContinuePath } from '@/lib/auth-flow';
+import { useModalFocus } from '@/hooks/useModalFocus';
 import { cn } from '@/lib/utils';
 
 type DrawerLink = {
@@ -79,30 +80,35 @@ function drawerToneClassName(isActive: boolean, variant: DrawerLink['variant']) 
 export function MobileNavigationMenu({ className, triggerClassName }: MobileNavigationMenuProps) {
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const pathname = usePathname();
   const drawerId = `mobile-navigation-drawer-${useId().replace(/:/g, '')}`;
   const displayName = user?.given_name || user?.family_name || user?.email || 'User';
   const postLoginRedirectUrl = buildAuthContinuePath('/feed');
   const isLandingActive = pathname === '/';
 
+  const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
+
   useEffect(() => {
     if (!isMobileMenuOpen) return;
 
     const previousOverflow = document.body.style.overflow;
-    const closeMenuOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsMobileMenuOpen(false);
-      }
-    };
 
     document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', closeMenuOnEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', closeMenuOnEscape);
     };
   }, [isMobileMenuOpen]);
+
+  useModalFocus({
+    isOpen: isMobileMenuOpen,
+    containerRef: drawerRef,
+    initialFocusRef: closeButtonRef,
+    onEscape: closeMobileMenu,
+  });
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -119,11 +125,10 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
     return () => mediaQuery.removeEventListener('change', closeMenuOnDesktop);
   }, [isMobileMenuOpen]);
 
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
-
   return (
     <div className={cn('inline-flex sm:hidden', className)}>
       <button
+        ref={triggerRef}
         type="button"
         className={cn(
           'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-secondary text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] transition-all',
@@ -154,10 +159,12 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
         />
 
         <div
+          ref={drawerRef}
           id={drawerId}
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
+          tabIndex={-1}
           className={cn(
             'absolute right-0 top-0 flex h-screen w-[min(86vw,22rem)] flex-col border-l-[3px] border-foreground bg-background px-5 pb-6 pt-5 shadow-[-6px_0_0_0_hsl(var(--foreground))] transition-transform duration-300 ease-out',
             isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -179,6 +186,7 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
             </div>
 
             <button
+              ref={closeButtonRef}
               type="button"
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-card text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_0_hsl(var(--foreground))] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
               aria-label="Close navigation menu"

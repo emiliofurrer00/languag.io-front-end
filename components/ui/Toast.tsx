@@ -35,17 +35,23 @@ function Toast({ className, variant = 'default', open = true, ref, ...props }: T
 
   const { onOpenChange, ...divProps } = props;
   void onOpenChange;
+  const liveRegionProps =
+    variant === 'destructive'
+      ? ({ role: 'alert', 'aria-live': 'assertive' } as const)
+      : ({ role: 'status', 'aria-live': 'polite' } as const);
 
   return (
     <div
       ref={ref}
       className={cn(
-        'group pointer-events-auto fixed bottom-0 left-0 right-0 z-50 flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all',
+        'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all',
         variant === 'destructive'
           ? 'border-destructive bg-destructive text-destructive-foreground'
           : 'border-border bg-background text-foreground',
         className
       )}
+      aria-atomic="true"
+      {...liveRegionProps}
       {...divProps}
     />
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ListChecks, Loader2, Sparkles, Volume2, X } from 'lucide-react';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@/lib/decks/client';
 import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
+import { useModalFocus } from '@/hooks/useModalFocus';
 import { cn } from '@/lib/utils';
 
 const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
@@ -28,6 +29,8 @@ function clampNumber(value: number, min: number, max: number) {
 export default function AiDeckGeneratorPanel() {
   const router = useRouter();
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const promptRef = useRef<HTMLTextAreaElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
@@ -40,6 +43,7 @@ export default function AiDeckGeneratorPanel() {
   const [phase, setPhase] = useState<GenerationPhase>('idle');
   const [statusText, setStatusText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const closePanel = useCallback(() => setIsOpen(false), []);
 
   const canSubmit = useMemo(
     () =>
@@ -68,21 +72,18 @@ export default function AiDeckGeneratorPanel() {
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    promptRef.current?.focus();
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen]);
+
+  useModalFocus({
+    isOpen,
+    containerRef: dialogRef,
+    initialFocusRef: promptRef,
+    onEscape: closePanel,
+  });
 
   async function pollJob(jobId: string) {
     try {
@@ -91,7 +92,7 @@ export default function AiDeckGeneratorPanel() {
       if (job.status === 'Completed' && job.createdDeckId) {
         setPhase('completed');
         setStatusText('Deck ready');
-        setIsOpen(false);
+        closePanel();
         router.push(`/decks/editor/${job.createdDeckId}`);
         router.refresh();
         return;
@@ -149,13 +150,14 @@ export default function AiDeckGeneratorPanel() {
 
   function closeFromBackdrop(event: MouseEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) {
-      setIsOpen(false);
+      closePanel();
     }
   }
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(true)}
         className="inline-flex h-11 w-fit items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-primary px-4 font-display text-sm font-bold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -174,9 +176,11 @@ export default function AiDeckGeneratorPanel() {
           onMouseDown={closeFromBackdrop}
         >
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="ai-deck-generator-title"
+            tabIndex={-1}
             className="max-h-[calc(100vh-3rem)] w-full max-w-3xl overflow-y-auto rounded-xl border-[3px] border-foreground bg-neo-yellow p-4 shadow-[8px_8px_0_0_hsl(var(--foreground))] sm:p-5"
           >
             <div className="mb-4 flex items-start justify-between gap-3">
@@ -195,7 +199,7 @@ export default function AiDeckGeneratorPanel() {
               </div>
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={closePanel}
                 aria-label="Close generator"
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-background transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >

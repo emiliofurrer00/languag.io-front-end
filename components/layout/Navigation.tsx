@@ -26,6 +26,9 @@ function Navigation() {
         <li>
           <Link href="/decks">Decks</Link>
         </li>
+        <li>
+          <Link href="/sagas">Sagas</Link>
+        </li>
         <li>About</li>
       </ul>
     </nav>

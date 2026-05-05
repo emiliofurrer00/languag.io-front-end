@@ -4,6 +4,7 @@ import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextj
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import {
   Bell,
+  Compass,
   Flame,
   Home,
   Layers,
@@ -40,6 +41,12 @@ const navItems: DesktopNavItem[] = [
     match: (pathname) => pathname.startsWith('/decks'),
   },
   {
+    href: '/sagas',
+    label: 'Sagas',
+    icon: Compass,
+    match: (pathname) => pathname.startsWith('/sagas') || pathname === '/create-saga',
+  },
+  {
     href: '/friends',
     label: 'Friends',
     icon: Users,
@@ -57,7 +64,6 @@ const navItems: DesktopNavItem[] = [
     icon: User,
     match: (pathname) => pathname.startsWith('/profile'),
   },
-  // TODO: Add the Sagas nav item here once a /sagas route exists.
 ];
 
 // TODO: Replace with real streak and XP once app-shell stats are available outside the feed payload.

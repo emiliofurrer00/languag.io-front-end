@@ -61,7 +61,7 @@ const authenticatedLinks: DrawerLink[] = [
 ];
 
 function isActivePath(pathname: string, href: string) {
-  return pathname === href;
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 function drawerToneClassName(isActive: boolean, variant: DrawerLink['variant']) {

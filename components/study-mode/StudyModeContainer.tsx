@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { submitStudySession } from '@/lib/decks/client';
+import { completeSagaLesson } from '@/lib/sagas/client';
 import { DeckDetails } from '@/lib/decks/types';
 import { cn } from '@/lib/utils';
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -18,6 +19,12 @@ type SubmissionState = {
   isSubmitting: boolean;
   error: string | null;
   studySessionId?: string;
+  sagaProgressSaved?: boolean;
+};
+
+type SagaStudyContext = {
+  sagaId: string;
+  lessonId: string;
 };
 
 function normalizeStudyDeck(deck: DeckDetails): StudyDeck {
@@ -99,7 +106,13 @@ function getSubmissionErrorMessage(error: unknown) {
   return messageParts[messageParts.length - 1] || 'Unable to save your study session.';
 }
 
-export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails }) {
+export default function StudyModeContainer({
+  mockDeck,
+  sagaContext,
+}: {
+  mockDeck: DeckDetails;
+  sagaContext?: SagaStudyContext;
+}) {
   const deck = normalizeStudyDeck(mockDeck);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -198,6 +211,10 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
           responses,
         });
 
+        if (sagaContext) {
+          await completeSagaLesson(sagaContext.sagaId, sagaContext.lessonId);
+        }
+
         if (activeSessionVersion !== sessionVersionRef.current) {
           return;
         }
@@ -206,6 +223,7 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
           isSubmitting: false,
           error: null,
           studySessionId: result.studySessionId,
+          sagaProgressSaved: Boolean(sagaContext),
         });
       } catch (error) {
         if (activeSessionVersion !== sessionVersionRef.current) {
@@ -218,7 +236,7 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
         });
       }
     },
-    [deck.id, shuffledCards]
+    [deck.id, sagaContext, shuffledCards]
   );
 
   const markCard = useCallback(
@@ -330,6 +348,8 @@ export default function StudyModeContainer({ mockDeck }: { mockDeck: DeckDetails
         isSubmitting={submissionState.isSubmitting}
         saveError={submissionState.error}
         studySessionId={submissionState.studySessionId}
+        sagaProgressSaved={submissionState.sagaProgressSaved}
+        sagaId={sagaContext?.sagaId}
         onRetrySave={handleRetrySave}
         onStudyLearning={handleStudyLearning}
         onShuffle={handleShuffle}

@@ -5,10 +5,15 @@ type StudyModePageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams?: Promise<{
+    sagaId?: string;
+    lessonId?: string;
+  }>;
 };
 
-export default async function StudyMode({ params }: StudyModePageProps) {
+export default async function StudyMode({ params, searchParams }: StudyModePageProps) {
   const { slug } = await params;
+  const query = searchParams ? await searchParams : undefined;
   const defaultData = await getDeckDetails(slug);
   const studyPlan = await getDeckStudyPlan(slug);
   const studyDeck = studyPlan
@@ -36,5 +41,17 @@ export default async function StudyMode({ params }: StudyModePageProps) {
       }
     : defaultData;
 
-  return <StudyModeContainer mockDeck={studyDeck} />;
+  return (
+    <StudyModeContainer
+      mockDeck={studyDeck}
+      sagaContext={
+        query?.sagaId && query?.lessonId
+          ? {
+              sagaId: query.sagaId,
+              lessonId: query.lessonId,
+            }
+          : undefined
+      }
+    />
+  );
 }

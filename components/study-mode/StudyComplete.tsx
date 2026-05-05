@@ -22,6 +22,8 @@ interface StudyCompleteProps {
   isSubmitting: boolean;
   saveError: string | null;
   studySessionId?: string;
+  sagaProgressSaved?: boolean;
+  sagaId?: string;
   onRetrySave: () => void;
   onStudyLearning: () => void;
   onShuffle: () => void;
@@ -36,6 +38,8 @@ const StudyComplete = ({
   isSubmitting,
   saveError,
   studySessionId,
+  sagaProgressSaved,
+  sagaId,
   onRetrySave,
   onStudyLearning,
   onShuffle,
@@ -121,7 +125,9 @@ const StudyComplete = ({
 
           {!isSubmitting && studySessionId ? (
             <div className="mb-6 rounded-xl border-[2px] border-foreground bg-neo-teal/40 px-4 py-3 text-sm">
-              Your study session has been saved.
+              {sagaProgressSaved
+                ? 'Your study session and saga progress have been saved.'
+                : 'Your study session has been saved.'}
             </div>
           ) : null}
 
@@ -137,6 +143,14 @@ const StudyComplete = ({
           ) : null}
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            {sagaId ? (
+              <Link href={`/sagas/${sagaId}`}>
+                <NeoButton variant="outline">
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Saga
+                </NeoButton>
+              </Link>
+            ) : null}
             {learningCount > 0 && (
               <NeoButton variant="accent" onClick={onStudyLearning}>
                 <Brain className="w-4 h-4" />

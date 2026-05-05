@@ -16,7 +16,7 @@ export function rejectCrossOriginMutation(request: Request) {
   }
 
   const fetchSite = request.headers.get('sec-fetch-site')?.toLowerCase();
-  if (!origin && fetchSite && !['same-origin', 'same-site', 'none'].includes(fetchSite)) {
+  if (!origin && (!fetchSite || !['same-origin', 'same-site', 'none'].includes(fetchSite))) {
     return NextResponse.json({ message: 'Cross-origin requests are not allowed.' }, { status: 403 });
   }
 

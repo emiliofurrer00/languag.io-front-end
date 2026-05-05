@@ -288,13 +288,13 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
   );
 
   return (
-    <div className="min-h-screen bg-background pt-28">
+    <div className="min-h-screen overflow-x-hidden bg-background pt-24 sm:pt-28">
       <AppNavbar
         leftContent={
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <Link
               href="/sagas"
-              className="inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-secondary px-4 py-2 font-display text-sm font-semibold text-secondary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-secondary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-secondary p-0 font-display text-sm font-semibold text-secondary-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-secondary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:h-auto sm:w-auto sm:px-4 sm:py-2 sm:shadow-[4px_4px_0_0_hsl(var(--foreground))]"
             >
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden md:block">Back</span>
@@ -306,9 +306,9 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
         mobileActions={renderSaveButton(true)}
       />
 
-      <main className="mx-auto grid w-full max-w-7xl gap-8 px-4 pb-12 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
-        <div className="space-y-6">
-          <NeoCard size="md">
+      <main className="mx-auto grid w-full max-w-7xl items-start gap-5 px-3 pb-12 sm:gap-6 sm:px-4 lg:grid-cols-[minmax(0,1.65fr)_minmax(17rem,0.85fr)] xl:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
+        <div className="min-w-0 space-y-5 sm:space-y-6">
+          <NeoCard size="md" className="overflow-hidden p-4 sm:p-6">
             <div className="mb-5 flex items-center gap-2">
               <Sparkles className="h-5 w-5" />
               <h1 className="font-display text-xl font-bold">Saga Details</h1>
@@ -398,9 +398,9 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
 
               <label
                 htmlFor="saga-public"
-                className="flex items-center justify-between gap-4 rounded-xl border-[2px] border-foreground bg-muted/50 px-4 py-3"
+                className="flex flex-col items-start justify-between gap-3 rounded-xl border-[2px] border-foreground bg-muted/50 px-3 py-3 sm:flex-row sm:items-center sm:gap-4 sm:px-4"
               >
-                <span className="flex items-center gap-3">
+                <span className="flex min-w-0 items-center gap-3">
                   {isPublic ? <Compass className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
                   <span>
                     <span className="block font-display text-sm font-bold">
@@ -418,13 +418,13 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
                   type="checkbox"
                   checked={isPublic}
                   onChange={(event) => setVisibility(event.target.checked ? 1 : 0)}
-                  className="h-5 w-5 accent-[hsl(var(--primary))]"
+                  className="h-5 w-5 shrink-0 accent-[hsl(var(--primary))]"
                 />
               </label>
             </div>
           </NeoCard>
 
-          <NeoCard size="md">
+          <NeoCard size="md" className="overflow-hidden p-4 sm:p-6">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="font-display text-xl font-bold">Saga Path</h2>
@@ -457,7 +457,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
                     <li
                       key={node.id}
                       className={cn(
-                        'flex items-center gap-3 rounded-xl border-[2px] border-foreground p-3 shadow-[3px_3px_0_0_hsl(var(--foreground))]',
+                        'grid grid-cols-[auto_auto_auto_minmax(0,1fr)_auto] items-center gap-2 rounded-xl border-[2px] border-foreground p-3 shadow-[3px_3px_0_0_hsl(var(--foreground))] sm:gap-3',
                         tone
                       )}
                     >
@@ -483,7 +483,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
                         </button>
                       </div>
 
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-[2px] border-foreground bg-background font-display text-sm font-extrabold">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-[2px] border-foreground bg-background font-display text-sm font-extrabold sm:h-10 sm:w-10">
                         {index + 1}
                       </div>
 
@@ -495,7 +495,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
                         )}
                       </div>
 
-                      <div className="min-w-0 flex-1">
+                      <div className="min-w-0">
                         {isCheckpoint ? (
                           <input
                             value={node.title}
@@ -517,7 +517,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
                       <button
                         type="button"
                         onClick={() => removeNode(node.id)}
-                        className="rounded-lg border-[2px] border-foreground bg-background p-2 transition-colors hover:bg-neo-coral"
+                        className="justify-self-end rounded-lg border-[2px] border-foreground bg-background p-2 transition-colors hover:bg-neo-coral"
                         aria-label="Remove step"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -536,23 +536,23 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
           </NeoCard>
         </div>
 
-        <aside className="space-y-6">
-          <NeoCard variant={color} size="md" className="lg:sticky lg:top-28">
-            <div className="mb-3 flex items-start justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border-[3px] border-foreground bg-background text-2xl shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+        <aside className="min-w-0 space-y-5 sm:space-y-6">
+          <NeoCard variant={color} size="md" className="p-4 sm:p-6">
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-[3px] border-foreground bg-background text-2xl shadow-[3px_3px_0_0_hsl(var(--foreground))] sm:h-14 sm:w-14">
                 {emoji}
               </div>
-              <span className="rounded-full border-[2px] border-foreground bg-background px-3 py-1 text-xs font-bold uppercase">
+              <span className="whitespace-nowrap rounded-full border-[2px] border-foreground bg-background px-3 py-1 text-xs font-bold uppercase">
                 {deckCount} {deckCount === 1 ? 'deck' : 'decks'}
               </span>
             </div>
-            <h3 className="font-display text-xl font-bold leading-tight">
+            <h3 className="break-words font-display text-lg font-bold leading-tight sm:text-xl">
               {title || 'Untitled Saga'}
             </h3>
-            <p className="mb-3 mt-1 text-sm font-semibold opacity-80">
+            <p className="mb-3 mt-1 break-words text-sm font-semibold opacity-80">
               {tagline || 'Add a tagline to inspire learners'}
             </p>
-            <div className="flex items-center gap-3 border-t-[2px] border-foreground/20 pt-3 text-xs font-semibold">
+            <div className="flex flex-wrap items-center gap-3 border-t-[2px] border-foreground/20 pt-3 text-xs font-semibold">
               <span className="inline-flex items-center gap-1">
                 <Trophy className="h-3.5 w-3.5" />
                 {totalXp.toLocaleString()} XP
@@ -564,7 +564,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
             </div>
           </NeoCard>
 
-          <NeoCard size="md">
+          <NeoCard size="md" className="p-4 sm:p-6">
             <h3 className="mb-3 font-display text-lg font-bold">Add Decks</h3>
             <div className="relative mb-4">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -576,7 +576,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
               />
             </div>
 
-            <div className="max-h-[480px] space-y-2 overflow-y-auto pr-1">
+            <div className="max-h-80 space-y-2 overflow-y-auto pr-1 sm:max-h-[480px]">
               {filteredDecks.length === 0 ? (
                 <p className="py-8 text-center text-sm text-muted-foreground">
                   {availableDecks.length === 0
@@ -628,4 +628,3 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
     </div>
   );
 }
-

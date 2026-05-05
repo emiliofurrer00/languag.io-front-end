@@ -7,15 +7,14 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import type { LucideIcon } from 'lucide-react';
 import {
-  Bell,
   BookOpen,
+  Compass,
   Group,
   Home,
   LoaderCircle,
   LogIn,
   LogOut,
   Menu,
-  Plus,
   Sparkles,
   UserPlus,
   UserRound,
@@ -48,6 +47,7 @@ const drawerItemClassName = cn(
 const authenticatedLinks: DrawerLink[] = [
   { href: '/feed', label: 'Feed', actionLabel: 'Open', icon: Group },
   { href: '/decks', label: 'My Decks', actionLabel: 'Open', icon: BookOpen },
+  { href: '/sagas', label: 'Sagas', actionLabel: 'Open', icon: Compass },
   //{ href: '/decks/editor/new', label: 'Create Deck', actionLabel: 'New', icon: Plus },
   { href: '/friends', label: 'Friends', actionLabel: 'Open', icon: Users },
   //{ href: '/notifications', label: 'Notifications', actionLabel: 'Open', icon: Bell },

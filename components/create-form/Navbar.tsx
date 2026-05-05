@@ -61,6 +61,7 @@ export default function Navbar({
       }
       actions={renderSaveButton()}
       mobileActions={renderSaveButton(true)}
+      showDesktopSideNav
     />
   );
 }

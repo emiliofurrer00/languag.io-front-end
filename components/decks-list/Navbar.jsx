@@ -39,6 +39,7 @@ export default function Navbar() {
         </>
       }
       mobileActions={<CreateDeckLink compact />}
+      showDesktopSideNav
     />
   );
 }

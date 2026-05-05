@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components';
-import { BookOpen, Group, LogOut, Sparkles, UserPlus, UserRound } from 'lucide-react';
+import { BookOpen, Compass, Group, LogOut, Sparkles, UserPlus, UserRound } from 'lucide-react';
 
 import { buildAuthContinuePath } from '@/lib/auth-flow';
 import { cn } from '@/lib/utils';
@@ -172,6 +172,16 @@ function DesktopAuthActions() {
       >
         <BookOpen className="h-4 w-4" />
         My Decks
+      </Link>
+      <Link
+        href="/sagas"
+        className={cn(
+          linkButtonClassName,
+          'hidden bg-transparent text-foreground hover:bg-muted sm:inline-flex'
+        )}
+      >
+        <Compass className="h-4 w-4" />
+        Sagas
       </Link>
       <Link
         href="/profile/me"

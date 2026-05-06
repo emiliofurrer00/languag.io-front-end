@@ -45,6 +45,29 @@ export type DeckSummary = DeckDetails & {
   id: string;
 };
 
+export type CursorPage<T> = {
+  items: T[];
+  nextCursor?: string | null;
+};
+
+export function normalizeCursorPage<T>(value: unknown): CursorPage<T> {
+  if (Array.isArray(value)) {
+    return { items: value as T[], nextCursor: null };
+  }
+
+  if (!value || typeof value !== 'object') {
+    return { items: [], nextCursor: null };
+  }
+
+  const record = value as Record<string, unknown>;
+  const rawItems = Array.isArray(record.items) ? record.items : [];
+
+  return {
+    items: rawItems as T[],
+    nextCursor: typeof record.nextCursor === 'string' ? record.nextCursor : null,
+  };
+}
+
 export type StudyPlanReason = 'Due' | 'Lapsed' | 'New' | 'Review';
 
 export type StudyPlanCard = {

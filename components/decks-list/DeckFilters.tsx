@@ -47,6 +47,7 @@ export default function DeckFilters({ searchQuery = '', ownerUsername }: DeckFil
     const params = new URLSearchParams(searchParams.toString());
     removeDeckSearchAliases(params);
     normalizeDeckOwnerParam(params, ownerUsername);
+    params.delete('cursor');
 
     const normalizedSearchQuery = nextSearchQuery?.trim();
     if (normalizedSearchQuery) {

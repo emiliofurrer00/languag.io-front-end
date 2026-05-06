@@ -1,6 +1,6 @@
 import SagaEditorContainer from '@/components/sagas/SagaEditorContainer';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
-import { getDecks } from '@/lib/decks/server';
+import { getAllDecks } from '@/lib/decks/server';
 import { getMyProfile } from '@/lib/profile/server';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
@@ -26,7 +26,7 @@ export default async function CreateSagaPage() {
     );
   }
 
-  const decks = await getDecks();
+  const decks = await getAllDecks();
 
   return <SagaEditorContainer availableDecks={decks} />;
 }

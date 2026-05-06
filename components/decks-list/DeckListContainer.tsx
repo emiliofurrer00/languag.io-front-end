@@ -1,19 +1,25 @@
+'use client';
+
 import DeckCard from './DeckCard';
 import DeckFilters from './DeckFilters';
 import Navbar from './Navbar';
 import StudyRecommendations from './StudyRecommendations';
 import { DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
+import { getDeckPage } from '@/lib/decks/client';
 import { NeoCard } from '@/components/ui/NeoCard';
-import { Layers, Plus, X } from 'lucide-react';
+import { Layers, LoaderCircle, Plus, X } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 type DeckListFilters = {
   searchQuery?: string;
   ownerUsername?: string;
+  pageSize?: number;
 };
 
 type DeckListContainerProps = {
   decks: DeckSummary[];
+  nextCursor?: string | null;
   studyRecommendations?: DeckStudyRecommendation[];
   filters?: DeckListFilters;
   currentUsername?: string;
@@ -43,12 +49,18 @@ function canEditDeck(deck: DeckSummary, currentUsername?: string) {
 
 export default function DeskListContainer({
   decks,
+  nextCursor,
   studyRecommendations = [],
   filters,
   currentUsername,
 }: DeckListContainerProps) {
   const searchQuery = filters?.searchQuery ?? '';
   const ownerUsername = filters?.ownerUsername?.trim();
+  const pageSize = filters?.pageSize;
+  const [visibleDecks, setVisibleDecks] = useState(decks);
+  const [cursor, setCursor] = useState(nextCursor ?? null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const isViewingOwnerDecks = Boolean(ownerUsername);
   const hasSearchQuery = Boolean(searchQuery.trim());
   // TODO: Move this / refactor into a utility function to keep the component cleaner and more focused on presentation logic
@@ -66,6 +78,40 @@ export default function DeskListContainer({
     : hasSearchQuery
       ? 'Try a different search, or clear the filter to see your full list.'
       : 'Start with a few cards. You can keep it private while it is still rough.';
+  const deckCountLabel = cursor ? `${visibleDecks.length}+` : visibleDecks.length;
+
+  useEffect(() => {
+    setVisibleDecks(decks);
+    setCursor(nextCursor ?? null);
+    setIsLoadingMore(false);
+    setLoadMoreError(null);
+  }, [decks, nextCursor, searchQuery, ownerUsername, pageSize]);
+
+  async function handleLoadMore() {
+    if (!cursor || isLoadingMore) {
+      return;
+    }
+
+    setIsLoadingMore(true);
+    setLoadMoreError(null);
+
+    try {
+      const page = await getDeckPage({
+        searchQuery,
+        username: ownerUsername,
+        cursor,
+        pageSize,
+      });
+
+      setVisibleDecks((currentDecks) => [...currentDecks, ...page.items]);
+      setCursor(page.nextCursor ?? null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to load more decks.';
+      setLoadMoreError(message.replace(/^API request failed for [^:]+:\s*/, ''));
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }
 
   return (
     <>
@@ -78,7 +124,7 @@ export default function DeskListContainer({
           </div>
           <span className="inline-flex w-fit items-center gap-2 rounded-full border-[2px] border-foreground bg-secondary px-3 py-1 text-sm font-semibold shadow-[3px_3px_0_0_hsl(var(--foreground))]">
             <Layers className="h-4 w-4" />
-            {decks.length} {decks.length === 1 ? 'deck' : 'decks'}
+            {deckCountLabel} {visibleDecks.length === 1 && !cursor ? 'deck' : 'decks'}
           </span>
         </div>
 
@@ -88,16 +134,36 @@ export default function DeskListContainer({
           <StudyRecommendations recommendations={studyRecommendations} />
         ) : null}
 
-        {decks.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {decks.map((deck) => (
-              <DeckCard
-                key={deck.id}
-                deckData={deck}
-                canEdit={canEditDeck(deck, currentUsername)}
-              />
-            ))}
-          </div>
+        {visibleDecks.length > 0 ? (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {visibleDecks.map((deck) => (
+                <DeckCard
+                  key={deck.id}
+                  deckData={deck}
+                  canEdit={canEditDeck(deck, currentUsername)}
+                />
+              ))}
+            </div>
+            {loadMoreError ? (
+              <p className="mt-5 text-center text-sm font-semibold text-destructive">
+                {loadMoreError}
+              </p>
+            ) : null}
+            {cursor ? (
+              <div className="mt-8 flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                  className={secondaryActionClassName}
+                >
+                  {isLoadingMore ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
+                  Load More
+                </button>
+              </div>
+            ) : null}
+          </>
         ) : (
           <NeoCard className="mx-auto max-w-xl p-8 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border-[2px] border-foreground bg-primary shadow-[4px_4px_0_0_hsl(var(--foreground))]">

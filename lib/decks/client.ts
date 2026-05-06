@@ -1,11 +1,22 @@
 import { apiFetch } from '@/lib/api';
 import {
   AiDeckGenerationJob,
+  CursorPage,
   DeckCard,
   DeckDetails,
   DeckStudyRecommendation,
+  DeckSummary,
   StudyPlanCard,
+  normalizeCursorPage,
 } from '@/lib/decks/types';
+
+export type DeckListFilters = {
+  searchQuery?: string;
+  username?: string;
+  owner?: string;
+  cursor?: string | null;
+  pageSize?: number;
+};
 
 type SaveDeckOptions = {
   deck: DeckDetails;
@@ -40,6 +51,32 @@ export type CreateAiDeckGenerationInput = {
 type CreateAiDeckGenerationResult = {
   jobId: string;
 };
+
+function buildDeckListQuery(filters: DeckListFilters = {}) {
+  const searchParams = new URLSearchParams();
+  const searchQuery = filters.searchQuery?.trim();
+  const ownerUsername = filters.username?.trim() || filters.owner?.trim();
+
+  if (searchQuery) {
+    searchParams.set('searchQuery', searchQuery);
+  }
+
+  if (ownerUsername) {
+    searchParams.set('username', ownerUsername);
+  }
+
+  if (filters.cursor?.trim()) {
+    searchParams.set('cursor', filters.cursor.trim());
+  }
+
+  if (filters.pageSize && Number.isFinite(filters.pageSize)) {
+    searchParams.set('pageSize', String(filters.pageSize));
+  }
+
+  const queryString = searchParams.toString();
+
+  return queryString ? `?${queryString}` : '';
+}
 
 function normalizeDeckCardsForSave(cards: DeckCard[]) {
   return (cards || []).map((card, index) => ({
@@ -80,6 +117,18 @@ export async function saveDeck({ deck, isNew }: SaveDeckOptions) {
   });
 
   return true;
+}
+
+export async function getDeckPage(
+  filters: DeckListFilters = {}
+): Promise<CursorPage<DeckSummary>> {
+  const response = await apiFetch<unknown>(`/api/decks${buildDeckListQuery(filters)}`, {
+    method: 'GET',
+    useApiBaseUrl: false,
+    cache: 'no-store',
+  });
+
+  return normalizeCursorPage<DeckSummary>(response);
 }
 
 export async function submitStudySession({

@@ -7,17 +7,21 @@ import {
   readAccessTokenDiagnostics,
 } from '@/lib/kinde-server';
 import {
+  CursorPage,
   DeckDetails,
   DeckStudyRecommendation,
   DeckSummary,
   StudyPlanCard,
   emptyDeckDetails,
+  normalizeCursorPage,
 } from '@/lib/decks/types';
 
 export type DeckListFilters = {
   searchQuery?: string;
   username?: string;
   owner?: string;
+  cursor?: string | null;
+  pageSize?: number;
 };
 
 function isUnauthorizedError(error: unknown) {
@@ -61,20 +65,30 @@ function buildDeckListPath(basePath: string, filters: DeckListFilters = {}) {
     searchParams.set('username', ownerUsername);
   }
 
+  if (filters.cursor?.trim()) {
+    searchParams.set('cursor', filters.cursor.trim());
+  }
+
+  if (filters.pageSize && Number.isFinite(filters.pageSize)) {
+    searchParams.set('pageSize', String(filters.pageSize));
+  }
+
   const queryString = searchParams.toString();
 
   return queryString ? `${basePath}?${queryString}` : basePath;
 }
 
-async function getPublicDecks(filters?: DeckListFilters) {
-  return apiFetch<DeckSummary[]>(buildDeckListPath('/decks/public', filters), {
+async function getPublicDeckPage(filters?: DeckListFilters): Promise<CursorPage<DeckSummary>> {
+  const response = await apiFetch<unknown>(buildDeckListPath('/decks/public', filters), {
     cache: 'no-store',
   });
+
+  return normalizeCursorPage<DeckSummary>(response);
 }
 
-export async function getDecks(filters: DeckListFilters = {}) {
+export async function getDeckPage(filters: DeckListFilters = {}): Promise<CursorPage<DeckSummary>> {
   if (filters.username?.trim() || filters.owner?.trim()) {
-    return getPublicDecks(filters);
+    return getPublicDeckPage(filters);
   }
 
   let accessToken: string | null;
@@ -83,11 +97,11 @@ export async function getDecks(filters: DeckListFilters = {}) {
     accessToken = await getOptionalApiAccessToken();
   } catch (error) {
     console.warn('Unable to read the Kinde access token, falling back to public decks.', error);
-    return getPublicDecks(filters);
+    return getPublicDeckPage(filters);
   }
 
   if (!accessToken) {
-    return getPublicDecks(filters);
+    return getPublicDeckPage(filters);
   }
 
   const audienceCheck = tokenMatchesConfiguredAudience(accessToken);
@@ -102,19 +116,45 @@ export async function getDecks(filters: DeckListFilters = {}) {
       }
     );
 
-    return getPublicDecks(filters);
+    return getPublicDeckPage(filters);
   }
 
   try {
-    return apiFetch<DeckSummary[]>(buildDeckListPath('/decks', filters), {
+    const response = await apiFetch<unknown>(buildDeckListPath('/decks', filters), {
       cache: 'no-store',
       accessToken,
     });
+
+    return normalizeCursorPage<DeckSummary>(response);
   } catch (error) {
     console.warn('Authenticated deck fetch failed, falling back to public decks.', error);
 
-    return getPublicDecks(filters);
+    return getPublicDeckPage(filters);
   }
+}
+
+export async function getDecks(filters: DeckListFilters = {}) {
+  const page = await getDeckPage(filters);
+  return page.items;
+}
+
+export async function getAllDecks(filters: DeckListFilters = {}, maxPages = 20) {
+  const pageSize = filters.pageSize ?? 100;
+  const decks: DeckSummary[] = [];
+  let cursor = filters.cursor ?? null;
+
+  for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+    const page = await getDeckPage({ ...filters, cursor, pageSize });
+    decks.push(...page.items);
+
+    if (!page.nextCursor) {
+      break;
+    }
+
+    cursor = page.nextCursor;
+  }
+
+  return decks;
 }
 
 export async function getDeckDetails(slug: string) {

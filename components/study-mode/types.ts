@@ -26,6 +26,8 @@ export type StudyCard = DeckCard & {
 
 export type StudyDeck = Omit<DeckDetails, 'id' | 'cards'> & {
   id: string;
+  deckVersionId?: string;
+  deckVersionNumber?: number;
   cards: StudyCard[];
 };
 

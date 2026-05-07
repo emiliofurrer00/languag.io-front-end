@@ -9,6 +9,8 @@ export type CardChoice = {
 
 export type DeckCard = {
   id?: string;
+  deckVersionId?: string;
+  deckVersionNumber?: number;
   type?: CardType;
   frontText: string;
   backText: string;
@@ -34,6 +36,8 @@ export type DeckDetails = {
   color: string;
   visibility: number;
   id?: string;
+  deckVersionId?: string;
+  deckVersionNumber?: number;
   cards: DeckCard[];
   ownerName?: string;
   ownerUsername?: string | null;
@@ -73,6 +77,8 @@ export type StudyPlanReason = 'Due' | 'Lapsed' | 'New' | 'Review';
 export type StudyPlanCard = {
   cardId: string;
   deckId: string;
+  deckVersionId: string;
+  deckVersionNumber: number;
   type?: CardType;
   frontText: string;
   backText: string;

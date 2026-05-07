@@ -12,7 +12,9 @@ import {
   createProfilePictureUpload,
   uploadProfilePictureToS3,
 } from '@/lib/profile/client';
+import { profileQueryKeys } from '@/lib/profile/query-keys';
 import type { ProfileData } from '@/lib/profile/types';
+import { useInvalidateQueries } from '@/providers/QueryInvalidationProvider';
 
 const TARGET_IMAGE_SIZE = 256;
 const MAX_SOURCE_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -132,6 +134,7 @@ function readErrorMessage(error: unknown) {
 
 export function ProfilePictureUploader({ profile }: { profile: ProfileData }) {
   const router = useRouter();
+  const invalidateQueries = useInvalidateQueries();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [isUploading, setIsUploading] = React.useState(false);
@@ -180,6 +183,7 @@ export function ProfilePictureUploader({ profile }: { profile: ProfileData }) {
         title: 'Profile picture updated',
         description: 'Your new picture is live on your profile.',
       });
+      invalidateQueries([profileQueryKeys.me]);
       router.refresh();
     } catch (error) {
       toast({

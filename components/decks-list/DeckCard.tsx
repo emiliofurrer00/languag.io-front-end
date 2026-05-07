@@ -1,4 +1,4 @@
-import { Globe, Layers, User, Lock, BookOpen } from 'lucide-react';
+import { Eye, Globe, Layers, User, Lock, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { DeckSummary } from '@/lib/decks/types';
 import { buildProfilePath } from '@/lib/profile/paths';
@@ -18,10 +18,11 @@ export default function DeckCard({
   const isPublic = Boolean(visibility);
   const creatorLabel = deckData.ownerName || deckData.ownerUsername || 'Unknown creator';
   const creatorProfilePath = buildProfilePath(deckData.ownerUsername ?? deckData.ownerName);
+  const previewHref = `/decks/${deckData.id}`;
 
   return (
     <div
-      aria-label={`Study ${title || 'Untitled deck'}`}
+      aria-label={`Preview ${title || 'Untitled deck'}`}
       className={cn(
         'group flex min-h-64 w-full flex-col justify-between rounded-xl border-[3px] border-foreground p-6 shadow-[5px_5px_0_0_hsl(var(--foreground))] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4',
         getNeoColorClass(color)
@@ -66,16 +67,17 @@ export default function DeckCard({
           )}
         </div>
         {/* Action Buttons */}
-        <div className="flex gap-2 w-full justify-between">
-          <Link href={`/study/${deckData.id}`} className={canEdit ? 'flex-1' : 'w-full'}>
+        <div className="flex w-full justify-between gap-2 sm:col-span-2">
+          <Link href={previewHref} className={canEdit ? 'flex-1' : 'w-full'}>
             <NeoButton variant="dark" size="sm" className="w-full">
-              <BookOpen className="w-4 h-4" />
-              Study
+              <Eye className="h-4 w-4" />
+              Preview
             </NeoButton>
           </Link>
           {canEdit ? (
             <Link href={`/decks/editor/${deckData.id}`} className="flex-1">
               <NeoButton variant="outline" size="sm" className="w-full bg-background/80">
+                <Pencil className="h-4 w-4" />
                 Edit
               </NeoButton>
             </Link>

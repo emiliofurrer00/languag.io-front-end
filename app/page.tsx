@@ -3,6 +3,8 @@ import Navbar from '@/components/landing/Navbar';
 import CardShowcaseSection from '@/components/landing/CardShowcase';
 import DeckShowcaseSection from '@/components/landing/DeckShowcase';
 import StudyFlowSection from '@/components/landing/StudyFlow';
+import AIAssistSection from '@/components/landing/AIAssist';
+import SagasSection from '@/components/landing/Sagas';
 import QuietCTASection from '@/components/landing/QuietCTA';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
@@ -22,6 +24,8 @@ export default async function Home() {
         <CardShowcaseSection />
         <DeckShowcaseSection />
         <StudyFlowSection />
+        <AIAssistSection />
+        <SagasSection />
         <QuietCTASection />
       </main>
     </div>

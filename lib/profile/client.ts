@@ -1,5 +1,46 @@
 import { apiFetch } from '@/lib/api';
 import type { ProfileAccentColor } from '@/lib/profile/types';
+import type { ProfileData } from '@/lib/profile/types';
+
+export type CurrentProfileSummary = Pick<
+  ProfileData,
+  'email' | 'handle' | 'name' | 'profilePictureUrl' | 'username'
+>;
+
+type ApiUserMeResponse = {
+  username?: string | null;
+  name?: string | null;
+  email?: string | null;
+  profilePictureUrl?: string | null;
+};
+
+function readString(value: unknown) {
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function normalizeCurrentProfileSummary(response: ApiUserMeResponse): CurrentProfileSummary {
+  const email = readString(response.email);
+  const username = readString(response.username);
+  const emailLocalPart = email?.split('@')[0];
+  const name = readString(response.name) || username || emailLocalPart || 'User';
+
+  return {
+    email,
+    handle: username || emailLocalPart,
+    name,
+    profilePictureUrl: readString(response.profilePictureUrl),
+    username,
+  };
+}
+
+export async function getCurrentProfileSummary() {
+  const response = await apiFetch<ApiUserMeResponse>('/api/users/me', {
+    cache: 'no-store',
+    useApiBaseUrl: false,
+  });
+
+  return normalizeCurrentProfileSummary(response);
+}
 
 type CreateProfilePictureUploadResponse = {
   uploadUrl: string;

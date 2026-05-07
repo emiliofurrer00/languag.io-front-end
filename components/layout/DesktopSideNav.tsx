@@ -23,6 +23,9 @@ import { usePathname } from 'next/navigation';
 
 import { SocialAvatar } from '@/components/social/SocialAvatar';
 import { buildAuthContinuePath } from '@/lib/auth-flow';
+import { getCurrentProfileSummary, type CurrentProfileSummary } from '@/lib/profile/client';
+import { profileQueryKeys } from '@/lib/profile/query-keys';
+import { useInvalidatedValueQuery } from '@/lib/social/hooks';
 import { cn } from '@/lib/utils';
 
 type DesktopNavItem = {
@@ -70,21 +73,42 @@ const navItems: DesktopNavItem[] = [
 const placeholderStreak = 0;
 const placeholderXp = 0;
 
-function getDisplayName(user: ReturnType<typeof useKindeBrowserClient>['user']) {
+function getDisplayName(
+  user: ReturnType<typeof useKindeBrowserClient>['user'],
+  profile?: CurrentProfileSummary | null
+) {
+  if (profile?.name) {
+    return profile.name;
+  }
+
   const fullName = [user?.given_name, user?.family_name].filter(Boolean).join(' ').trim();
   return fullName || user?.email || 'Learner';
 }
 
-function getHandle(user: ReturnType<typeof useKindeBrowserClient>['user']) {
-  // TODO: Replace with the app profile username once the desktop shell receives ProfileData.
+function getHandle(
+  user: ReturnType<typeof useKindeBrowserClient>['user'],
+  profile?: CurrentProfileSummary | null
+) {
+  if (profile?.handle) {
+    return profile.handle;
+  }
+
   return user?.email?.split('@')[0] || 'learner';
 }
 
 export function DesktopSideNav() {
   const pathname = usePathname();
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient();
-  const displayName = getDisplayName(user);
-  const handle = getHandle(user);
+  const { data: currentProfile } = useInvalidatedValueQuery(
+    profileQueryKeys.me,
+    getCurrentProfileSummary,
+    {
+      enabled: !isLoading && Boolean(isAuthenticated),
+    }
+  );
+  const displayName = getDisplayName(user, currentProfile);
+  const handle = getHandle(user, currentProfile);
+  const profileImageUrl = currentProfile?.profilePictureUrl ?? user?.picture ?? null;
   const postLoginRedirectUrl = buildAuthContinuePath('/feed');
 
   return (
@@ -160,7 +184,7 @@ export function DesktopSideNav() {
             >
               <SocialAvatar
                 label={displayName}
-                imageUrl={user?.picture ?? null}
+                imageUrl={profileImageUrl}
                 fallbackClassName="bg-neo-teal"
                 className="h-9 w-9 rounded-xl text-xs shadow-[2px_2px_0_0_hsl(var(--foreground))]"
                 sizes="36px"

@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { Layers } from 'lucide-react';
 
 const decks = [
-  { title: 'Spanish — A1 vocab', count: 84, color: 'bg-neo-magenta', tag: 'Languages' },
+  { title: 'Spanish - A1 vocab', count: 84, color: 'bg-neo-magenta', tag: 'Languages' },
   { title: 'React Hooks', count: 32, color: 'bg-neo-teal', tag: 'Code' },
   { title: 'World Capitals', count: 196, color: 'bg-neo-yellow', tag: 'Geography' },
   { title: 'Bones of the body', count: 48, color: 'bg-neo-coral', tag: 'Anatomy' },
@@ -23,7 +23,7 @@ const DeckShowcaseSection = () => {
 
   return (
     <section ref={ref} className="py-32 relative overflow-hidden w-full">
-      <div className="container mx-auto px-4 mb-19.5">
+      <div className="container mx-auto px-4 mb-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -32,7 +32,7 @@ const DeckShowcaseSection = () => {
           className="max-w-2xl ml-auto text-right"
         >
           <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
-            02 — The deck
+            02 - The deck
           </p>
           <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight mb-6">
             Group cards
@@ -46,7 +46,6 @@ const DeckShowcaseSection = () => {
         </motion.div>
       </div>
 
-      {/* Horizontal scrolling decks */}
       <div className="relative">
         <motion.div style={{ x }} className="flex gap-6 px-4 will-change-transform">
           {decks.map((deck, i) => (

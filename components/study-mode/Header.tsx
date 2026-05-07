@@ -24,6 +24,8 @@ export default function Header({
   progressPercent,
   handleShuffle,
   handleRestart,
+  backHref = '/decks',
+  backLabel = 'Back',
 }: {
   deck: StudyDeck;
   currentIndex: number;
@@ -33,6 +35,8 @@ export default function Header({
   progressPercent: number;
   handleShuffle: () => void;
   handleRestart: () => void;
+  backHref?: string;
+  backLabel?: string;
 }) {
   const creatorUsername = deck.ownerUsername || deck.ownerName;
   const creatorProfilePath = buildProfilePath(creatorUsername);
@@ -42,10 +46,10 @@ export default function Header({
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/decks">
+            <Link href={backHref}>
               <NeoButton variant="outline" size="sm">
                 <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Back</span>
+                <span className="hidden sm:inline">{backLabel}</span>
               </NeoButton>
             </Link>
             <div className="flex items-center gap-2">

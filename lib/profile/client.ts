@@ -1,4 +1,5 @@
 import { apiFetch } from '@/lib/api';
+import type { ProfileAccentColor } from '@/lib/profile/types';
 import type { ProfileData } from '@/lib/profile/types';
 
 export type CurrentProfileSummary = Pick<
@@ -49,6 +50,57 @@ type CreateProfilePictureUploadResponse = {
   expiresAtUtc: string;
   maxBytes: number;
 };
+
+export type UpdateMyProfileInput = {
+  username: string;
+  name: string;
+  hasBeenOnboarded: boolean;
+  dailyCardsGoal: number;
+  profileDescription: string;
+  about: string;
+  isPublicProfile: boolean;
+  avatarColor: ProfileAccentColor;
+};
+
+type ApiErrorPayload = {
+  message?: string;
+  detail?: string;
+  title?: string;
+  errors?: Record<string, string[]>;
+} | null;
+
+function readApiErrorMessage(payload: ApiErrorPayload, fallback: string) {
+  if (!payload) {
+    return fallback;
+  }
+
+  const validationMessage = payload.errors
+    ? Object.values(payload.errors)
+        .flat()
+        .find((message) => typeof message === 'string' && message.trim())
+    : undefined;
+
+  return payload.message || payload.detail || validationMessage || payload.title || fallback;
+}
+
+export async function updateMyProfile(profile: UpdateMyProfileInput) {
+  const response = await fetch('/api/users/me', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(profile),
+  });
+  const payload = (await response.json().catch(() => null)) as ApiErrorPayload | unknown;
+
+  if (!response.ok) {
+    throw new Error(
+      readApiErrorMessage(payload as ApiErrorPayload, 'Unable to update your profile.')
+    );
+  }
+
+  return payload;
+}
 
 export async function createProfilePictureUpload({ contentLength }: { contentLength: number }) {
   return apiFetch<CreateProfilePictureUploadResponse>(

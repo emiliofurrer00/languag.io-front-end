@@ -30,6 +30,7 @@ type SubmitStudySessionResponsePayload = {
 
 type SubmitStudySessionOptions = {
   deckId: string;
+  deckVersionId?: string;
   percentageCorrect: number;
   responses: SubmitStudySessionResponsePayload[];
 };
@@ -133,12 +134,14 @@ export async function getDeckPage(
 
 export async function submitStudySession({
   deckId,
+  deckVersionId,
   percentageCorrect,
   responses,
 }: SubmitStudySessionOptions) {
   return apiFetch<SubmitStudySessionResult>(`/api/decks/${deckId}/study-sessions`, {
     method: 'POST',
     body: JSON.stringify({
+      deckVersionId,
       percentageCorrect,
       responses,
     }),

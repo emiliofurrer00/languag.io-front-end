@@ -1,4 +1,5 @@
 import StudyModeContainer from '@/components/study-mode/StudyModeContainer';
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { getDeckDetails, getDeckStudyPlan } from '@/lib/decks/server';
 
 type StudyModePageProps = {
@@ -14,13 +15,19 @@ type StudyModePageProps = {
 export default async function StudyMode({ params, searchParams }: StudyModePageProps) {
   const { slug } = await params;
   const query = searchParams ? await searchParams : undefined;
+  const { isAuthenticated } = getKindeServerSession();
+  const canSaveProgress = Boolean(await isAuthenticated());
   const defaultData = await getDeckDetails(slug);
   const studyPlan = await getDeckStudyPlan(slug);
   const studyDeck = studyPlan
     ? {
         ...defaultData,
+        deckVersionId: studyPlan[0]?.deckVersionId,
+        deckVersionNumber: studyPlan[0]?.deckVersionNumber,
         cards: studyPlan.map((card) => ({
           id: card.cardId,
+          deckVersionId: card.deckVersionId,
+          deckVersionNumber: card.deckVersionNumber,
           type: card.type ?? 'flashcard',
           frontText: card.frontText,
           backText: card.backText,
@@ -44,6 +51,7 @@ export default async function StudyMode({ params, searchParams }: StudyModePageP
   return (
     <StudyModeContainer
       mockDeck={studyDeck}
+      canSaveProgress={canSaveProgress}
       sagaContext={
         query?.sagaId && query?.lessonId
           ? {

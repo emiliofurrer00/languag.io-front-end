@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ChevronRight, Compass, Flame, Layers, Plus, Trophy, Users } from 'lucide-react';
+import { BookOpen, ChevronRight, Compass, Flame, Layers, Plus, Trophy, Users } from 'lucide-react';
 import SagasNavbar from './SagasNavbar';
 import { NeoCard } from '@/components/ui/NeoCard';
 import {
@@ -14,6 +14,12 @@ type SagaListContainerProps = {
   sagas: Saga[];
 };
 
+const primaryActionClassName =
+  'inline-flex h-12 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-primary px-4 font-display text-sm font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
+
+const secondaryActionClassName =
+  'inline-flex h-12 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-secondary px-4 font-display text-sm font-semibold text-secondary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-secondary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
+
 function formatLearnerCount(seed: string) {
   const checksum = Array.from(seed).reduce((total, char) => total + char.charCodeAt(0), 0);
   return `${((checksum % 18) + 2).toFixed(1)}k`;
@@ -26,21 +32,32 @@ export default function SagaListContainer({ sagas }: SagaListContainerProps) {
 
       <main className="mx-auto w-full max-w-7xl px-4 pb-20">
         <section className="pb-8 pt-3">
-          <div className="max-w-3xl">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border-[2px] border-foreground bg-neo-yellow px-3 py-1 text-xs font-bold uppercase tracking-wide shadow-[3px_3px_0_0_hsl(var(--foreground))]">
-              <Compass className="h-3.5 w-3.5" />
-              New path builder
-            </span>
-            <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl">
-              Pick your{' '}
-              <span className="inline-block -rotate-1 rounded-md border-[2px] border-foreground bg-neo-coral px-2">
-                adventure
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-3xl">
+              <span className="mb-4 inline-flex items-center gap-2 rounded-full border-[2px] border-foreground bg-neo-yellow px-3 py-1 text-xs font-bold uppercase tracking-wide shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+                <Compass className="h-3.5 w-3.5" />
+                Ordered paths
               </span>
-            </h1>
-            <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
-              Sagas turn your decks into ordered learning journeys with chapters, progress, and a
-              clear next lesson.
-            </p>
+              <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl">Sagas</h1>
+              <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
+                Turn decks into guided learning paths with chapters, checkpoints, and one clear next
+                lesson.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/sagas/create" className={primaryActionClassName}>
+                  <Plus className="h-4 w-4" />
+                  Create saga
+                </Link>
+                <Link href="/decks" className={secondaryActionClassName}>
+                  <BookOpen className="h-4 w-4" />
+                  Browse decks
+                </Link>
+              </div>
+            </div>
+            <span className="inline-flex h-12 w-fit items-center gap-2 rounded-xl border-[2px] border-foreground bg-secondary px-4 text-sm font-semibold shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+              <Layers className="h-4 w-4" />
+              {sagas.length} {sagas.length === 1 ? 'saga' : 'sagas'}
+            </span>
           </div>
         </section>
 
@@ -114,7 +131,7 @@ export default function SagaListContainer({ sagas }: SagaListContainerProps) {
                 className="inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-primary px-4 py-2 font-display font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <Plus className="h-4 w-4" />
-                Create Saga
+                Create saga
               </Link>
             </div>
           </NeoCard>
@@ -123,4 +140,3 @@ export default function SagaListContainer({ sagas }: SagaListContainerProps) {
     </div>
   );
 }
-

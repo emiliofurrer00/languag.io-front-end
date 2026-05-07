@@ -228,6 +228,7 @@ export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlow
           profileDescription: data.tagline.trim(),
           about: data.aboutMe.trim(),
           isPublicProfile: data.isPublicProfile,
+          avatarColor: data.avatarColor,
         }),
       });
 

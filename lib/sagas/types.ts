@@ -78,3 +78,36 @@ export type CreateSagaResult = {
   sagaId: string;
 };
 
+export type AiSagaGenerationStatus = 'Pending' | 'Processing' | 'Completed' | 'Failed';
+
+export type AiSagaGenerationJob = {
+  id: string;
+  status: AiSagaGenerationStatus;
+  createdSagaId?: string | null;
+  errorMessage?: string | null;
+  audioStatus?: 'NotRequested' | 'Pending' | 'Processing' | 'Ready' | 'Failed';
+  requestedDeckCount: number;
+  requestedCardsPerDeck: number;
+  requestedMultiChoiceCountPerDeck: number;
+  usageWeekStartUtc: string;
+  nextAllowedAtUtc: string;
+  createdAtUtc: string;
+  startedAtUtc?: string | null;
+  completedAtUtc?: string | null;
+};
+
+export type CreateAiSagaGenerationInput = {
+  prompt: string;
+  targetLanguage?: string;
+  nativeLanguage?: string;
+  difficulty: string;
+  deckCount: number;
+  cardsPerDeck: number;
+  multiChoiceCountPerDeck: number;
+  includeAudio: boolean;
+};
+
+export type CreateAiSagaGenerationResult = {
+  jobId: string;
+  nextAllowedAtUtc?: string | null;
+};

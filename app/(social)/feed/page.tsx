@@ -499,7 +499,7 @@ export default async function Feed() {
           {feed.suggestedDecks.length > 0 ? (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {feed.suggestedDecks.map((deck, index) => (
-                <Link key={deck.id} href={`/study/${deck.id}`} className="group block">
+                <Link key={deck.id} href={`/decks/${deck.id}`} className="group block">
                   <NeoCard
                     size="sm"
                     className={cn(

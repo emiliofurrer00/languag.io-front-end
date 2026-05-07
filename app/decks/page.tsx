@@ -57,6 +57,7 @@ export default async function DecksPage({ searchParams }: DecksPageProps) {
       nextCursor={deckPage.nextCursor}
       studyRecommendations={studyRecommendations}
       currentUsername={profile?.username}
+      isAuthenticated={Boolean(profile)}
       filters={{ searchQuery, ownerUsername, pageSize }}
     />
   );

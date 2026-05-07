@@ -10,8 +10,8 @@ export default function PageLoading({ title, description, shell = 'full' }: Page
   return (
     <div
       className={cn(
-        'fixed inset-y-0 right-0 z-30 flex items-center justify-center bg-background px-4',
-        shell === 'app' ? 'left-0 lg:left-60' : 'left-0'
+        'fixed inset-0 z-30 flex items-center justify-center bg-background px-4',
+        shell === 'app' ? 'lg:px-[17rem]' : null
       )}
     >
       <div className="w-full max-w-xl rounded-2xl border-[3px] border-foreground bg-card p-8 shadow-[6px_6px_0_0_hsl(var(--foreground))]">

@@ -135,7 +135,7 @@ function DesktopAuthActions() {
             'hidden cursor-pointer bg-transparent text-foreground hover:bg-muted sm:inline-flex'
           )}
         >
-          Log In
+          Log in
         </LoginLink>
         <RegisterLink
           postLoginRedirectURL={postLoginRedirectUrl}
@@ -145,7 +145,7 @@ function DesktopAuthActions() {
           )}
         >
           <UserPlus className="h-4 w-4" />
-          Get Started
+          Get started
         </RegisterLink>
       </>
     );

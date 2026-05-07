@@ -7,7 +7,7 @@ import StudyRecommendations from './StudyRecommendations';
 import { DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
 import { getDeckPage } from '@/lib/decks/client';
 import { NeoCard } from '@/components/ui/NeoCard';
-import { Layers, LoaderCircle, Plus, X } from 'lucide-react';
+import { Compass, Layers, LoaderCircle, Plus, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -23,6 +23,7 @@ type DeckListContainerProps = {
   studyRecommendations?: DeckStudyRecommendation[];
   filters?: DeckListFilters;
   currentUsername?: string;
+  isAuthenticated?: boolean;
 };
 
 const secondaryActionClassName =
@@ -53,6 +54,7 @@ export default function DeskListContainer({
   studyRecommendations = [],
   filters,
   currentUsername,
+  isAuthenticated = false,
 }: DeckListContainerProps) {
   const searchQuery = filters?.searchQuery ?? '';
   const ownerUsername = filters?.ownerUsername?.trim();
@@ -64,20 +66,30 @@ export default function DeskListContainer({
   const isViewingOwnerDecks = Boolean(ownerUsername);
   const hasSearchQuery = Boolean(searchQuery.trim());
   // TODO: Move this / refactor into a utility function to keep the component cleaner and more focused on presentation logic
-  const title = ownerUsername ? `@${ownerUsername}'s Public Decks` : 'Your Decks';
+  const title = ownerUsername
+    ? `@${ownerUsername}'s public decks`
+    : isAuthenticated
+      ? 'Your decks'
+      : 'Public decks';
   const description = ownerUsername
     ? 'Browse public decks shared by this creator.'
-    : 'Pick a deck to study, or create a fresh one from scratch.';
+    : isAuthenticated
+      ? 'Preview a deck, study what is due, or create a fresh set from scratch.'
+      : 'Preview community decks and try a study run before creating an account.';
   const emptyTitle = isViewingOwnerDecks
     ? 'No public decks found'
     : hasSearchQuery
       ? 'No decks match your search'
-      : 'Create your first deck';
+      : isAuthenticated
+        ? 'Create your first deck'
+        : 'No public decks yet';
   const emptyDescription = isViewingOwnerDecks
     ? 'Try a different search, or clear the creator filter to browse your decks.'
     : hasSearchQuery
       ? 'Try a different search, or clear the filter to see your full list.'
-      : 'Start with a few cards. You can keep it private while it is still rough.';
+      : isAuthenticated
+        ? 'Start with a few cards. You can keep it private while it is still rough.'
+        : 'Check back soon, or sign in to build the first public deck.';
   const deckCountLabel = cursor ? `${visibleDecks.length}+` : visibleDecks.length;
 
   useEffect(() => {
@@ -117,15 +129,21 @@ export default function DeskListContainer({
     <>
       <Navbar />
       <section className="mx-auto w-full max-w-7xl px-4 pb-10">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-display text-3xl font-bold">{title}</h1>
             <p className="mt-1 text-sm text-muted-foreground">{description}</p>
           </div>
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border-[2px] border-foreground bg-secondary px-3 py-1 text-sm font-semibold shadow-[3px_3px_0_0_hsl(var(--foreground))]">
-            <Layers className="h-4 w-4" />
-            {deckCountLabel} {visibleDecks.length === 1 && !cursor ? 'deck' : 'decks'}
-          </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/sagas" className={secondaryActionClassName}>
+              <Compass className="h-4 w-4" />
+              Explore sagas
+            </Link>
+            <span className="inline-flex h-12 w-fit items-center gap-2 rounded-xl border-[2px] border-foreground bg-secondary px-4 text-sm font-semibold shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+              <Layers className="h-4 w-4" />
+              {deckCountLabel} {visibleDecks.length === 1 && !cursor ? 'deck' : 'decks'}
+            </span>
+          </div>
         </div>
 
         <DeckFilters searchQuery={searchQuery} ownerUsername={ownerUsername} />
@@ -159,7 +177,7 @@ export default function DeskListContainer({
                   className={secondaryActionClassName}
                 >
                   {isLoadingMore ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
-                  Load More
+                  Load more
                 </button>
               </div>
             ) : null}
@@ -184,7 +202,7 @@ export default function DeskListContainer({
                   className="inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-primary px-4 py-2 font-display font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <Plus className="h-4 w-4" />
-                  New Deck
+                  New deck
                 </Link>
               ) : null}
             </div>

@@ -20,7 +20,7 @@ function CreateDeckLink({ compact = false }) {
         <span className="sr-only">Create deck</span>
       ) : (
         <>
-          <span className="hidden sm:inline">Create Deck</span>
+          <span className="hidden sm:inline">Create deck</span>
           <span className="sm:hidden">New</span>
         </>
       )}
@@ -28,10 +28,10 @@ function CreateDeckLink({ compact = false }) {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ title = 'Decks' }) {
   return (
     <AppNavbar
-      title="My Decks"
+      title={title}
       actions={
         <>
           <SocialNavActions />

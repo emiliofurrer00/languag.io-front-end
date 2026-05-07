@@ -129,7 +129,7 @@ function NodeBubble({ sagaId, node }: { sagaId: string; node: SagaLessonNode }) 
         </p>
         {!isLocked ? (
           <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">
-            {node.lesson.cardCount} cards · {getLessonXp(node.lesson)} XP
+            {node.lesson.cardCount} cards - {getLessonXp(node.lesson)} XP
           </p>
         ) : null}
       </div>
@@ -220,7 +220,7 @@ export default function SagaDetailView({ saga }: { saga: Saga }) {
                 />
               </div>
               <span className="shrink-0 text-xs font-bold tabular-nums">
-                {completed}/{total} · {progressPct}%
+                {completed}/{total} - {progressPct}%
               </span>
             </div>
           </div>

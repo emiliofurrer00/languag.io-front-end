@@ -2,11 +2,11 @@ import { getNeoColorClass, NEO_COLOR_CLASSES, NeoColor } from '@/lib/theme/neo-c
 import { Saga, SagaDisplayMeta, SagaLesson } from './types';
 
 const FALLBACK_EMOJIS: Record<NeoColor, string> = {
-  teal: '🧠',
-  blue: '🌍',
-  coral: '🌶️',
-  magenta: '🎨',
-  yellow: '⚡',
+  teal: '\u{1F9E0}',
+  blue: '\u{1F30D}',
+  coral: '\u{1F336}\u{FE0F}',
+  magenta: '\u{1F3A8}',
+  yellow: '\u{26A1}',
 };
 
 function firstGrapheme(value: string) {
@@ -89,4 +89,3 @@ export function getSagaEarnedXp(saga: Saga) {
 
   return total;
 }
-

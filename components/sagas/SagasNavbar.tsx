@@ -20,7 +20,7 @@ function CreateSagaLink({ compact = false }) {
         <span className="sr-only">Create saga</span>
       ) : (
         <>
-          <span className="hidden sm:inline">Create Saga</span>
+          <span className="hidden sm:inline">Create saga</span>
           <span className="sm:hidden">New</span>
         </>
       )}

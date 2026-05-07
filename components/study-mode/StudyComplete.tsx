@@ -6,12 +6,14 @@ import {
   RotateCcw,
   Shuffle,
   Trophy,
+  UserPlus,
 } from 'lucide-react';
 import { NeoButton } from '../ui/NeoButton';
 import { Progress } from '@radix-ui/react-progress';
 import { NeoCard } from '../ui/NeoCard';
 import Link from 'next/link';
 import { StudyDeck } from './types';
+import { buildLoginRedirectPath } from '@/lib/auth-flow';
 import { buildProfilePath } from '@/lib/profile/paths';
 
 interface StudyCompleteProps {
@@ -24,6 +26,9 @@ interface StudyCompleteProps {
   studySessionId?: string;
   sagaProgressSaved?: boolean;
   sagaId?: string;
+  canSaveProgress?: boolean;
+  backHref?: string;
+  backLabel?: string;
   onRetrySave: () => void;
   onStudyLearning: () => void;
   onShuffle: () => void;
@@ -40,6 +45,9 @@ const StudyComplete = ({
   studySessionId,
   sagaProgressSaved,
   sagaId,
+  canSaveProgress = true,
+  backHref = '/decks',
+  backLabel = 'Back',
   onRetrySave,
   onStudyLearning,
   onShuffle,
@@ -48,15 +56,16 @@ const StudyComplete = ({
   const knownPercent = totalCards > 0 ? Math.round((knownCount / totalCards) * 100) : 0;
   const creatorUsername = deck.ownerUsername || deck.ownerName;
   const creatorProfilePath = buildProfilePath(creatorUsername);
+  const loginHref = buildLoginRedirectPath(deck.id ? `/study/${deck.id}` : '/decks');
 
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b-[3px] border-foreground">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/decks">
+          <Link href={backHref}>
             <NeoButton variant="outline" size="sm">
               <ArrowLeft className="w-4 h-4" />
-              Back
+              {backLabel}
             </NeoButton>
           </Link>
           <div className="min-w-0">
@@ -128,6 +137,20 @@ const StudyComplete = ({
               {sagaProgressSaved
                 ? 'Your study session and saga progress have been saved.'
                 : 'Your study session has been saved.'}
+            </div>
+          ) : null}
+
+          {!canSaveProgress ? (
+            <div className="mb-6 rounded-xl border-[2px] border-foreground bg-neo-yellow/40 px-4 py-3 text-sm">
+              <p>Your preview run is complete. Sign in to save history and due-card progress.</p>
+              <div className="mt-3 flex justify-center">
+                <Link href={loginHref}>
+                  <NeoButton variant="outline" size="sm">
+                    <UserPlus className="h-4 w-4" />
+                    Sign in to save
+                  </NeoButton>
+                </Link>
+              </div>
             </div>
           ) : null}
 

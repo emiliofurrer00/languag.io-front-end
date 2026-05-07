@@ -110,9 +110,11 @@ function getSubmissionErrorMessage(error: unknown) {
 
 export default function StudyModeContainer({
   mockDeck,
+  canSaveProgress = true,
   sagaContext,
 }: {
   mockDeck: DeckDetails;
+  canSaveProgress?: boolean;
   sagaContext?: SagaStudyContext;
 }) {
   const deck = normalizeStudyDeck(mockDeck);
@@ -141,6 +143,9 @@ export default function StudyModeContainer({
   );
   const reviewedCount = Object.keys(cardResults).length;
   const progressPercent = totalCards > 0 ? (reviewedCount / totalCards) * 100 : 0;
+  const deckPreviewHref = deck.id ? `/decks/${deck.id}` : '/decks';
+  const backHref = sagaContext ? `/sagas/${sagaContext.sagaId}` : deckPreviewHref;
+  const backLabel = sagaContext ? 'Saga' : 'Preview';
 
   const handleFlip = useCallback(() => {
     setIsFlipped((prev) => !prev);
@@ -258,13 +263,23 @@ export default function StudyModeContainer({
 
       if (Object.keys(nextResults).length >= totalCards) {
         setIsComplete(true);
-        void submitCurrentSession(nextResults);
+        if (canSaveProgress) {
+          void submitCurrentSession(nextResults);
+        }
         return;
       }
 
       setCurrentIndex(findNextUnansweredCardIndex(shuffledCards, nextResults, currentIndex));
     },
-    [cardResults, currentCard, currentIndex, shuffledCards, submitCurrentSession, totalCards]
+    [
+      canSaveProgress,
+      cardResults,
+      currentCard,
+      currentIndex,
+      shuffledCards,
+      submitCurrentSession,
+      totalCards,
+    ]
   );
 
   const markAsKnown = useCallback(() => {
@@ -353,6 +368,9 @@ export default function StudyModeContainer({
         studySessionId={submissionState.studySessionId}
         sagaProgressSaved={submissionState.sagaProgressSaved}
         sagaId={sagaContext?.sagaId}
+        canSaveProgress={canSaveProgress}
+        backHref={backHref}
+        backLabel={backLabel}
         onRetrySave={handleRetrySave}
         onStudyLearning={handleStudyLearning}
         onShuffle={handleShuffle}
@@ -372,6 +390,8 @@ export default function StudyModeContainer({
         progressPercent={progressPercent}
         handleShuffle={handleShuffle}
         handleRestart={handleRestart}
+        backHref={backHref}
+        backLabel={backLabel}
       />
       <main className="flex-1 container mx-auto px-4 py-8 flex flex-col items-center justify-center max-w-2xl">
         {isMultipleChoiceCard(currentCard) ? (

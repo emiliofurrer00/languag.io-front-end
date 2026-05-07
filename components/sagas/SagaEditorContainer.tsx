@@ -29,6 +29,7 @@ import { createSaga } from '@/lib/sagas/client';
 import { NEO_COLOR_OPTIONS, NeoColor, getNeoColorClass } from '@/lib/theme/neo-colors';
 import { DeckSummary } from '@/lib/decks/types';
 import { cn } from '@/lib/utils';
+import AiSagaGeneratorPanel from './AiSagaGeneratorPanel';
 
 type SagaNodeKind = 'deck' | 'checkpoint';
 
@@ -310,9 +311,12 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
       <main className="mx-auto grid w-full max-w-7xl items-start gap-5 px-3 pb-12 sm:gap-6 sm:px-4 lg:grid-cols-[minmax(0,1.65fr)_minmax(17rem,0.85fr)] xl:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
         <div className="min-w-0 space-y-5 sm:space-y-6">
           <NeoCard size="md" className="overflow-hidden p-4 sm:p-6">
-            <div className="mb-5 flex items-center gap-2">
-              <Sparkles className="h-5 w-5" />
-              <h1 className="font-display text-xl font-bold">Saga Details</h1>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                <h1 className="font-display text-xl font-bold">Saga Details</h1>
+              </div>
+              <AiSagaGeneratorPanel />
             </div>
 
             <div className="space-y-4">

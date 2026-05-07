@@ -26,7 +26,18 @@ export function buildApiUrl(path: string) {
 async function readErrorMessage(response: Response) {
   try {
     const data = await response.json();
-    return data?.message || data?.error || data?.detail || data?.title || response.statusText;
+    const message =
+      data?.message || data?.error || data?.detail || data?.title || response.statusText;
+    const nextAllowedAtUtc = data?.nextAllowedAtUtc;
+
+    if (typeof nextAllowedAtUtc === 'string') {
+      const nextAllowedAt = new Date(nextAllowedAtUtc);
+      if (!Number.isNaN(nextAllowedAt.getTime())) {
+        return `${message} Try again after ${nextAllowedAt.toLocaleString()}.`;
+      }
+    }
+
+    return message;
   } catch {
     return response.statusText;
   }

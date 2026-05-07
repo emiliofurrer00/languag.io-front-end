@@ -1,6 +1,13 @@
 import { apiFetch } from '@/lib/api';
 import { buildSagaCategoryValue } from './display';
-import { CreateSagaInput, CreateSagaResult, SagaProgress } from './types';
+import {
+  AiSagaGenerationJob,
+  CreateAiSagaGenerationInput,
+  CreateAiSagaGenerationResult,
+  CreateSagaInput,
+  CreateSagaResult,
+  SagaProgress,
+} from './types';
 
 export async function createSaga(input: CreateSagaInput) {
   return apiFetch<CreateSagaResult>('/api/sagas', {
@@ -24,3 +31,18 @@ export async function completeSagaLesson(sagaId: string, lessonId: string) {
   });
 }
 
+export async function createAiSagaGenerationJob(input: CreateAiSagaGenerationInput) {
+  return apiFetch<CreateAiSagaGenerationResult>('/api/ai/saga-generations', {
+    method: 'POST',
+    body: JSON.stringify(input),
+    useApiBaseUrl: false,
+  });
+}
+
+export async function getAiSagaGenerationJob(jobId: string) {
+  return apiFetch<AiSagaGenerationJob>(`/api/ai/saga-generations/${jobId}`, {
+    method: 'GET',
+    useApiBaseUrl: false,
+    cache: 'no-store',
+  });
+}

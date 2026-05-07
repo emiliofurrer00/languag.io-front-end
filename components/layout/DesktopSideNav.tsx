@@ -141,7 +141,7 @@ export function DesktopSideNav() {
           className="mt-4 flex items-center gap-3 rounded-xl border-[2px] border-foreground bg-neo-magenta px-3 py-2.5 font-display text-sm font-bold shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <Plus className="h-5 w-5" />
-          <span>Create Deck</span>
+          <span>Create deck</span>
         </Link>
       </nav>
 

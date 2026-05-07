@@ -13,7 +13,7 @@ const moments = [
   {
     icon: Calendar,
     label: 'You wait',
-    body: "Spaced repetition picks the next time you'll see it - when you're about to forget.",
+    body: 'Spaced repetition picks the next time you will see it - when you are about to forget.',
     color: 'bg-neo-teal',
   },
   {
@@ -26,7 +26,7 @@ const moments = [
 
 const StudyFlowSection = () => {
   return (
-    <section className="py-24 relative w-full overflow-hidden" id="how-it-works">
+    <section id="how-it-works" className="py-24 relative w-full overflow-hidden">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -36,7 +36,7 @@ const StudyFlowSection = () => {
           className="max-w-2xl mx-auto text-center mb-16"
         >
           <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
-            03 &mdash; The loop
+            03 - The loop
           </p>
           <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight">
             How something

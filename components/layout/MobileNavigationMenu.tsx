@@ -244,7 +244,7 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
                 >
                   <span className="flex min-w-0 items-center gap-3">
                     <LogIn className="h-4 w-4 shrink-0" />
-                    <span className="truncate">Log In</span>
+                    <span className="truncate">Log in</span>
                   </span>
                   <span className="shrink-0 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                     Open
@@ -260,7 +260,7 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
                 >
                   <span className="flex min-w-0 items-center gap-3">
                     <UserPlus className="h-4 w-4 shrink-0" />
-                    <span className="truncate">Get Started</span>
+                    <span className="truncate">Get started</span>
                   </span>
                   <span className="shrink-0 text-[10px] uppercase tracking-[0.16em] text-primary-foreground/70">
                     Join
@@ -308,7 +308,7 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
                 >
                   <span className="flex min-w-0 items-center gap-3">
                     <LogOut className="h-4 w-4 shrink-0" />
-                    <span className="truncate">Log Out</span>
+                    <span className="truncate">Log out</span>
                   </span>
                   <span className="shrink-0 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                     Exit

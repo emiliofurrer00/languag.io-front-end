@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { NeoButton } from '@/components/ui/NeoButton';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Compass, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 const HeroSection = () => {
@@ -61,8 +61,8 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
           >
-            A flashcard tool built around how memory actually works. Write a card, review it
-            tomorrow, recall it next year.
+            A flashcard tool built around how memory actually works. Preview public decks, follow
+            guided sagas, then sign in when you want saved progress.
           </motion.p>
 
           <motion.div
@@ -77,9 +77,10 @@ const HeroSection = () => {
                 <ArrowRight className="w-5 h-5" />
               </NeoButton>
             </Link>
-            <Link href="/decks/editor/new">
+            <Link href="/sagas">
               <NeoButton variant="secondary" size="lg">
-                Create your first
+                Explore sagas
+                <Compass className="w-5 h-5" />
               </NeoButton>
             </Link>
           </motion.div>

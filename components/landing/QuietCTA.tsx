@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { NeoButton } from '@/components/ui/NeoButton';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Compass } from 'lucide-react';
 import Link from 'next/link';
 
 const QuietCTASection = () => {
@@ -25,7 +25,8 @@ const QuietCTASection = () => {
             </span>
           </h2>
           <p className="text-lg text-muted-foreground mb-10">
-            Open source. No accounts required to try it. Take a look around.
+            No account required to preview a deck. Sign in when you are ready to save progress or
+            build your own.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/decks">
@@ -34,9 +35,10 @@ const QuietCTASection = () => {
                 <ArrowRight className="w-5 h-5" />
               </NeoButton>
             </Link>
-            <Link href="/decks/editor/new">
+            <Link href="/sagas">
               <NeoButton variant="secondary" size="lg">
-                Make one
+                Explore sagas
+                <Compass className="w-5 h-5" />
               </NeoButton>
             </Link>
           </div>

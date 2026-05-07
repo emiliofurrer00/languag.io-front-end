@@ -304,6 +304,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
         }
         actions={renderSaveButton()}
         mobileActions={renderSaveButton(true)}
+        showDesktopSideNav
       />
 
       <main className="mx-auto grid w-full max-w-7xl items-start gap-5 px-3 pb-12 sm:gap-6 sm:px-4 lg:grid-cols-[minmax(0,1.65fr)_minmax(17rem,0.85fr)] xl:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
@@ -407,9 +408,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
                       {isPublic ? 'Public Saga' : 'Private Saga'}
                     </span>
                     <span className="block text-xs text-muted-foreground">
-                      {isPublic
-                        ? 'Everyone can view this path.'
-                        : 'Only you can view this path.'}
+                      {isPublic ? 'Everyone can view this path.' : 'Only you can view this path.'}
                     </span>
                   </span>
                 </span>
@@ -450,7 +449,9 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
               <ol className="space-y-3">
                 {nodes.map((node, index) => {
                   const isCheckpoint = node.kind === 'checkpoint';
-                  const tone = isCheckpoint ? 'bg-neo-yellow' : getNeoColorClass(node.color, 'teal');
+                  const tone = isCheckpoint
+                    ? 'bg-neo-yellow'
+                    : getNeoColorClass(node.color, 'teal');
                   const cardCount = node.cardCount ?? 0;
 
                   return (

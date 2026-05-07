@@ -39,7 +39,7 @@ export default function SagasNavbar() {
         </>
       }
       mobileActions={<CreateSagaLink compact />}
+      showDesktopSideNav
     />
   );
 }
-

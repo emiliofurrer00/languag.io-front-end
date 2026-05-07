@@ -33,6 +33,8 @@ function normalizeStudyDeck(deck: DeckDetails): StudyDeck {
       ? [
           {
             id: card.id,
+            deckVersionId: card.deckVersionId,
+            deckVersionNumber: card.deckVersionNumber,
             type: card.type ?? 'flashcard',
             frontText: card.frontText,
             backText: card.backText,
@@ -207,6 +209,7 @@ export default function StudyModeContainer({
       try {
         const result = await submitStudySession({
           deckId: deck.id,
+          deckVersionId: deck.deckVersionId,
           percentageCorrect,
           responses,
         });
@@ -236,7 +239,7 @@ export default function StudyModeContainer({
         });
       }
     },
-    [deck.id, sagaContext, shuffledCards]
+    [deck.id, deck.deckVersionId, sagaContext, shuffledCards]
   );
 
   const markCard = useCallback(

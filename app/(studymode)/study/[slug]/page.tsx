@@ -19,8 +19,12 @@ export default async function StudyMode({ params, searchParams }: StudyModePageP
   const studyDeck = studyPlan
     ? {
         ...defaultData,
+        deckVersionId: studyPlan[0]?.deckVersionId,
+        deckVersionNumber: studyPlan[0]?.deckVersionNumber,
         cards: studyPlan.map((card) => ({
           id: card.cardId,
+          deckVersionId: card.deckVersionId,
+          deckVersionNumber: card.deckVersionNumber,
           type: card.type ?? 'flashcard',
           frontText: card.frontText,
           backText: card.backText,

@@ -20,6 +20,7 @@ import { redirect } from 'next/navigation';
 import Navbar from '@/components/profile/Navbar';
 import { ProfileFriendshipActions } from '@/components/social/ProfileFriendshipActions';
 import { SocialAvatar } from '@/components/social/SocialAvatar';
+import { AppStatePanel, stateActionClassName } from '@/components/ui/AppStatePanel';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { Progress } from '@/components/ui/Progress';
@@ -153,6 +154,13 @@ export default async function Feed() {
   const league = feed.summary.league ?? 'Soon';
   const today = formatToday();
   const firstName = getFirstName(profile.name);
+  const isFirstUserFeed =
+    feed.continueStudying.length === 0 &&
+    feed.friendsActivity.length === 0 &&
+    feed.suggestedDecks.length === 0 &&
+    feed.suggestedPeople.length === 0 &&
+    feed.summary.cards === 0 &&
+    feed.summary.decks === 0;
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background">
@@ -292,6 +300,32 @@ export default async function Feed() {
             <p className="mt-1 text-[10px] font-semibold opacity-70">Cards studied</p>
           </NeoCard>
         </section>
+
+        {isFirstUserFeed ? (
+          <section className="mb-8">
+            <AppStatePanel
+              icon={Sparkles}
+              tone="success"
+              kicker="First loop"
+              title={`Welcome in, ${firstName}`}
+              description="Create or study one deck and this feed will start filling with progress, suggestions, and people to follow."
+            >
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/decks/editor/new"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-primary px-4 py-2 font-display text-sm font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  New deck
+                </Link>
+                <Link href="/decks" className={stateActionClassName}>
+                  Browse decks
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </AppStatePanel>
+          </section>
+        ) : null}
 
         {feed.continueStudying.length > 0 ? (
           <section className="mb-8">

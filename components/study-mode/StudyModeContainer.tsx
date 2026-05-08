@@ -6,13 +6,13 @@ import { submitStudySession } from '@/lib/decks/client';
 import { completeSagaLesson } from '@/lib/sagas/client';
 import { DeckDetails } from '@/lib/decks/types';
 import { cn } from '@/lib/utils';
-import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Layers, Plus, X } from 'lucide-react';
 import FlipCardView from './FlipCardView';
 import Header, { colorMap } from './Header';
 import MultipleChoiceCardView from './MultipleChoiceCardView';
 import StudyComplete from './StudyComplete';
+import { AppStatePanel, stateActionClassName } from '../ui/AppStatePanel';
 import { NeoButton } from '../ui/NeoButton';
-import { NeoCard } from '../ui/NeoCard';
 import { isMultipleChoiceCard, StudyCard, StudyDeck, StudySessionResponse } from './types';
 
 type SubmissionState = {
@@ -144,6 +144,7 @@ export default function StudyModeContainer({
   const reviewedCount = Object.keys(cardResults).length;
   const progressPercent = totalCards > 0 ? (reviewedCount / totalCards) * 100 : 0;
   const deckPreviewHref = deck.id ? `/decks/${deck.id}` : '/decks';
+  const deckEditorHref = deck.id ? `/decks/editor/${deck.id}` : '/decks/editor/new';
   const backHref = sagaContext ? `/sagas/${sagaContext.sagaId}` : deckPreviewHref;
   const backLabel = sagaContext ? 'Saga' : 'Preview';
 
@@ -339,19 +340,25 @@ export default function StudyModeContainer({
   if (!currentCard) {
     return (
       <div className="min-h-screen bg-background px-4 py-12">
-        <div className="mx-auto max-w-xl">
-          <NeoCard className="p-8 text-center">
-            <h1 className="font-display text-2xl font-bold">No cards to study yet</h1>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Add some cards to this deck before starting a study session.
-            </p>
-            <div className="mt-6 flex justify-center">
-              <Link href="/decks">
-                <NeoButton variant="outline">Back to Decks</NeoButton>
-              </Link>
-            </div>
-          </NeoCard>
-        </div>
+        <AppStatePanel
+          icon={Layers}
+          title="No cards to study yet"
+          description="Add a few cards to this deck before starting a study session."
+          className="mx-auto max-w-xl"
+        >
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href={deckEditorHref}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-primary px-4 py-2 font-display text-sm font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add cards
+            </Link>
+            <Link href="/decks" className={stateActionClassName}>
+              Back to decks
+            </Link>
+          </div>
+        </AppStatePanel>
       </div>
     );
   }

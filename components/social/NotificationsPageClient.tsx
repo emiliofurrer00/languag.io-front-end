@@ -2,9 +2,19 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Bell, BellRing, CheckCheck, LoaderCircle, MailOpen, UserRound } from 'lucide-react';
+import {
+  Bell,
+  BellRing,
+  CheckCheck,
+  LoaderCircle,
+  MailOpen,
+  RefreshCcw,
+  UserRound,
+  WifiOff,
+} from 'lucide-react';
 
 import { SocialAvatar } from '@/components/social/SocialAvatar';
+import { AppStatePanel, stateActionClassName } from '@/components/ui/AppStatePanel';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { toast } from '@/hooks/useToast';
@@ -55,15 +65,17 @@ function notificationActionLabel(notification: NotificationItem) {
 
 function EmptyNotificationsState() {
   return (
-    <NeoCard className="p-8 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-foreground bg-secondary shadow-[4px_4px_0_0_hsl(var(--foreground))]">
-        <Bell className="h-6 w-6" />
-      </div>
-      <h2 className="mt-4 font-display text-xl font-bold">No notifications yet</h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Friend requests and acceptance updates will show up here as soon as they happen.
-      </p>
-    </NeoCard>
+    <AppStatePanel
+      icon={Bell}
+      title="No notifications yet"
+      description="Friend requests and acceptance updates will show up here as soon as they happen."
+      className="p-6 sm:p-8"
+    >
+      <Link href="/friends" className={stateActionClassName}>
+        <MailOpen className="h-4 w-4" />
+        Open friends
+      </Link>
+    </AppStatePanel>
   );
 }
 
@@ -234,11 +246,15 @@ export function NotificationsPageClient() {
       </div>
 
       {notificationsQuery.isRefreshing ? (
-        <p className="mt-4 text-sm text-muted-foreground">Refreshing notifications…</p>
+        <p className="mt-4 text-sm text-muted-foreground">Refreshing notifications...</p>
       ) : null}
 
       {notificationsQuery.isLoading ? (
         <div className="mt-8 space-y-4">
+          <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+            Loading notifications...
+          </div>
           {[0, 1, 2].map((index) => (
             <NeoCard key={index} className="animate-pulse p-5">
               <div className="flex items-start gap-4">
@@ -255,18 +271,25 @@ export function NotificationsPageClient() {
       ) : null}
 
       {!notificationsQuery.isLoading && notificationsQuery.errorMessage ? (
-        <NeoCard className="mt-8 p-6">
-          <p className="font-semibold">We could not load your notifications.</p>
-          <p className="mt-2 text-sm text-muted-foreground">{notificationsQuery.errorMessage}</p>
-          <NeoButton
-            variant="secondary"
-            size="sm"
-            onClick={notificationsQuery.refetch}
-            className="mt-4"
+        <div className="mt-8">
+          <AppStatePanel
+            icon={WifiOff}
+            tone="error"
+            kicker="Connection"
+            title="We could not load your notifications"
+            description={notificationsQuery.errorMessage}
+            className="p-6 sm:p-8"
           >
-            Try Again
-          </NeoButton>
-        </NeoCard>
+            <button
+              type="button"
+              onClick={notificationsQuery.refetch}
+              className={stateActionClassName}
+            >
+              <RefreshCcw className="h-4 w-4" />
+              Try again
+            </button>
+          </AppStatePanel>
+        </div>
       ) : null}
 
       {!notificationsQuery.isLoading &&

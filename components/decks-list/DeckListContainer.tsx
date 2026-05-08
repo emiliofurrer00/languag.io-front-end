@@ -6,9 +6,22 @@ import Navbar from './Navbar';
 import StudyRecommendations from './StudyRecommendations';
 import { DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
 import { getDeckPage } from '@/lib/decks/client';
-import { NeoCard } from '@/components/ui/NeoCard';
-import { Compass, Layers, LoaderCircle, Plus, X } from 'lucide-react';
+import { buildLoginRedirectPath } from '@/lib/auth-flow';
+import { AppStatePanel, stateActionClassName } from '@/components/ui/AppStatePanel';
+import {
+  BookOpen,
+  Compass,
+  Layers,
+  LoaderCircle,
+  Plus,
+  RefreshCcw,
+  SearchX,
+  UserPlus,
+  WifiOff,
+  X,
+} from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 type DeckListFilters = {
@@ -24,6 +37,7 @@ type DeckListContainerProps = {
   filters?: DeckListFilters;
   currentUsername?: string;
   isAuthenticated?: boolean;
+  serviceError?: string | null;
 };
 
 const secondaryActionClassName =
@@ -55,7 +69,9 @@ export default function DeskListContainer({
   filters,
   currentUsername,
   isAuthenticated = false,
+  serviceError,
 }: DeckListContainerProps) {
+  const router = useRouter();
   const searchQuery = filters?.searchQuery ?? '';
   const ownerUsername = filters?.ownerUsername?.trim();
   const pageSize = filters?.pageSize;
@@ -77,19 +93,25 @@ export default function DeskListContainer({
       ? 'Preview a deck, study what is due, or create a fresh set from scratch.'
       : 'Preview community decks and try a study run before creating an account.';
   const emptyTitle = isViewingOwnerDecks
-    ? 'No public decks found'
+    ? ownerUsername
+      ? `No public decks from @${ownerUsername}`
+      : 'No public decks found'
     : hasSearchQuery
       ? 'No decks match your search'
       : isAuthenticated
-        ? 'Create your first deck'
-        : 'No public decks yet';
+        ? 'Start your deck shelf'
+        : 'The public shelf is still empty';
   const emptyDescription = isViewingOwnerDecks
-    ? 'Try a different search, or clear the creator filter to browse your decks.'
+    ? hasSearchQuery
+      ? 'Try a different search, or clear the creator filter to browse the full library.'
+      : 'This creator has not published a public deck yet.'
     : hasSearchQuery
       ? 'Try a different search, or clear the filter to see your full list.'
       : isAuthenticated
-        ? 'Start with a few cards. You can keep it private while it is still rough.'
-        : 'Check back soon, or sign in to build the first public deck.';
+        ? 'Create one small deck to unlock study recommendations and a cleaner daily practice loop.'
+        : 'Sign in to build the first public deck and give the library somewhere to begin.';
+  const EmptyIcon =
+    isViewingOwnerDecks || hasSearchQuery ? SearchX : isAuthenticated ? BookOpen : Layers;
   const deckCountLabel = cursor ? `${visibleDecks.length}+` : visibleDecks.length;
 
   useEffect(() => {
@@ -148,11 +170,34 @@ export default function DeskListContainer({
 
         <DeckFilters searchQuery={searchQuery} ownerUsername={ownerUsername} />
 
-        {!isViewingOwnerDecks && !hasSearchQuery ? (
+        {!serviceError && !isViewingOwnerDecks && !hasSearchQuery ? (
           <StudyRecommendations recommendations={studyRecommendations} />
         ) : null}
 
-        {visibleDecks.length > 0 ? (
+        {serviceError ? (
+          <AppStatePanel
+            icon={WifiOff}
+            tone="error"
+            kicker="Backend offline"
+            title="Decks could not check in"
+            description={serviceError}
+            className="mx-auto max-w-2xl"
+          >
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => router.refresh()}
+                className={stateActionClassName}
+              >
+                <RefreshCcw className="h-4 w-4" />
+                Try again
+              </button>
+              <Link href="/" className={stateActionClassName}>
+                Back home
+              </Link>
+            </div>
+          </AppStatePanel>
+        ) : visibleDecks.length > 0 ? (
           <>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {visibleDecks.map((deck) => (
@@ -183,30 +228,63 @@ export default function DeskListContainer({
             ) : null}
           </>
         ) : (
-          <NeoCard className="mx-auto max-w-xl p-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border-[2px] border-foreground bg-primary shadow-[4px_4px_0_0_hsl(var(--foreground))]">
-              <Plus className="h-6 w-6" />
-            </div>
-            <h2 className="mt-5 font-display text-2xl font-bold">{emptyTitle}</h2>
-            <p className="mt-2 text-sm text-muted-foreground">{emptyDescription}</p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <AppStatePanel
+            icon={EmptyIcon}
+            kicker={
+              isAuthenticated && !hasSearchQuery && !isViewingOwnerDecks
+                ? 'First deck'
+                : 'No results'
+            }
+            title={emptyTitle}
+            description={emptyDescription}
+            className="mx-auto max-w-2xl"
+          >
+            {isAuthenticated && !hasSearchQuery && !isViewingOwnerDecks ? (
+              <ul className="mx-auto mb-6 grid max-w-md gap-2 text-left text-sm font-medium">
+                <li className="flex gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-neo-yellow font-display text-xs font-bold">
+                    1
+                  </span>
+                  Make a focused set with five to ten cards.
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-neo-teal font-display text-xs font-bold">
+                    2
+                  </span>
+                  Study it once so recommendations have something to work with.
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-neo-magenta font-display text-xs font-bold">
+                    3
+                  </span>
+                  Publish it when it is ready for other learners.
+                </li>
+              </ul>
+            ) : null}
+            <div className="flex flex-wrap justify-center gap-3">
               {hasSearchQuery || isViewingOwnerDecks ? (
-                <Link href="/decks" className={secondaryActionClassName}>
+                <Link href="/decks" className={stateActionClassName}>
                   <X className="h-4 w-4" />
                   Clear filters
                 </Link>
               ) : null}
-              {!isViewingOwnerDecks ? (
+              {!isViewingOwnerDecks && isAuthenticated ? (
                 <Link
                   href="/decks/editor/new"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-primary px-4 py-2 font-display font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-primary px-4 py-2 font-display text-sm font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <Plus className="h-4 w-4" />
                   New deck
                 </Link>
               ) : null}
+              {!isAuthenticated && !isViewingOwnerDecks ? (
+                <Link href={buildLoginRedirectPath('/decks')} className={stateActionClassName}>
+                  <UserPlus className="h-4 w-4" />
+                  Sign in to create
+                </Link>
+              ) : null}
             </div>
-          </NeoCard>
+          </AppStatePanel>
         )}
       </section>
     </>

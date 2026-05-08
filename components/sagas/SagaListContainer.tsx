@@ -1,6 +1,22 @@
+'use client';
+
 import Link from 'next/link';
-import { BookOpen, ChevronRight, Compass, Flame, Layers, Plus, Trophy, Users } from 'lucide-react';
+import {
+  BookOpen,
+  ChevronRight,
+  Compass,
+  Flame,
+  Layers,
+  Plus,
+  RefreshCcw,
+  Route,
+  Trophy,
+  Users,
+  WifiOff,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import SagasNavbar from './SagasNavbar';
+import { AppStatePanel, stateActionClassName } from '@/components/ui/AppStatePanel';
 import { NeoCard } from '@/components/ui/NeoCard';
 import {
   getSagaDisplayMeta,
@@ -12,6 +28,7 @@ import { Saga } from '@/lib/sagas/types';
 
 type SagaListContainerProps = {
   sagas: Saga[];
+  serviceError?: string | null;
 };
 
 const primaryActionClassName =
@@ -25,7 +42,9 @@ function formatLearnerCount(seed: string) {
   return `${((checksum % 18) + 2).toFixed(1)}k`;
 }
 
-export default function SagaListContainer({ sagas }: SagaListContainerProps) {
+export default function SagaListContainer({ sagas, serviceError }: SagaListContainerProps) {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-background pt-28">
       <SagasNavbar />
@@ -61,7 +80,31 @@ export default function SagaListContainer({ sagas }: SagaListContainerProps) {
           </div>
         </section>
 
-        {sagas.length > 0 ? (
+        {serviceError ? (
+          <AppStatePanel
+            icon={WifiOff}
+            tone="error"
+            kicker="Backend offline"
+            title="Sagas could not load"
+            description={serviceError}
+            className="mx-auto max-w-2xl"
+          >
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => router.refresh()}
+                className={stateActionClassName}
+              >
+                <RefreshCcw className="h-4 w-4" />
+                Try again
+              </button>
+              <Link href="/decks" className={stateActionClassName}>
+                <BookOpen className="h-4 w-4" />
+                Browse decks
+              </Link>
+            </div>
+          </AppStatePanel>
+        ) : sagas.length > 0 ? (
           <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {sagas.map((saga) => {
               const meta = getSagaDisplayMeta(saga);
@@ -117,24 +160,47 @@ export default function SagaListContainer({ sagas }: SagaListContainerProps) {
             })}
           </section>
         ) : (
-          <NeoCard className="mx-auto max-w-xl p-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border-[2px] border-foreground bg-primary shadow-[4px_4px_0_0_hsl(var(--foreground))]">
-              <Layers className="h-6 w-6" />
-            </div>
-            <h2 className="mt-5 font-display text-2xl font-bold">No sagas yet</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Build a path from your decks and split it into chapters with checkpoints.
-            </p>
-            <div className="mt-6 flex justify-center">
+          <AppStatePanel
+            icon={Route}
+            kicker="First path"
+            title="No sagas yet"
+            description="Turn a handful of related decks into a chaptered path once you are ready for more structure."
+            className="mx-auto max-w-2xl"
+          >
+            <ul className="mx-auto mb-6 grid max-w-md gap-2 text-left text-sm font-medium">
+              <li className="flex gap-3">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-neo-yellow font-display text-xs font-bold">
+                  1
+                </span>
+                Pick two or more decks that belong together.
+              </li>
+              <li className="flex gap-3">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-neo-teal font-display text-xs font-bold">
+                  2
+                </span>
+                Order them from warm-up to challenge.
+              </li>
+              <li className="flex gap-3">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-neo-magenta font-display text-xs font-bold">
+                  3
+                </span>
+                Use checkpoints to make the next lesson obvious.
+              </li>
+            </ul>
+            <div className="flex flex-wrap justify-center gap-3">
               <Link
                 href="/sagas/create"
-                className="inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-primary px-4 py-2 font-display font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-primary px-4 py-2 font-display text-sm font-semibold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-primary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <Plus className="h-4 w-4" />
                 Create saga
               </Link>
+              <Link href="/decks" className={stateActionClassName}>
+                <BookOpen className="h-4 w-4" />
+                Browse decks
+              </Link>
             </div>
-          </NeoCard>
+          </AppStatePanel>
         )}
       </main>
     </div>

@@ -8,14 +8,17 @@ import {
   Check,
   LoaderCircle,
   MailOpen,
+  RefreshCcw,
   Trash2,
   UserCheck,
   UserPlus,
   UserRoundMinus,
+  WifiOff,
   X,
 } from 'lucide-react';
 
 import { SocialAvatar } from '@/components/social/SocialAvatar';
+import { AppStatePanel, stateActionClassName } from '@/components/ui/AppStatePanel';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { toast } from '@/hooks/useToast';
@@ -57,6 +60,10 @@ const linkButtonClassName =
 function LoadingState() {
   return (
     <div className="space-y-4">
+      <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+        <LoaderCircle className="h-4 w-4 animate-spin" />
+        Loading your social circle...
+      </div>
       {[0, 1, 2].map((index) => (
         <NeoCard key={index} className="animate-pulse p-5">
           <div className="flex items-center gap-4">
@@ -76,31 +83,35 @@ function EmptyState({
   icon: Icon,
   title,
   description,
+  children,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
+  children?: React.ReactNode;
 }) {
   return (
-    <NeoCard className="p-8 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-foreground bg-secondary shadow-[4px_4px_0_0_hsl(var(--foreground))]">
-        <Icon className="h-6 w-6" />
-      </div>
-      <h2 className="mt-4 font-display text-xl font-bold">{title}</h2>
-      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-    </NeoCard>
+    <AppStatePanel icon={Icon} title={title} description={description} className="p-6 sm:p-8">
+      {children}
+    </AppStatePanel>
   );
 }
 
 function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <NeoCard className="p-6">
-      <p className="font-semibold">We hit a snag loading this list.</p>
-      <p className="mt-2 text-sm text-muted-foreground">{message}</p>
-      <NeoButton variant="secondary" size="sm" onClick={onRetry} className="mt-4">
-        Try Again
-      </NeoButton>
-    </NeoCard>
+    <AppStatePanel
+      icon={WifiOff}
+      tone="error"
+      kicker="Connection"
+      title="We hit a snag loading this list"
+      description={message}
+      className="p-6 sm:p-8"
+    >
+      <button type="button" onClick={onRetry} className={stateActionClassName}>
+        <RefreshCcw className="h-4 w-4" />
+        Try again
+      </button>
+    </AppStatePanel>
   );
 }
 
@@ -417,7 +428,7 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
       </div>
 
       {activeQuery.isRefreshing ? (
-        <p className="mt-4 text-sm text-muted-foreground">Refreshing results…</p>
+        <p className="mt-4 text-sm text-muted-foreground">Refreshing results...</p>
       ) : null}
 
       <div className="mt-8 space-y-4">
@@ -434,8 +445,13 @@ export function FriendsPageClient({ initialTab = 'friends' }: FriendsPageClientP
           <EmptyState
             icon={UserCheck}
             title="No friends yet"
-            description="Once you connect with someone, they will show up here with a quick link back to their profile."
-          />
+            description="Start from public profiles or feed suggestions. New connections will appear here with quick actions."
+          >
+            <Link href="/feed" className={stateActionClassName}>
+              <UserPlus className="h-4 w-4" />
+              Find people
+            </Link>
+          </EmptyState>
         ) : null}
 
         {!activeQuery.isLoading &&

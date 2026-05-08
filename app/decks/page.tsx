@@ -1,7 +1,10 @@
 import { buildOnboardingPath } from '@/lib/auth-flow';
 import DeckListContainer from '@/components/decks-list/DeckListContainer';
 import { getDeckPage, getStudyRecommendations } from '@/lib/decks/server';
+import type { CursorPage, DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
+import { getApiErrorDisplayMessage } from '@/lib/api';
 import { getMyProfileIfAuthenticated } from '@/lib/profile/server';
+import type { ProfileData } from '@/lib/profile/types';
 import { redirect } from 'next/navigation';
 
 type DecksPageProps = {
@@ -35,21 +38,37 @@ export default async function DecksPage({ searchParams }: DecksPageProps) {
   const ownerUsername = firstParamValue(params?.username, params?.owner);
   const cursor = firstParamValue(params?.cursor);
   const pageSize = parsePageSize(params?.pageSize);
-  const profile = await getMyProfileIfAuthenticated();
+  let profile: ProfileData | null = null;
+  let serviceError: string | null = null;
+
+  try {
+    profile = await getMyProfileIfAuthenticated();
+  } catch (error) {
+    serviceError = getApiErrorDisplayMessage(error);
+  }
 
   if (profile && !profile.hasBeenOnboarded) {
     redirect(buildOnboardingPath('/decks'));
   }
 
-  const [deckPage, studyRecommendations] = await Promise.all([
-    getDeckPage({
-      searchQuery,
-      username: ownerUsername,
-      cursor,
-      pageSize,
-    }),
-    ownerUsername ? Promise.resolve([]) : getStudyRecommendations(),
-  ]);
+  let deckPage: CursorPage<DeckSummary> = { items: [], nextCursor: null };
+  let studyRecommendations: DeckStudyRecommendation[] = [];
+
+  if (!serviceError) {
+    try {
+      [deckPage, studyRecommendations] = await Promise.all([
+        getDeckPage({
+          searchQuery,
+          username: ownerUsername,
+          cursor,
+          pageSize,
+        }),
+        ownerUsername ? Promise.resolve([]) : getStudyRecommendations(),
+      ]);
+    } catch (error) {
+      serviceError = getApiErrorDisplayMessage(error);
+    }
+  }
 
   return (
     <DeckListContainer
@@ -58,6 +77,7 @@ export default async function DecksPage({ searchParams }: DecksPageProps) {
       studyRecommendations={studyRecommendations}
       currentUsername={profile?.username}
       isAuthenticated={Boolean(profile)}
+      serviceError={serviceError}
       filters={{ searchQuery, ownerUsername, pageSize }}
     />
   );

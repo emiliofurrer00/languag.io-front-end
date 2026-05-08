@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { ApiError } from '@/lib/api';
+import { getApiErrorDisplayMessage } from '@/lib/api';
 import type { CursorPage } from '@/lib/social/types';
 import { useQueryVersion } from '@/providers/QueryInvalidationProvider';
 
@@ -22,15 +22,7 @@ function isNil<T>(value: T | null | undefined): value is null | undefined {
 }
 
 export function getApiErrorMessage(error: unknown, fallbackMessage: string) {
-  if (error instanceof ApiError) {
-    return error.message.replace(/^API request failed for [^:]+:\s*/, '') || fallbackMessage;
-  }
-
-  if (error instanceof Error && error.message.trim()) {
-    return error.message;
-  }
-
-  return fallbackMessage;
+  return getApiErrorDisplayMessage(error, fallbackMessage);
 }
 
 export function useInvalidatedValueQuery<T>(

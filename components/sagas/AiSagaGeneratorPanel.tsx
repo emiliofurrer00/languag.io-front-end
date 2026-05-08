@@ -7,6 +7,7 @@ import { createAiSagaGenerationJob, getAiSagaGenerationJob } from '@/lib/sagas/c
 import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
 import { useModalFocus } from '@/hooks/useModalFocus';
+import { getApiErrorDisplayMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
@@ -111,7 +112,7 @@ export default function AiSagaGeneratorPanel() {
       pollTimeoutRef.current = setTimeout(() => void pollJob(jobId), 2500);
     } catch (pollError) {
       setPhase('failed');
-      setError(pollError instanceof Error ? pollError.message : 'Unable to check job status.');
+      setError(getApiErrorDisplayMessage(pollError, 'Unable to check job status.'));
       setIsOpen(true);
     }
   }
@@ -143,9 +144,7 @@ export default function AiSagaGeneratorPanel() {
       await pollJob(result.jobId);
     } catch (createError) {
       setPhase('failed');
-      setError(
-        createError instanceof Error ? createError.message : 'Unable to create a generation job.'
-      );
+      setError(getApiErrorDisplayMessage(createError, 'Unable to create a generation job.'));
     }
   }
 

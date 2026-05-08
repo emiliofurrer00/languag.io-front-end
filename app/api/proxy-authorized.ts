@@ -6,6 +6,7 @@ import {
   readAccessTokenDiagnostics,
 } from '@/lib/kinde-server';
 import { NextResponse } from 'next/server';
+import { buildBackendUnavailableResponse } from './backend-unavailable';
 import { rejectCrossOriginMutation } from './request-guards';
 
 type ProxyMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -69,15 +70,21 @@ export async function proxyAuthorizedApiRequest(
   const targetPath = forwardQuery ? `${path}${requestUrl.search}` : path;
   const body = includeBody ? await request.text() : undefined;
 
-  const response = await fetch(buildApiUrl(targetPath), {
-    method,
-    headers: {
-      ...(body ? { 'Content-Type': 'application/json' } : {}),
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: body || undefined,
-    cache: 'no-store',
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(buildApiUrl(targetPath), {
+      method,
+      headers: {
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: body || undefined,
+      cache: 'no-store',
+    });
+  } catch (error) {
+    response = buildBackendUnavailableResponse(error);
+  }
 
   if (response.status === 401) {
     return buildRejectedTokenResponse(accessToken);

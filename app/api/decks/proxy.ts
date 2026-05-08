@@ -7,6 +7,7 @@ import {
   readAccessTokenDiagnostics,
 } from '@/lib/kinde-server';
 import { NextResponse } from 'next/server';
+import { buildBackendUnavailableResponse } from '../backend-unavailable';
 import { rejectCrossOriginMutation } from '../request-guards';
 
 async function proxyBackendResponse(response: Response) {
@@ -48,11 +49,15 @@ function appendQueryString(path: string, searchParams: URLSearchParams) {
 }
 
 async function fetchDeckList(path: string, accessToken?: string | null) {
-  return fetch(buildApiUrl(path), {
-    method: 'GET',
-    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
-    cache: 'no-store',
-  });
+  try {
+    return await fetch(buildApiUrl(path), {
+      method: 'GET',
+      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+      cache: 'no-store',
+    });
+  } catch (error) {
+    return buildBackendUnavailableResponse(error);
+  }
 }
 
 export async function proxyDeckListRead(request: Request) {
@@ -105,15 +110,21 @@ export async function proxyAuthorizedDeckWrite(
   }
 
   const body = await request.text();
-  const response = await fetch(buildApiUrl(path), {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: body || undefined,
-    cache: 'no-store',
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(buildApiUrl(path), {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: body || undefined,
+      cache: 'no-store',
+    });
+  } catch (error) {
+    response = buildBackendUnavailableResponse(error);
+  }
 
   if (response.status === 401) {
     return buildRejectedTokenResponse(accessToken);

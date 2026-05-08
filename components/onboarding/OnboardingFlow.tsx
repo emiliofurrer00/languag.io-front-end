@@ -24,6 +24,7 @@ import { NeoButton } from '@/components/ui/NeoButton';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
+import { getApiErrorDisplayMessage } from '@/lib/api';
 import type { ProfileAccentColor } from '@/lib/profile/types';
 import { cn } from '@/lib/utils';
 
@@ -138,20 +139,16 @@ export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlow
             cache: 'no-store',
           }
         );
-        const payload = (await response.json().catch(() => null)) as
-          | {
-              available?: boolean;
-              message?: string;
-              detail?: string;
-              title?: string;
-              errors?: Record<string, string[]>;
-            }
-          | null;
+        const payload = (await response.json().catch(() => null)) as {
+          available?: boolean;
+          message?: string;
+          detail?: string;
+          title?: string;
+          errors?: Record<string, string[]>;
+        } | null;
 
         if (!response.ok) {
-          throw new Error(
-            readApiErrorMessage(payload, 'Unable to check username availability.')
-          );
+          throw new Error(readApiErrorMessage(payload, 'Unable to check username availability.'));
         }
 
         if (cancelled) {
@@ -173,7 +170,7 @@ export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlow
 
         setUsernameStatus('error');
         setUsernameMessage(
-          error instanceof Error ? error.message : 'Unable to check username availability.'
+          getApiErrorDisplayMessage(error, 'Unable to check username availability.')
         );
       }
     }, 350);
@@ -242,7 +239,7 @@ export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlow
       router.refresh();
     } catch (error) {
       setSubmissionError(
-        error instanceof Error ? error.message : 'Unable to save your onboarding details.'
+        getApiErrorDisplayMessage(error, 'Unable to save your onboarding details.')
       );
     } finally {
       setIsSaving(false);

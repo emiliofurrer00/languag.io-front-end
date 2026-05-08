@@ -3,13 +3,11 @@
 import { FormEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ListChecks, Loader2, Sparkles, Volume2, X } from 'lucide-react';
-import {
-  createAiDeckGenerationJob,
-  getAiDeckGenerationJob,
-} from '@/lib/decks/client';
+import { createAiDeckGenerationJob, getAiDeckGenerationJob } from '@/lib/decks/client';
 import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
 import { useModalFocus } from '@/hooks/useModalFocus';
+import { getApiErrorDisplayMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
@@ -109,7 +107,7 @@ export default function AiDeckGeneratorPanel() {
       pollTimeoutRef.current = setTimeout(() => void pollJob(jobId), 2000);
     } catch (pollError) {
       setPhase('failed');
-      setError(pollError instanceof Error ? pollError.message : 'Unable to check job status.');
+      setError(getApiErrorDisplayMessage(pollError, 'Unable to check job status.'));
       setIsOpen(true);
     }
   }
@@ -140,11 +138,7 @@ export default function AiDeckGeneratorPanel() {
       await pollJob(result.jobId);
     } catch (createError) {
       setPhase('failed');
-      setError(
-        createError instanceof Error
-          ? createError.message
-          : 'Unable to create a generation job.'
-      );
+      setError(getApiErrorDisplayMessage(createError, 'Unable to create a generation job.'));
     }
   }
 
@@ -313,9 +307,7 @@ export default function AiDeckGeneratorPanel() {
                         max={cardCount}
                         value={multiChoiceCount}
                         onChange={(event) =>
-                          setMultiChoiceCount(
-                            clampNumber(Number(event.target.value), 0, cardCount)
-                          )
+                          setMultiChoiceCount(clampNumber(Number(event.target.value), 0, cardCount))
                         }
                         className="h-8 w-14 rounded-md border-[2px] border-foreground bg-background px-2 text-center text-sm normal-case outline-none focus:ring-2 focus:ring-ring"
                         disabled={phase === 'pending'}

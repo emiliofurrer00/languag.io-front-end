@@ -1,6 +1,7 @@
 import { buildApiUrl } from '@/lib/api';
 import { getMissingAudienceMessage, getRequiredApiAccessToken } from '@/lib/kinde-server';
 import { NextRequest, NextResponse } from 'next/server';
+import { buildBackendUnavailableResponse } from '../../backend-unavailable';
 
 function normalizeAvailabilityResponse(payload: unknown) {
   if (typeof payload === 'boolean') {
@@ -94,16 +95,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: getMissingAudienceMessage() }, { status: 401 });
   }
 
-  const response = await fetch(
-    buildApiUrl(`/Users/username-availability?username=${encodeURIComponent(username)}`),
-    {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      cache: 'no-store',
-    }
-  );
+  let response: Response;
+
+  try {
+    response = await fetch(
+      buildApiUrl(`/Users/username-availability?username=${encodeURIComponent(username)}`),
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        cache: 'no-store',
+      }
+    );
+  } catch (error) {
+    response = buildBackendUnavailableResponse(error);
+  }
 
   if (!response.ok) {
     const message = readAvailabilityErrorMessage(await response.text());

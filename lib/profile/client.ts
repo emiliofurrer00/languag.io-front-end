@@ -1,4 +1,4 @@
-import { apiFetch } from '@/lib/api';
+import { getApiErrorDisplayMessage, apiFetch } from '@/lib/api';
 import type { ProfileAccentColor } from '@/lib/profile/types';
 import type { ProfileData } from '@/lib/profile/types';
 
@@ -84,13 +84,19 @@ function readApiErrorMessage(payload: ApiErrorPayload, fallback: string) {
 }
 
 export async function updateMyProfile(profile: UpdateMyProfileInput) {
-  const response = await fetch('/api/users/me', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(profile),
-  });
+  let response: Response;
+
+  try {
+    response = await fetch('/api/users/me', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(profile),
+    });
+  } catch (error) {
+    throw new Error(getApiErrorDisplayMessage(error, 'Unable to update your profile.'));
+  }
   const payload = (await response.json().catch(() => null)) as ApiErrorPayload | unknown;
 
   if (!response.ok) {

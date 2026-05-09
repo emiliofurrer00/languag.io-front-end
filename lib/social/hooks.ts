@@ -4,12 +4,13 @@ import * as React from 'react';
 
 import { getApiErrorDisplayMessage } from '@/lib/api';
 import type { CursorPage } from '@/lib/social/types';
-import { useQueryVersion } from '@/providers/QueryInvalidationProvider';
+import { useQueryValueCache, useQueryVersion } from '@/providers/QueryInvalidationProvider';
 
 type ValueQueryOptions<T> = {
   enabled?: boolean;
   initialData?: T;
   pollMs?: number;
+  refetchOnMount?: boolean;
 };
 
 type CursorQueryOptions = {
@@ -30,24 +31,32 @@ export function useInvalidatedValueQuery<T>(
   queryFn: () => Promise<T>,
   options?: ValueQueryOptions<T>
 ) {
-  const { enabled = true, initialData, pollMs } = options ?? {};
+  const { enabled = true, initialData, pollMs, refetchOnMount = true } = options ?? {};
   const queryVersion = useQueryVersion(queryKey);
-  const [data, setData] = React.useState<T | null>(initialData ?? null);
+  const { getCachedQueryData, setCachedQueryData } = useQueryValueCache();
+  const cachedInitialData = enabled ? getCachedQueryData<T>(queryKey) : undefined;
+  const seedData = initialData ?? cachedInitialData ?? null;
+  const [data, setData] = React.useState<T | null>(seedData);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [isLoading, setIsLoading] = React.useState(enabled && isNil(initialData));
+  const [isLoading, setIsLoading] = React.useState(enabled && isNil(seedData));
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [reloadToken, setReloadToken] = React.useState(0);
-  const hasLoadedRef = React.useRef(!isNil(initialData));
+  const hasLoadedRef = React.useRef(!isNil(seedData));
+  const loadedVersionRef = React.useRef(!isNil(seedData) ? queryVersion : -1);
   const requestIdRef = React.useRef(0);
 
   React.useEffect(() => {
-    setData(initialData ?? null);
+    const cachedData = enabled ? getCachedQueryData<T>(queryKey) : undefined;
+    const nextData = initialData ?? cachedData ?? null;
+
+    setData(nextData);
     setErrorMessage(null);
-    setIsLoading(enabled && isNil(initialData));
+    setIsLoading(enabled && isNil(nextData));
     setIsRefreshing(false);
-    hasLoadedRef.current = !isNil(initialData);
+    hasLoadedRef.current = !isNil(nextData);
+    loadedVersionRef.current = !isNil(nextData) ? 0 : -1;
     requestIdRef.current += 1;
-  }, [enabled, initialData, queryKey]);
+  }, [enabled, getCachedQueryData, initialData, queryKey]);
 
   const loadQuery = React.useEffectEvent(async () => {
     const requestId = ++requestIdRef.current;
@@ -67,6 +76,8 @@ export function useInvalidatedValueQuery<T>(
       }
 
       hasLoadedRef.current = true;
+      loadedVersionRef.current = queryVersion;
+      setCachedQueryData(queryKey, nextData);
       setData(nextData);
     } catch (error) {
       if (requestId !== requestIdRef.current) {
@@ -89,8 +100,17 @@ export function useInvalidatedValueQuery<T>(
       return;
     }
 
+    if (
+      !refetchOnMount &&
+      reloadToken === 0 &&
+      hasLoadedRef.current &&
+      loadedVersionRef.current === queryVersion
+    ) {
+      return;
+    }
+
     void loadQuery();
-  }, [enabled, queryVersion, reloadToken]);
+  }, [enabled, queryVersion, refetchOnMount, reloadToken]);
 
   React.useEffect(() => {
     if (!enabled || !pollMs) {

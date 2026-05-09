@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { AuthProvider } from './AuthProvider';
+import { AppChrome } from '@/components/layout/AppChrome';
 import './globals.css';
 
 const geistSans = Geist({
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="">
         <AuthProvider>
-          <div className="h-full bg-neutral-50">{children}</div>
+          <AppChrome>
+            <div className="h-full bg-neutral-50">{children}</div>
+          </AppChrome>
         </AuthProvider>
       </body>
     </html>

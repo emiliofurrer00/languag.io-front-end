@@ -104,6 +104,7 @@ export function DesktopSideNav() {
     getCurrentProfileSummary,
     {
       enabled: !isLoading && Boolean(isAuthenticated),
+      refetchOnMount: false,
     }
   );
   const displayName = getDisplayName(user, currentProfile);

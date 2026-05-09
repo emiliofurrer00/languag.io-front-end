@@ -5,14 +5,17 @@ import * as React from 'react';
 type QueryInvalidationContextValue = {
   invalidateQueries: (queryKeys: string[]) => void;
   getVersion: (queryKey: string) => number;
+  getCachedQueryData: <T>(queryKey: string) => T | undefined;
+  setCachedQueryData: <T>(queryKey: string, data: T | null | undefined) => void;
 };
 
 const QueryInvalidationContext = React.createContext<QueryInvalidationContextValue | null>(null);
 
 export function QueryInvalidationProvider({ children }: { children: React.ReactNode }) {
   const [versions, setVersions] = React.useState<Record<string, number>>({});
+  const cacheRef = React.useRef<Record<string, unknown>>({});
 
-  function invalidateQueries(queryKeys: string[]) {
+  const invalidateQueries = React.useCallback((queryKeys: string[]) => {
     setVersions((currentVersions) => {
       const nextVersions = { ...currentVersions };
 
@@ -22,14 +25,40 @@ export function QueryInvalidationProvider({ children }: { children: React.ReactN
 
       return nextVersions;
     });
-  }
+  }, []);
 
-  function getVersion(queryKey: string) {
+  const getVersion = React.useCallback((queryKey: string) => {
     return versions[queryKey] ?? 0;
-  }
+  }, [versions]);
+
+  const getCachedQueryData = React.useCallback(<T,>(queryKey: string) => {
+    return cacheRef.current[queryKey] as T | undefined;
+  }, []);
+
+  const setCachedQueryData = React.useCallback(
+    <T,>(queryKey: string, data: T | null | undefined) => {
+      if (data === null || data === undefined) {
+        delete cacheRef.current[queryKey];
+        return;
+      }
+
+      cacheRef.current[queryKey] = data;
+    },
+    []
+  );
+
+  const value = React.useMemo(
+    () => ({
+      invalidateQueries,
+      getVersion,
+      getCachedQueryData,
+      setCachedQueryData,
+    }),
+    [getCachedQueryData, getVersion, invalidateQueries, setCachedQueryData]
+  );
 
   return (
-    <QueryInvalidationContext.Provider value={{ invalidateQueries, getVersion }}>
+    <QueryInvalidationContext.Provider value={value}>
       {children}
     </QueryInvalidationContext.Provider>
   );
@@ -53,4 +82,17 @@ export function useQueryVersion(queryKey: string) {
   }
 
   return context.getVersion(queryKey);
+}
+
+export function useQueryValueCache() {
+  const context = React.useContext(QueryInvalidationContext);
+
+  if (!context) {
+    throw new Error('useQueryValueCache must be used within QueryInvalidationProvider.');
+  }
+
+  return {
+    getCachedQueryData: context.getCachedQueryData,
+    setCachedQueryData: context.setCachedQueryData,
+  };
 }

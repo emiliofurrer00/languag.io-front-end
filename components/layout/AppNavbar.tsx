@@ -10,7 +10,6 @@ import { BookOpen, Compass, Group, LogOut, Sparkles, UserPlus, UserRound } from 
 import { buildAuthContinuePath } from '@/lib/auth-flow';
 import { cn } from '@/lib/utils';
 import { NeoButton } from '@/components/ui/NeoButton';
-import { DesktopSideNav } from '@/components/layout/DesktopSideNav';
 import { MobileNavigationMenu } from '@/components/layout/MobileNavigationMenu';
 
 type DesktopNavLink = {
@@ -221,7 +220,6 @@ export default function AppNavbar({
 }: AppNavbarProps) {
   return (
     <>
-      {showDesktopSideNav ? <DesktopSideNav /> : null}
       <nav
         className={cn(
           'fixed left-0 right-0 top-0 z-50 border-b-3 bg-background/80 backdrop-blur-sm',

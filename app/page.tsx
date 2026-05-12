@@ -8,6 +8,13 @@ import SagasSection from '@/components/landing/Sagas';
 import QuietCTASection from '@/components/landing/QuietCTA';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Flashcards and guided study paths',
+  description:
+    'Build flashcards, browse public decks, and follow guided sagas that make language learning and memorization easier to keep up with.',
+});
 
 export default async function Home() {
   const { isAuthenticated } = getKindeServerSession();

@@ -5,6 +5,9 @@ import { NotificationsPageClient } from '@/components/social/NotificationsPageCl
 import Navbar from '@/components/profile/Navbar';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
+
+export const metadata = createNoIndexMetadata('Notifications');
 
 export default async function NotificationsPage() {
   const { isAuthenticated } = getKindeServerSession();

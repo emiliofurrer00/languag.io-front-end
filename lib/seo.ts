@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 export const siteConfig = {
   name: 'Languag.io',
   title: 'Languag.io - Flashcards and guided study paths',
@@ -52,4 +54,67 @@ export function cleanMetaDescription(value?: string | null, fallback = siteConfi
   }
 
   return normalizedValue.length > 155 ? `${normalizedValue.slice(0, 152).trimEnd()}...` : normalizedValue;
+}
+
+type PageMetadataInput = {
+  title: string;
+  description?: string | null;
+  path?: string;
+  type?: 'website' | 'article' | 'profile';
+  noIndex?: boolean;
+};
+
+export function createPageMetadata({
+  title,
+  description,
+  path = '/',
+  type = 'website',
+  noIndex = false,
+}: PageMetadataInput): Metadata {
+  const metaDescription = cleanMetaDescription(description);
+  const url = buildAbsoluteUrl(path);
+
+  return {
+    title,
+    description: metaDescription,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description: metaDescription,
+      url,
+      siteName: siteConfig.name,
+      type,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description: metaDescription,
+    },
+    robots: noIndex
+      ? {
+          index: false,
+          follow: false,
+        }
+      : {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            'max-snippet': -1,
+            'max-image-preview': 'large',
+            'max-video-preview': -1,
+          },
+        },
+  };
+}
+
+export function createNoIndexMetadata(title: string): Metadata {
+  return createPageMetadata({
+    title,
+    description: siteConfig.description,
+    noIndex: true,
+  });
 }

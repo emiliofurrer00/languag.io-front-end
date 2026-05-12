@@ -5,6 +5,9 @@ import Navbar from '@/components/profile/Navbar';
 import { ProfileEditForm } from '@/components/profile/ProfileEditForm';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
+
+export const metadata = createNoIndexMetadata('Edit profile');
 
 export default async function EditMyProfilePage() {
   const { isAuthenticated } = getKindeServerSession();

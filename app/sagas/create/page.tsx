@@ -2,8 +2,11 @@ import SagaEditorContainer from '@/components/sagas/SagaEditorContainer';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import { getAllDecks } from '@/lib/decks/server';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
+
+export const metadata = createNoIndexMetadata('Saga editor');
 
 export default async function CreateSagaPage() {
   const { isAuthenticated, getAccessTokenRaw } = getKindeServerSession();

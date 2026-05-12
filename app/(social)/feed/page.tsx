@@ -27,7 +27,10 @@ import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import { getFeed } from '@/lib/feed/server';
 import { buildProfilePath } from '@/lib/profile/paths';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
 import { cn } from '@/lib/utils';
+
+export const metadata = createNoIndexMetadata('Feed');
 
 const inlineLinkClassName =
   'inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-foreground px-4 py-2 text-sm font-semibold font-display shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';

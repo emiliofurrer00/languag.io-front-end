@@ -5,6 +5,9 @@ import { FriendsPageClient } from '@/components/social/FriendsPageClient';
 import Navbar from '@/components/profile/Navbar';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
+
+export const metadata = createNoIndexMetadata('Friends');
 
 type FriendsPageProps = {
   searchParams?: Promise<{

@@ -1,8 +1,10 @@
+import type { Metadata } from 'next';
 import Navbar from '@/components/profile/Navbar';
 import ProfilePageContainer from '@/components/profile/ProfilePageContainer';
 import { ProfileFriendshipActions } from '@/components/social/ProfileFriendshipActions';
 import { buildOnboardingPath } from '@/lib/auth-flow';
 import { getMyProfileIfAuthenticated, getPublicProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata, createPageMetadata } from '@/lib/seo';
 import { notFound, redirect } from 'next/navigation';
 
 type PublicProfilePageProps = {
@@ -10,6 +12,32 @@ type PublicProfilePageProps = {
     username: string;
   }>;
 };
+
+export async function generateMetadata({ params }: PublicProfilePageProps): Promise<Metadata> {
+  const { username } = await params;
+  const normalizedUsername = username.trim();
+
+  try {
+    const publicProfile = await getPublicProfile(normalizedUsername);
+
+    if (!publicProfile) {
+      return createNoIndexMetadata('Profile not found');
+    }
+
+    const handle = publicProfile.handle ? `@${publicProfile.handle.replace(/^@/, '')}` : null;
+    const deckCount = publicProfile.stats.decksCreated;
+    const fallbackDescription = `${publicProfile.name}${handle ? ` (${handle})` : ''} has created ${deckCount} public ${deckCount === 1 ? 'deck' : 'decks'} on Languag.io.`;
+
+    return createPageMetadata({
+      title: `${publicProfile.name} - Languag.io creator profile`,
+      description: publicProfile.tagline || publicProfile.bio || fallbackDescription,
+      path: `/profile/${encodeURIComponent(normalizedUsername)}`,
+      type: 'profile',
+    });
+  } catch {
+    return createNoIndexMetadata('Profile not found');
+  }
+}
 
 export default async function PublicProfilePage({ params }: PublicProfilePageProps) {
   const { username } = await params;

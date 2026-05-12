@@ -5,7 +5,15 @@ import { getMyProfileIfAuthenticated } from '@/lib/profile/server';
 import type { ProfileData } from '@/lib/profile/types';
 import { getSagas } from '@/lib/sagas/server';
 import type { Saga } from '@/lib/sagas/types';
+import { createPageMetadata } from '@/lib/seo';
 import { redirect } from 'next/navigation';
+
+export const metadata = createPageMetadata({
+  title: 'Guided study sagas',
+  description:
+    'Explore ordered learning paths that connect flashcard decks into chapters, checkpoints, and one clear next lesson.',
+  path: '/sagas',
+});
 
 export default async function SagasPage() {
   let profile: ProfileData | null = null;

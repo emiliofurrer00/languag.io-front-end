@@ -3,6 +3,7 @@ import DeckEditorContainer from '@/components/create-form/DeckEditorContainer';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import { getDeckDetailsOrDefault } from '@/lib/decks/server';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
 import { redirect } from 'next/navigation';
 
 type CreateDeckPageProps = {
@@ -10,6 +11,8 @@ type CreateDeckPageProps = {
     slug: string;
   }>;
 };
+
+export const metadata = createNoIndexMetadata('Deck editor');
 
 export default async function CreateDeckPage({ params }: CreateDeckPageProps) {
   const { slug } = await params;

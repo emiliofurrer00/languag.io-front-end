@@ -2,6 +2,7 @@ import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import OnboardingFlow from '@/components/onboarding/OnboardingFlow';
 import { buildLoginRedirectPath, normalizeInternalPath } from '@/lib/auth-flow';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
 import { redirect } from 'next/navigation';
 
 type OnboardingPageProps = {
@@ -9,6 +10,8 @@ type OnboardingPageProps = {
     next?: string;
   }>;
 };
+
+export const metadata = createNoIndexMetadata('Onboarding');
 
 export default async function OnboardingPage({ searchParams }: OnboardingPageProps) {
   const { isAuthenticated } = getKindeServerSession();

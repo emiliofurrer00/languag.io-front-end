@@ -5,6 +5,7 @@ import type { CursorPage, DeckStudyRecommendation, DeckSummary } from '@/lib/dec
 import { getApiErrorDisplayMessage } from '@/lib/api';
 import { getMyProfileIfAuthenticated } from '@/lib/profile/server';
 import type { ProfileData } from '@/lib/profile/types';
+import { createPageMetadata } from '@/lib/seo';
 import { redirect } from 'next/navigation';
 
 type DecksPageProps = {
@@ -18,6 +19,13 @@ type DecksPageProps = {
     pageSize?: string;
   }>;
 };
+
+export const metadata = createPageMetadata({
+  title: 'Public flashcard decks',
+  description:
+    'Browse community flashcard decks for languages, programming, science, history, and other subjects you want to remember.',
+  path: '/decks',
+});
 
 function firstParamValue(...values: Array<string | undefined>) {
   return values.find((value) => value?.trim())?.trim();

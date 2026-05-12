@@ -4,7 +4,10 @@ import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
 import ProfilePageContainer from '@/components/profile/ProfilePageContainer';
 import { ProfilePictureUploader } from '@/components/profile/ProfilePictureUploader';
 import { getMyProfile } from '@/lib/profile/server';
+import { createNoIndexMetadata } from '@/lib/seo';
 import { redirect } from 'next/navigation';
+
+export const metadata = createNoIndexMetadata('My profile');
 
 export default async function MyProfilePage() {
   const { isAuthenticated } = getKindeServerSession();

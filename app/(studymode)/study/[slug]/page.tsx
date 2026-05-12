@@ -1,6 +1,7 @@
 import StudyModeContainer from '@/components/study-mode/StudyModeContainer';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { getDeckDetails, getDeckStudyPlan } from '@/lib/decks/server';
+import { createNoIndexMetadata } from '@/lib/seo';
 
 type StudyModePageProps = {
   params: Promise<{
@@ -11,6 +12,8 @@ type StudyModePageProps = {
     lessonId?: string;
   }>;
 };
+
+export const metadata = createNoIndexMetadata('Study session');
 
 export default async function StudyMode({ params, searchParams }: StudyModePageProps) {
   const { slug } = await params;

@@ -6,9 +6,10 @@ import StudyFlowSection from '@/components/landing/StudyFlow';
 import AIAssistSection from '@/components/landing/AIAssist';
 import SagasSection from '@/components/landing/Sagas';
 import QuietCTASection from '@/components/landing/QuietCTA';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
-import { createPageMetadata } from '@/lib/seo';
+import { buildAbsoluteUrl, createPageMetadata, siteConfig } from '@/lib/seo';
 
 export const metadata = createPageMetadata({
   title: 'Flashcards and guided study paths',
@@ -25,6 +26,23 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center bg-background font-sans dark:bg-black">
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: siteConfig.name,
+          url: buildAbsoluteUrl('/'),
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: siteConfig.name,
+          url: buildAbsoluteUrl('/'),
+          description: siteConfig.description,
+        }}
+      />
       <Navbar isLandingPage={true} />
       <main className="flex w-full flex-col items-center dark:bg-black sm:items-start">
         <HeroSection />

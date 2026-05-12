@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Navbar from '@/components/profile/Navbar';
 import ProfilePageContainer from '@/components/profile/ProfilePageContainer';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { ProfileFriendshipActions } from '@/components/social/ProfileFriendshipActions';
 import { buildOnboardingPath } from '@/lib/auth-flow';
 import { getMyProfileIfAuthenticated, getPublicProfile } from '@/lib/profile/server';
-import { createNoIndexMetadata, createPageMetadata } from '@/lib/seo';
+import { buildAbsoluteUrl, createNoIndexMetadata, createPageMetadata } from '@/lib/seo';
 import { notFound, redirect } from 'next/navigation';
 
 type PublicProfilePageProps = {
@@ -59,6 +60,22 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
 
   return (
     <div className="bg-background min-h-screen w-full">
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'ProfilePage',
+          url: buildAbsoluteUrl(`/profile/${encodeURIComponent(normalizedUsername)}`),
+          mainEntity: {
+            '@type': 'Person',
+            name: publicProfile.name,
+            alternateName: publicProfile.handle
+              ? `@${publicProfile.handle.replace(/^@/, '')}`
+              : undefined,
+            description: publicProfile.tagline || publicProfile.bio || undefined,
+            image: publicProfile.profilePictureUrl || undefined,
+          },
+        }}
+      />
       <Navbar />
       <ProfilePageContainer
         profile={publicProfile}

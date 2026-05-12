@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import SagaDetailView from '@/components/sagas/SagaDetailView';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { getSagaDetails } from '@/lib/sagas/server';
 import { getSagaLessonCount } from '@/lib/sagas/display';
-import { createNoIndexMetadata, createPageMetadata } from '@/lib/seo';
+import { buildAbsoluteUrl, createNoIndexMetadata, createPageMetadata } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 
 type SagaDetailPageProps = {
@@ -40,5 +41,32 @@ export default async function SagaDetailPage({ params }: SagaDetailPageProps) {
     notFound();
   }
 
-  return <SagaDetailView saga={saga} />;
+  const lessonCount = getSagaLessonCount(saga);
+
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'LearningResource',
+          name: saga.title || 'Untitled saga',
+          description:
+            saga.description ||
+            `Follow ${lessonCount} ${lessonCount === 1 ? 'deck' : 'decks'} in this guided study saga.`,
+          url: buildAbsoluteUrl(`/sagas/${encodeURIComponent(saga.id)}`),
+          learningResourceType: 'Guided study path',
+          educationalUse: 'Practice',
+          numberOfItems: lessonCount,
+          about: saga.category || undefined,
+          creator: saga.ownerName
+            ? {
+                '@type': 'Person',
+                name: saga.ownerName,
+              }
+            : undefined,
+        }}
+      />
+      <SagaDetailView saga={saga} />
+    </>
+  );
 }

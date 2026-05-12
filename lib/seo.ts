@@ -53,7 +53,9 @@ export function cleanMetaDescription(value?: string | null, fallback = siteConfi
     return fallback;
   }
 
-  return normalizedValue.length > 155 ? `${normalizedValue.slice(0, 152).trimEnd()}...` : normalizedValue;
+  return normalizedValue.length > 155
+    ? `${normalizedValue.slice(0, 152).trimEnd()}...`
+    : normalizedValue;
 }
 
 type PageMetadataInput = {

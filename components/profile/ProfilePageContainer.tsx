@@ -96,7 +96,7 @@ export default function ProfilePageContainer({
           )}
         </div>
         <div className="flex-1">
-          <h2 className="text-2xl font-semibold">{profile.name}</h2>
+          <h1 className="text-2xl font-semibold">{profile.name}</h1>
           {profile.handle ? (
             <p className="mb-2 text-sm text-gray-500">{formatHandle(profile.handle)}</p>
           ) : null}
@@ -171,7 +171,7 @@ export default function ProfilePageContainer({
         <NeoBox alignItems="start" justifyContent="start">
           <div className="flex items-center gap-1 mb-4">
             <User className="w-6 h-6" />
-            <h6 className="text-left font-semibold text-xl">About</h6>
+            <h2 className="text-left font-semibold text-xl">About</h2>
           </div>
           <p className="text-sm">{aboutCopy}</p>
           {profile.joinedLabel ? (
@@ -184,7 +184,7 @@ export default function ProfilePageContainer({
         <NeoBox alignItems="start" justifyContent="start">
           <div className="flex items-center gap-1">
             <ToolCase className="w-6 h-6" />
-            <h6 className="text-left font-semibold text-xl">Preferences</h6>
+            <h2 className="text-left font-semibold text-xl">Preferences</h2>
           </div>
           {profile.preferences.length > 0 ? (
             <div className="mt-4 flex flex-wrap gap-2">
@@ -207,7 +207,7 @@ export default function ProfilePageContainer({
       {/* Recent Activity */}
       <div className="mt-8">
         <NeoBox alignItems="start" justifyContent="start">
-          <h6 className="text-lg font-semibold mb-4">Recent Activity</h6>
+          <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
           {profile.recentActivity.length > 0 ? (
             <ul className="space-y-3">
               {profile.recentActivity.map((activity) => {

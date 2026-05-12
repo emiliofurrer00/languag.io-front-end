@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import DeckDetailPreview from '@/components/decks-list/DeckDetailPreview';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { getDeckDetails } from '@/lib/decks/server';
-import { createNoIndexMetadata, createPageMetadata } from '@/lib/seo';
+import { buildAbsoluteUrl, createNoIndexMetadata, createPageMetadata } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 
 type DeckDetailPageProps = {
@@ -41,5 +42,34 @@ export default async function DeckDetailPage({ params }: DeckDetailPageProps) {
     notFound();
   }
 
-  return <DeckDetailPreview deck={{ ...deck, id: deck.id ?? slug }} />;
+  const deckId = deck.id ?? slug;
+  const deckUrl = buildAbsoluteUrl(`/decks/${encodeURIComponent(deckId)}`);
+  const cardCount = deck.cards?.length ?? 0;
+
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'LearningResource',
+          name: deck.title || 'Untitled deck',
+          description:
+            deck.description ||
+            `Study ${cardCount} ${cardCount === 1 ? 'card' : 'cards'} with this Languag.io deck.`,
+          url: deckUrl,
+          learningResourceType: 'Flashcard deck',
+          educationalUse: 'Practice',
+          numberOfItems: cardCount,
+          about: deck.category || undefined,
+          creator: deck.ownerName
+            ? {
+                '@type': 'Person',
+                name: deck.ownerName,
+              }
+            : undefined,
+        }}
+      />
+      <DeckDetailPreview deck={{ ...deck, id: deckId }} />
+    </>
+  );
 }

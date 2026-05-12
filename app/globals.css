@@ -1,6 +1,5 @@
 @config "../tailwind.config.ts";
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
 /* -----------------------------
@@ -103,7 +102,7 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
 
     /* Tailwind's `antialiased` equivalent */
     -webkit-font-smoothing: antialiased;
@@ -116,7 +115,7 @@
   h4,
   h5,
   h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -280,10 +279,10 @@
   }
 
   .font-display {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
   }
 
   .font-body {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
   }
 }

@@ -18,7 +18,6 @@ import {
   Search,
   Sparkles,
   Trash2,
-  Trophy,
   X,
 } from 'lucide-react';
 import AppNavbar from '@/components/layout/AppNavbar';
@@ -60,10 +59,6 @@ function makeId() {
 
 function getDeckCardCount(deck: DeckSummary) {
   return deck.cards?.length ?? 0;
-}
-
-function getDeckXp(cardCount: number) {
-  return Math.max(80, Math.round(cardCount * 5));
 }
 
 function getDeckVisibilityLabel(visibility?: number) {
@@ -152,10 +147,6 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
   );
   const deckCount = nodes.filter((node) => node.kind === 'deck').length;
   const stepCount = nodes.length;
-  const totalXp = nodes.reduce(
-    (sum, node) => sum + (node.kind === 'deck' ? getDeckXp(node.cardCount ?? 0) : 0),
-    0
-  );
   const selectedPrivateDeckCount = nodes.filter(
     (node) => node.kind === 'deck' && !node.visibility
   ).length;
@@ -512,8 +503,7 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
                           <>
                             <p className="truncate font-display font-bold">{node.title}</p>
                             <p className="text-xs opacity-80">
-                              {cardCount} cards · {getDeckXp(cardCount)} XP ·{' '}
-                              {getDeckVisibilityLabel(node.visibility)}
+                              {cardCount} cards - {getDeckVisibilityLabel(node.visibility)}
                             </p>
                           </>
                         )}
@@ -558,10 +548,6 @@ export default function SagaEditorContainer({ availableDecks }: SagaEditorContai
               {tagline || 'Add a tagline to inspire learners'}
             </p>
             <div className="flex flex-wrap items-center gap-3 border-t-[2px] border-foreground/20 pt-3 text-xs font-semibold">
-              <span className="inline-flex items-center gap-1">
-                <Trophy className="h-3.5 w-3.5" />
-                {totalXp.toLocaleString()} XP
-              </span>
               <span className="inline-flex items-center gap-1">
                 <Layers className="h-3.5 w-3.5" />
                 {stepCount} steps

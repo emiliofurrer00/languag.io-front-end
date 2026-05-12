@@ -4,7 +4,6 @@ import {
   BookOpen,
   Check,
   Crown,
-  Flame,
   LayoutGrid,
   Lock,
   Play,
@@ -14,9 +13,7 @@ import {
 import { NeoButton } from '@/components/ui/NeoButton';
 import {
   getLessonTitle,
-  getLessonXp,
   getSagaDisplayMeta,
-  getSagaEarnedXp,
   getSagaLessonCount,
   normalizeSagaColor,
 } from '@/lib/sagas/display';
@@ -129,7 +126,7 @@ function NodeBubble({ sagaId, node }: { sagaId: string; node: SagaLessonNode }) 
         </p>
         {!isLocked ? (
           <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">
-            {node.lesson.cardCount} cards - {getLessonXp(node.lesson)} XP
+            {node.lesson.cardCount} cards
           </p>
         ) : null}
       </div>
@@ -158,7 +155,6 @@ export default function SagaDetailView({ saga }: { saga: Saga }) {
   const completed = Math.min(saga.progress.completedLessonCount, nodes.length);
   const total = getSagaLessonCount(saga);
   const progressPct = total ? Math.round((completed / total) * 100) : 0;
-  const earnedXp = getSagaEarnedXp(saga);
   const currentNode = nodes.find((node) => node.status === 'current');
 
   return (
@@ -197,13 +193,9 @@ export default function SagaDetailView({ saga }: { saga: Saga }) {
                     Decks
                   </NeoButton>
                 </Link>
-                <span className="hidden items-center gap-1 rounded-full border-[2px] border-foreground bg-neo-yellow px-3 py-1.5 text-xs font-bold md:flex">
-                  <Trophy className="h-3.5 w-3.5" />
-                  {earnedXp} XP
-                </span>
                 <span className="hidden items-center gap-1 rounded-full border-[2px] border-foreground bg-neo-coral px-3 py-1.5 text-xs font-bold md:flex">
-                  <Flame className="h-3.5 w-3.5" />
-                  {completed}
+                  <Check className="h-3.5 w-3.5" />
+                  {completed}/{total}
                 </span>
               </div>
             </div>

@@ -57,35 +57,6 @@ export function getLessonTitle(lesson: SagaLesson) {
   return lesson.title?.trim() || lesson.deckTitle || 'Untitled lesson';
 }
 
-export function getLessonXp(lesson: Pick<SagaLesson, 'cardCount'>) {
-  return Math.max(80, Math.round((lesson.cardCount || 0) * 5));
-}
-
 export function getSagaLessonCount(saga: Pick<Saga, 'chapters'>) {
   return saga.chapters.reduce((total, chapter) => total + chapter.lessons.length, 0);
-}
-
-export function getSagaTotalXp(saga: Pick<Saga, 'chapters'>) {
-  return saga.chapters.reduce(
-    (total, chapter) =>
-      total + chapter.lessons.reduce((lessonTotal, lesson) => lessonTotal + getLessonXp(lesson), 0),
-    0
-  );
-}
-
-export function getSagaEarnedXp(saga: Saga) {
-  let lessonIndex = 0;
-  let total = 0;
-
-  for (const chapter of saga.chapters) {
-    for (const lesson of chapter.lessons) {
-      if (lessonIndex < saga.progress.completedLessonCount) {
-        total += getLessonXp(lesson);
-      }
-
-      lessonIndex += 1;
-    }
-  }
-
-  return total;
 }

@@ -3,15 +3,13 @@
 import Link from 'next/link';
 import {
   BookOpen,
+  Check,
   ChevronRight,
   Compass,
-  Flame,
   Layers,
   Plus,
   RefreshCcw,
   Route,
-  Trophy,
-  Users,
   WifiOff,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -21,7 +19,6 @@ import { NeoCard } from '@/components/ui/NeoCard';
 import {
   getSagaDisplayMeta,
   getSagaLessonCount,
-  getSagaTotalXp,
   normalizeSagaColor,
 } from '@/lib/sagas/display';
 import { Saga } from '@/lib/sagas/types';
@@ -36,11 +33,6 @@ const primaryActionClassName =
 
 const secondaryActionClassName =
   'inline-flex h-12 items-center justify-center gap-2 rounded-xl border-[2px] border-foreground bg-secondary px-4 font-display text-sm font-semibold text-secondary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-secondary/90 hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
-
-function formatLearnerCount(seed: string) {
-  const checksum = Array.from(seed).reduce((total, char) => total + char.charCodeAt(0), 0);
-  return `${((checksum % 18) + 2).toFixed(1)}k`;
-}
 
 export default function SagaListContainer({ sagas, serviceError }: SagaListContainerProps) {
   const router = useRouter();
@@ -109,7 +101,6 @@ export default function SagaListContainer({ sagas, serviceError }: SagaListConta
             {sagas.map((saga) => {
               const meta = getSagaDisplayMeta(saga);
               const lessonCount = getSagaLessonCount(saga);
-              const totalXp = getSagaTotalXp(saga);
 
               return (
                 <Link key={saga.id} href={`/sagas/${saga.id}`} className="group block">
@@ -138,17 +129,13 @@ export default function SagaListContainer({ sagas, serviceError }: SagaListConta
                     <div className="mt-6 flex items-center justify-between gap-3 border-t-[2px] border-foreground/20 pt-4">
                       <div className="flex min-w-0 flex-wrap items-center gap-3 text-xs font-semibold">
                         <span className="inline-flex items-center gap-1">
-                          <Trophy className="h-3.5 w-3.5" />
-                          {totalXp.toLocaleString()} XP
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <Users className="h-3.5 w-3.5" />
-                          {formatLearnerCount(saga.id)}
+                          <Layers className="h-3.5 w-3.5" />
+                          {lessonCount} {lessonCount === 1 ? 'step' : 'steps'}
                         </span>
                         {saga.progress.completedLessonCount > 0 ? (
                           <span className="inline-flex items-center gap-1">
-                            <Flame className="h-3.5 w-3.5" />
-                            {Math.round(saga.progress.percentageComplete)}%
+                            <Check className="h-3.5 w-3.5" />
+                            {Math.round(saga.progress.percentageComplete)}% complete
                           </span>
                         ) : null}
                       </div>

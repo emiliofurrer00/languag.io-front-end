@@ -3,7 +3,6 @@ import {
   ArrowUpRight,
   BookOpen,
   ChevronRight,
-  Crown,
   Flame,
   Heart,
   Sparkles,
@@ -43,12 +42,6 @@ const feedAccentColors = [
 
 // TODO: Replace with API-provided browse categories when feed personalization supports them.
 const browseCategories = ['Languages', 'Programming', 'Science', 'History', 'Math', 'Music', 'Art'];
-
-// TODO: Replace with real XP/rank/league-season fields once the feed API exposes gamification stats.
-const placeholderXp = 0;
-const placeholderXpToday = 0;
-const placeholderLeagueRank = 'Top 8%';
-const placeholderLeagueTimeLeft = '3 days left';
 
 type FeedActivityIcon = ComponentType<{ className?: string }>;
 
@@ -151,7 +144,6 @@ export default async function Feed() {
   const dailyGoalPercentage =
     feed.dailyGoal.percentage || (dailyGoal > 0 ? (dailyProgress / dailyGoal) * 100 : 0);
   const streak = feed.streak.current;
-  const league = feed.summary.league ?? 'Soon';
   const today = formatToday();
   const firstName = getFirstName(profile.name);
   const isFirstUserFeed =
@@ -236,69 +228,49 @@ export default async function Feed() {
             )}
           </NeoCard>
 
-          <NeoCard className="col-span-6 flex min-h-44 flex-col p-4 sm:col-span-3 md:col-span-2">
-            <div className="mb-2 flex items-center justify-between">
-              <Flame className="h-5 w-5 text-neo-coral" />
-              <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
-                Streak
-              </span>
-            </div>
-            <p className="font-display text-4xl font-bold leading-none">
-              {streak}
-              <span className="text-lg text-muted-foreground">d</span>
-            </p>
-            <div className="mt-auto grid grid-cols-7 gap-1 pt-3">
-              {feed.streak.days.map((day, index) => {
-                const isToday = !day.done && index === streak;
+          <div className="col-span-6 grid gap-3 sm:grid-cols-2 md:col-span-2 md:grid-cols-1">
+            <NeoCard className="flex min-h-44 flex-col p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <Flame className="h-5 w-5 text-neo-coral" />
+                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Streak
+                </span>
+              </div>
+              <p className="font-display text-4xl font-bold leading-none">
+                {streak}
+                <span className="text-lg text-muted-foreground">d</span>
+              </p>
+              <div className="mt-auto grid grid-cols-7 gap-1 pt-3">
+                {feed.streak.days.map((day, index) => {
+                  const isToday = !day.done && index === streak;
 
-                return (
-                  <div key={`${day.day}-${index}`} className="flex flex-col items-center gap-0.5">
-                    <div
-                      className={cn(
-                        'flex aspect-square w-full items-center justify-center rounded-md border-[1.5px]',
-                        day.done
-                          ? 'border-foreground bg-neo-coral'
-                          : isToday
-                            ? 'border-dashed border-foreground bg-neo-yellow'
-                            : 'border-foreground/20 bg-secondary'
-                      )}
-                    >
-                      {day.done ? <Zap className="h-2 w-2" /> : null}
+                  return (
+                    <div key={`${day.day}-${index}`} className="flex flex-col items-center gap-0.5">
+                      <div
+                        className={cn(
+                          'flex aspect-square w-full items-center justify-center rounded-md border-[1.5px]',
+                          day.done
+                            ? 'border-foreground bg-neo-coral'
+                            : isToday
+                              ? 'border-dashed border-foreground bg-neo-yellow'
+                              : 'border-foreground/20 bg-secondary'
+                        )}
+                      >
+                        {day.done ? <Zap className="h-2 w-2" /> : null}
+                      </div>
+                      <span className="text-[7px] font-bold text-muted-foreground">{day.day}</span>
                     </div>
-                    <span className="text-[7px] font-bold text-muted-foreground">{day.day}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </NeoCard>
+                  );
+                })}
+              </div>
+            </NeoCard>
 
-          <NeoCard variant="magenta" size="sm" className="relative col-span-3 p-4 md:col-span-2">
-            <span
-              aria-hidden="true"
-              className="absolute -right-2 -top-2 rounded-md border-[2px] border-foreground bg-neo-yellow px-2 py-0.5 font-display text-[9px] font-bold uppercase shadow-[2px_2px_0_0_hsl(var(--foreground))] rotate-6"
-            >
-              {placeholderLeagueRank}
-            </span>
-            <Crown className="mb-2 h-5 w-5" />
-            <p className="font-display text-2xl font-bold leading-none">{league}</p>
-            <p className="mt-1 text-[10px] font-semibold opacity-70">
-              League - {placeholderLeagueTimeLeft}
-            </p>
-          </NeoCard>
-
-          <NeoCard variant="teal" size="sm" className="col-span-3 p-4 md:col-span-2">
-            <Zap className="mb-2 h-5 w-5" />
-            <p className="font-display text-2xl font-bold leading-none">{placeholderXp}</p>
-            <p className="mt-1 text-[10px] font-semibold opacity-70">
-              XP - +{placeholderXpToday} today
-            </p>
-          </NeoCard>
-
-          <NeoCard variant="blue" size="sm" className="col-span-6 p-4 md:col-span-2">
-            <TrendingUp className="mb-2 h-5 w-5" />
-            <p className="font-display text-2xl font-bold leading-none">{feed.summary.cards}</p>
-            <p className="mt-1 text-[10px] font-semibold opacity-70">Cards studied</p>
-          </NeoCard>
+            <NeoCard variant="blue" size="sm" className="p-4">
+              <TrendingUp className="mb-2 h-5 w-5" />
+              <p className="font-display text-2xl font-bold leading-none">{feed.summary.cards}</p>
+              <p className="mt-1 text-[10px] font-semibold opacity-70">Cards studied</p>
+            </NeoCard>
+          </div>
         </section>
 
         {isFirstUserFeed ? (

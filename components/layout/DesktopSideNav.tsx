@@ -5,7 +5,6 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import {
   Bell,
   Compass,
-  Flame,
   Home,
   Layers,
   LogIn,
@@ -15,7 +14,6 @@ import {
   User,
   UserPlus,
   Users,
-  Zap,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -68,10 +66,6 @@ const navItems: DesktopNavItem[] = [
     match: (pathname) => pathname.startsWith('/profile'),
   },
 ];
-
-// TODO: Replace with real streak and XP once app-shell stats are available outside the feed payload.
-const placeholderStreak = 0;
-const placeholderXp = 0;
 
 function getDisplayName(
   user: ReturnType<typeof useKindeBrowserClient>['user'],
@@ -126,17 +120,6 @@ export function DesktopSideNav() {
         </div>
         <span className="font-display text-xl font-bold">Languag.io</span>
       </Link>
-
-      <div className="flex items-center gap-3 border-b-[2px] border-foreground/15 px-5 py-3">
-        <div className="flex items-center gap-1.5 font-display text-sm font-bold">
-          <Flame className="h-4 w-4 text-neo-coral" />
-          <span>{placeholderStreak}</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-display text-sm font-bold">
-          <Zap className="h-4 w-4 text-primary" />
-          <span>{placeholderXp}</span>
-        </div>
-      </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {navItems.map((item) => {

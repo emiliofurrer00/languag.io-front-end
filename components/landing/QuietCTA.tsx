@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { ArrowRight, Compass } from 'lucide-react';
 import Link from 'next/link';
+import { revealViewport } from './motionViewport';
 
 const QuietCTASection = () => {
   return (
@@ -12,7 +13,7 @@ const QuietCTASection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={revealViewport}
           transition={{ duration: 0.6 }}
           className="max-w-2xl mx-auto text-center"
         >

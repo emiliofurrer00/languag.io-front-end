@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, Flag, Map, Swords } from 'lucide-react';
 import Link from 'next/link';
 import { NeoButton } from '@/components/ui/NeoButton';
+import { revealViewport } from './motionViewport';
 
 const path = [
   { icon: BookOpen, label: 'Greetings', color: 'bg-neo-teal' },
@@ -21,7 +22,7 @@ const SagasSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
+            viewport={revealViewport}
             transition={{ duration: 0.6 }}
             className="order-2 lg:order-1 rounded-2xl border-[3px] border-foreground bg-card p-6 shadow-[6px_6px_0_0_hsl(var(--foreground))]"
           >
@@ -34,7 +35,7 @@ const SagasSection = () => {
                 aria-hidden
                 initial={{ scaleY: 0 }}
                 whileInView={{ scaleY: 1 }}
-                viewport={{ once: true, margin: '-100px' }}
+                viewport={revealViewport}
                 transition={{ duration: 0.9, ease: 'easeOut' }}
                 className="absolute left-[18px] top-2 bottom-2 w-0.5 bg-foreground/30 origin-top"
               />
@@ -44,14 +45,14 @@ const SagasSection = () => {
                     key={p.label}
                     initial={{ opacity: 0, x: -16 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: '-100px' }}
+                    viewport={revealViewport}
                     transition={{ duration: 0.4, delay: 0.2 + i * 0.12 }}
                     className="flex items-center gap-3"
                   >
                     <motion.div
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
-                      viewport={{ once: true, margin: '-100px' }}
+                      viewport={revealViewport}
                       transition={{
                         duration: 0.4,
                         delay: 0.25 + i * 0.12,
@@ -72,7 +73,7 @@ const SagasSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
+            viewport={revealViewport}
             transition={{ duration: 0.6, delay: 0.15 }}
             className="order-1 lg:order-2"
           >

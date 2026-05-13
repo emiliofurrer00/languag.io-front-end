@@ -80,3 +80,4 @@ yarn format:check  # Check formatting
 ## Project Docs
 
 - [Architecture](./docs/ARCHITECTURE.md) describes the application structure, routing model, auth flow, API boundary, profile-picture upload flow, and state patterns.
+- [Project Structure](./docs/PROJECT_STRUCTURE.md) documents the folder layout, file placement rules, and best-practice improvement opportunities.

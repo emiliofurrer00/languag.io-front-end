@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { Layers } from 'lucide-react';
+import { revealViewport } from './motionViewport';
 
 const decks = [
   { title: 'Spanish - A1 vocab', count: 84, color: 'bg-neo-magenta', tag: 'Languages' },
@@ -27,7 +28,7 @@ const DeckShowcaseSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={revealViewport}
           transition={{ duration: 0.6 }}
           className="max-w-2xl ml-auto text-right"
         >

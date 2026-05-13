@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Brain, Calendar, TrendingUp } from 'lucide-react';
+import { revealViewport } from './motionViewport';
 
 const moments = [
   {
@@ -31,7 +32,7 @@ const StudyFlowSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={revealViewport}
           transition={{ duration: 0.6 }}
           className="max-w-2xl mx-auto text-center mb-16"
         >
@@ -50,7 +51,7 @@ const StudyFlowSection = () => {
             aria-hidden
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
-            viewport={{ once: true, margin: '-80px' }}
+            viewport={revealViewport}
             transition={{ duration: 1.1, ease: 'easeOut' }}
             className="absolute left-[34px] top-8 bottom-8 w-1 bg-foreground origin-top hidden md:block"
           />
@@ -61,14 +62,14 @@ const StudyFlowSection = () => {
                 key={m.label}
                 initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={revealViewport}
                 transition={{ duration: 0.6, delay: i * 0.18 }}
                 className="flex items-start gap-6 p-6 rounded-2xl border-[3px] border-foreground bg-card shadow-[6px_6px_0_0_hsl(var(--foreground))] relative"
               >
                 <motion.div
                   initial={{ scale: 0, rotate: -45 }}
                   whileInView={{ scale: 1, rotate: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
+                  viewport={revealViewport}
                   transition={{
                     duration: 0.5,
                     delay: 0.2 + i * 0.18,

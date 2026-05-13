@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { RotateCw } from 'lucide-react';
+import { revealViewport } from './motionViewport';
 
 const sampleCards = [
   {
@@ -40,7 +41,7 @@ const CardItem = ({ card, index, scrollYProgress, isFlipped, onFlip }: CardItemP
       style={{ y, rotate }}
       initial={{ opacity: 0, y: 80 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-50px' }}
+      viewport={revealViewport}
       transition={{ duration: 0.6, delay: index * 0.1 }}
       className="cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4"
       role="button"
@@ -99,7 +100,7 @@ const CardShowcaseSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={revealViewport}
           transition={{ duration: 0.6 }}
           className="max-w-2xl mb-20"
         >

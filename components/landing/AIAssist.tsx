@@ -5,6 +5,7 @@ import { Sparkles, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { NeoButton } from '@/components/ui/NeoButton';
+import { revealViewport } from './motionViewport';
 
 const PROMPT = 'Italian kitchen vocabulary, around 20 cards, beginner.';
 
@@ -16,7 +17,7 @@ const ROWS: [string, string][] = [
 
 const AIAssistSection = () => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(cardRef, { once: true, margin: '-100px' });
+  const inView = useInView(cardRef, revealViewport);
   const [typed, setTyped] = useState('');
   const [showRows, setShowRows] = useState(false);
 
@@ -48,7 +49,7 @@ const AIAssistSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
+            viewport={revealViewport}
             transition={{ duration: 0.6 }}
           >
             <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
@@ -75,7 +76,7 @@ const AIAssistSection = () => {
             ref={cardRef}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
+            viewport={revealViewport}
             transition={{ duration: 0.6, delay: 0.15 }}
             className="rounded-2xl border-[3px] border-foreground bg-card p-6 shadow-[6px_6px_0_0_hsl(var(--foreground))]"
           >

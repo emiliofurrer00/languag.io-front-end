@@ -3,7 +3,7 @@
 import DeckCard from './DeckCard';
 import DeckFilters from './DeckFilters';
 import Navbar from './Navbar';
-import StudyRecommendations from './StudyRecommendations';
+import StudyRecommendations from '@/components/study/StudyRecommendations';
 import { DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
 import { getDeckPage } from '@/lib/decks/client';
 import { buildLoginRedirectPath } from '@/lib/auth-flow';

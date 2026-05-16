@@ -19,11 +19,13 @@ import { redirect } from 'next/navigation';
 import Navbar from '@/components/profile/Navbar';
 import { ProfileFriendshipActions } from '@/components/social/ProfileFriendshipActions';
 import { SocialAvatar } from '@/components/social/SocialAvatar';
+import StudyRecommendations from '@/components/study/StudyRecommendations';
 import { AppStatePanel, stateActionClassName } from '@/components/ui/AppStatePanel';
 import { NeoButton } from '@/components/ui/NeoButton';
 import { NeoCard } from '@/components/ui/NeoCard';
 import { Progress } from '@/components/ui/Progress';
 import { buildLoginRedirectPath, buildOnboardingPath } from '@/lib/auth-flow';
+import { getStudyRecommendations } from '@/lib/decks/server';
 import { getFeed } from '@/lib/feed/server';
 import { buildProfilePath } from '@/lib/profile/paths';
 import { getMyProfile } from '@/lib/profile/server';
@@ -140,7 +142,7 @@ export default async function Feed() {
     redirect(buildOnboardingPath('/feed'));
   }
 
-  const feed = await getFeed();
+  const [feed, studyRecommendations] = await Promise.all([getFeed(), getStudyRecommendations()]);
   const fallbackDailyGoal = profile.dailyCardsGoal || 20;
   const dailyGoal = feed.dailyGoal.goal || fallbackDailyGoal;
   const dailyProgress = feed.dailyGoal.progress;
@@ -154,6 +156,7 @@ export default async function Feed() {
     feed.friendsActivity.length === 0 &&
     feed.suggestedDecks.length === 0 &&
     feed.suggestedPeople.length === 0 &&
+    studyRecommendations.length === 0 &&
     feed.summary.cards === 0 &&
     feed.summary.decks === 0;
 
@@ -184,6 +187,8 @@ export default async function Feed() {
             <span className="text-muted-foreground">Ready to study?</span>
           </h1>
         </section>
+
+        <StudyRecommendations recommendations={studyRecommendations} />
 
         <section className="mb-8 grid grid-cols-6 gap-3">
           <NeoCard

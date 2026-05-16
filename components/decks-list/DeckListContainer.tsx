@@ -3,8 +3,7 @@
 import DeckCard from './DeckCard';
 import DeckFilters from './DeckFilters';
 import Navbar from './Navbar';
-import StudyRecommendations from '@/components/study/StudyRecommendations';
-import { DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
+import { DeckSummary } from '@/lib/decks/types';
 import { getDeckPage } from '@/lib/decks/client';
 import { buildLoginRedirectPath } from '@/lib/auth-flow';
 import { AppStatePanel, stateActionClassName } from '@/components/ui/AppStatePanel';
@@ -33,7 +32,6 @@ type DeckListFilters = {
 type DeckListContainerProps = {
   decks: DeckSummary[];
   nextCursor?: string | null;
-  studyRecommendations?: DeckStudyRecommendation[];
   filters?: DeckListFilters;
   currentUsername?: string;
   isAuthenticated?: boolean;
@@ -65,7 +63,6 @@ function canEditDeck(deck: DeckSummary, currentUsername?: string) {
 export default function DeskListContainer({
   decks,
   nextCursor,
-  studyRecommendations = [],
   filters,
   currentUsername,
   isAuthenticated = false,
@@ -169,10 +166,6 @@ export default function DeskListContainer({
         </div>
 
         <DeckFilters searchQuery={searchQuery} ownerUsername={ownerUsername} />
-
-        {!serviceError && !isViewingOwnerDecks && !hasSearchQuery ? (
-          <StudyRecommendations recommendations={studyRecommendations} />
-        ) : null}
 
         {serviceError ? (
           <AppStatePanel

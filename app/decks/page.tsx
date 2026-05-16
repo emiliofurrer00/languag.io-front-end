@@ -1,7 +1,7 @@
 import { buildOnboardingPath } from '@/lib/auth-flow';
 import DeckListContainer from '@/components/decks-list/DeckListContainer';
-import { getDeckPage, getStudyRecommendations } from '@/lib/decks/server';
-import type { CursorPage, DeckStudyRecommendation, DeckSummary } from '@/lib/decks/types';
+import { getDeckPage } from '@/lib/decks/server';
+import type { CursorPage, DeckSummary } from '@/lib/decks/types';
 import { getApiErrorDisplayMessage } from '@/lib/api';
 import { getMyProfileIfAuthenticated } from '@/lib/profile/server';
 import type { ProfileData } from '@/lib/profile/types';
@@ -60,19 +60,15 @@ export default async function DecksPage({ searchParams }: DecksPageProps) {
   }
 
   let deckPage: CursorPage<DeckSummary> = { items: [], nextCursor: null };
-  let studyRecommendations: DeckStudyRecommendation[] = [];
 
   if (!serviceError) {
     try {
-      [deckPage, studyRecommendations] = await Promise.all([
-        getDeckPage({
-          searchQuery,
-          username: ownerUsername,
-          cursor,
-          pageSize,
-        }),
-        ownerUsername ? Promise.resolve([]) : getStudyRecommendations(),
-      ]);
+      deckPage = await getDeckPage({
+        searchQuery,
+        username: ownerUsername,
+        cursor,
+        pageSize,
+      });
     } catch (error) {
       serviceError = getApiErrorDisplayMessage(error);
     }
@@ -82,7 +78,6 @@ export default async function DecksPage({ searchParams }: DecksPageProps) {
     <DeckListContainer
       decks={deckPage.items}
       nextCursor={deckPage.nextCursor}
-      studyRecommendations={studyRecommendations}
       currentUsername={profile?.username}
       isAuthenticated={Boolean(profile)}
       serviceError={serviceError}

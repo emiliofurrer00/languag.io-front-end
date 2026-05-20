@@ -235,7 +235,21 @@ export default function OnboardingFlow({ initialData, nextPath }: OnboardingFlow
         throw new Error(readApiErrorMessage(payload, 'Unable to save your onboarding details.'));
       }
 
-      router.push(nextPath ?? '/decks');
+      try {
+        window.localStorage.setItem(
+          'onboarding:first-session-seed',
+          JSON.stringify({
+            tagline: data.tagline.trim(),
+            aboutMe: data.aboutMe.trim(),
+            dailyGoal: data.dailyGoal,
+            nextPath,
+          })
+        );
+      } catch {
+        // The get-started route works without the local personalization seed.
+      }
+
+      router.push('/get-started');
       router.refresh();
     } catch (error) {
       setSubmissionError(

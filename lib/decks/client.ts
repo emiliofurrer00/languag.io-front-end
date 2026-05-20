@@ -23,6 +23,10 @@ type SaveDeckOptions = {
   isNew: boolean;
 };
 
+export type CreatedDeckResult = DeckDetails & {
+  id: string;
+};
+
 type SubmitStudySessionResponsePayload = {
   cardId: string;
   wasCorrect: boolean;
@@ -52,6 +56,65 @@ export type CreateAiDeckGenerationInput = {
 type CreateAiDeckGenerationResult = {
   jobId: string;
 };
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+
+  return value as Record<string, unknown>;
+}
+
+function readString(value: unknown) {
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+function readCreatedDeckPayload(value: unknown): Record<string, unknown> | null {
+  const record = asRecord(value);
+
+  if (!record) {
+    return null;
+  }
+
+  return asRecord(record.deck) ?? asRecord(record.data) ?? asRecord(record.createdDeck) ?? record;
+}
+
+function readCreatedDeckId(value: unknown) {
+  if (typeof value === 'string') {
+    return readString(value);
+  }
+
+  const record = asRecord(value);
+  const payload = readCreatedDeckPayload(value);
+
+  return (
+    readString(payload?.id) ??
+    readString(payload?.deckId) ??
+    readString(payload?.createdDeckId) ??
+    readString(record?.id) ??
+    readString(record?.deckId) ??
+    readString(record?.createdDeckId)
+  );
+}
+
+function normalizeCreatedDeck(value: unknown, fallbackDeck: DeckDetails): CreatedDeckResult {
+  const id = readCreatedDeckId(value);
+
+  if (!id) {
+    throw new Error('The deck was created, but the backend did not return a deck id.');
+  }
+
+  const payload = readCreatedDeckPayload(value);
+  const deckPayload = (payload ?? {}) as Partial<DeckDetails>;
+  const cards = Array.isArray(payload?.cards) ? (payload.cards as DeckCard[]) : fallbackDeck.cards;
+
+  return {
+    ...fallbackDeck,
+    ...deckPayload,
+    id,
+    cards,
+  };
+}
 
 function buildDeckListQuery(filters: DeckListFilters = {}) {
   const searchParams = new URLSearchParams();
@@ -99,8 +162,8 @@ function normalizeDeckCardsForSave(cards: DeckCard[]) {
   }));
 }
 
-export async function saveDeck({ deck, isNew }: SaveDeckOptions) {
-  const payload = {
+function buildDeckSavePayload(deck: DeckDetails) {
+  return {
     title: deck.title,
     description: deck.description,
     category: deck.category || 'Language',
@@ -108,21 +171,37 @@ export async function saveDeck({ deck, isNew }: SaveDeckOptions) {
     visibility: deck.visibility,
     cards: normalizeDeckCardsForSave(deck.cards || []),
   };
+}
+
+export async function createDeck(deck: DeckDetails) {
+  const response = await apiFetch<unknown>('/api/decks', {
+    method: 'POST',
+    body: JSON.stringify(buildDeckSavePayload(deck)),
+    useApiBaseUrl: false,
+  });
+
+  return normalizeCreatedDeck(response, deck);
+}
+
+export async function saveDeck({ deck, isNew }: SaveDeckOptions) {
+  const payload = buildDeckSavePayload(deck);
 
   const path = isNew ? '/api/decks' : `/api/decks/${deck.id}`;
 
-  await apiFetch(path, {
-    method: isNew ? 'POST' : 'PUT',
-    body: JSON.stringify(payload),
-    useApiBaseUrl: false,
-  });
+  if (isNew) {
+    await createDeck(deck);
+  } else {
+    await apiFetch(path, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+      useApiBaseUrl: false,
+    });
+  }
 
   return true;
 }
 
-export async function getDeckPage(
-  filters: DeckListFilters = {}
-): Promise<CursorPage<DeckSummary>> {
+export async function getDeckPage(filters: DeckListFilters = {}): Promise<CursorPage<DeckSummary>> {
   const response = await apiFetch<unknown>(`/api/decks${buildDeckListQuery(filters)}`, {
     method: 'GET',
     useApiBaseUrl: false,

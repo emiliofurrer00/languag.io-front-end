@@ -34,7 +34,9 @@ const HeroSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border-2 border-foreground"
           >
             <Sparkles className="w-4 h-4" />
-            <span className="font-medium text-sm">An open notebook for memory</span>
+            <span className="font-medium text-sm">
+              A spaced-repetition powered open notebook for memory
+            </span>
           </motion.div>
 
           <motion.h1

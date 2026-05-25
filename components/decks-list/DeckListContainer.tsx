@@ -60,7 +60,62 @@ function canEditDeck(deck: DeckSummary, currentUsername?: string) {
   return Boolean(deckOwnerUsername && normalizedCurrentUsername === deckOwnerUsername);
 }
 
-export default function DeskListContainer({
+function getDeckListViewCopy({
+  ownerUsername,
+  isAuthenticated,
+  hasSearchQuery,
+  isViewingOwnerDecks,
+}: {
+  ownerUsername?: string;
+  isAuthenticated: boolean;
+  hasSearchQuery: boolean;
+  isViewingOwnerDecks: boolean;
+}) {
+  if (isViewingOwnerDecks) {
+    return {
+      title: ownerUsername ? `@${ownerUsername}'s public decks` : 'Public decks',
+      description: 'Browse public decks shared by this creator.',
+      emptyTitle: ownerUsername ? `No public decks from @${ownerUsername}` : 'No public decks found',
+      emptyDescription: hasSearchQuery
+        ? 'Try a different search, or clear the creator filter to browse the full library.'
+        : 'This creator has not published a public deck yet.',
+      emptyKicker: 'No results',
+    };
+  }
+
+  if (hasSearchQuery) {
+    return {
+      title: isAuthenticated ? 'Your decks' : 'Public decks',
+      description: isAuthenticated
+        ? 'Preview a deck, study what is due, or create a fresh set from scratch.'
+        : 'Preview community decks and try a study run before creating an account.',
+      emptyTitle: 'No decks match your search',
+      emptyDescription: 'Try a different search, or clear the filter to see your full list.',
+      emptyKicker: 'No results',
+    };
+  }
+
+  if (isAuthenticated) {
+    return {
+      title: 'Your decks',
+      description: 'Preview a deck, study what is due, or create a fresh set from scratch.',
+      emptyTitle: 'Start your deck shelf',
+      emptyDescription:
+        'Create one small deck to unlock study recommendations and a cleaner daily practice loop.',
+      emptyKicker: 'First deck',
+    };
+  }
+
+  return {
+    title: 'Public decks',
+    description: 'Preview community decks and try a study run before creating an account.',
+    emptyTitle: 'The public shelf is still empty',
+    emptyDescription: 'Sign in to build the first public deck and give the library somewhere to begin.',
+    emptyKicker: 'No results',
+  };
+}
+
+export default function DeckListContainer({
   decks,
   nextCursor,
   filters,
@@ -78,35 +133,12 @@ export default function DeskListContainer({
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const isViewingOwnerDecks = Boolean(ownerUsername);
   const hasSearchQuery = Boolean(searchQuery.trim());
-  // TODO: Move this / refactor into a utility function to keep the component cleaner and more focused on presentation logic
-  const title = ownerUsername
-    ? `@${ownerUsername}'s public decks`
-    : isAuthenticated
-      ? 'Your decks'
-      : 'Public decks';
-  const description = ownerUsername
-    ? 'Browse public decks shared by this creator.'
-    : isAuthenticated
-      ? 'Preview a deck, study what is due, or create a fresh set from scratch.'
-      : 'Preview community decks and try a study run before creating an account.';
-  const emptyTitle = isViewingOwnerDecks
-    ? ownerUsername
-      ? `No public decks from @${ownerUsername}`
-      : 'No public decks found'
-    : hasSearchQuery
-      ? 'No decks match your search'
-      : isAuthenticated
-        ? 'Start your deck shelf'
-        : 'The public shelf is still empty';
-  const emptyDescription = isViewingOwnerDecks
-    ? hasSearchQuery
-      ? 'Try a different search, or clear the creator filter to browse the full library.'
-      : 'This creator has not published a public deck yet.'
-    : hasSearchQuery
-      ? 'Try a different search, or clear the filter to see your full list.'
-      : isAuthenticated
-        ? 'Create one small deck to unlock study recommendations and a cleaner daily practice loop.'
-        : 'Sign in to build the first public deck and give the library somewhere to begin.';
+  const viewCopy = getDeckListViewCopy({
+    ownerUsername,
+    isAuthenticated,
+    hasSearchQuery,
+    isViewingOwnerDecks,
+  });
   const EmptyIcon =
     isViewingOwnerDecks || hasSearchQuery ? SearchX : isAuthenticated ? BookOpen : Layers;
   const deckCountLabel = cursor ? `${visibleDecks.length}+` : visibleDecks.length;
@@ -150,8 +182,8 @@ export default function DeskListContainer({
       <section className="mx-auto w-full max-w-7xl px-4 pb-10">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-3xl font-bold">{title}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+            <h1 className="font-display text-3xl font-bold">{viewCopy.title}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">{viewCopy.description}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link href="/sagas" className={secondaryActionClassName}>
@@ -223,13 +255,9 @@ export default function DeskListContainer({
         ) : (
           <AppStatePanel
             icon={EmptyIcon}
-            kicker={
-              isAuthenticated && !hasSearchQuery && !isViewingOwnerDecks
-                ? 'First deck'
-                : 'No results'
-            }
-            title={emptyTitle}
-            description={emptyDescription}
+            kicker={viewCopy.emptyKicker}
+            title={viewCopy.emptyTitle}
+            description={viewCopy.emptyDescription}
             className="mx-auto max-w-2xl"
           >
             {isAuthenticated && !hasSearchQuery && !isViewingOwnerDecks ? (

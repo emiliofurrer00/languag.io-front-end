@@ -6,6 +6,7 @@ import { BookOpen, Layers, ListChecks, Loader2, Sparkles, Volume2, X } from 'luc
 import { createAiSagaGenerationJob, getAiSagaGenerationJob } from '@/lib/sagas/client';
 import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useModalFocus } from '@/hooks/useModalFocus';
 import { getApiErrorDisplayMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -29,7 +30,6 @@ function clampNumber(value: number, min: number, max: number) {
 export default function AiSagaGeneratorPanel() {
   const router = useRouter();
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const promptRef = useRef<HTMLTextAreaElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -68,19 +68,7 @@ export default function AiSagaGeneratorPanel() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
-
+  useBodyScrollLock(isOpen);
   useModalFocus({
     isOpen,
     containerRef: dialogRef,
@@ -157,7 +145,6 @@ export default function AiSagaGeneratorPanel() {
   return (
     <>
       <button
-        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(true)}
         className="inline-flex h-11 w-fit items-center justify-center gap-2 rounded-full border-[2px] border-foreground bg-primary px-4 font-display text-sm font-bold text-primary-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

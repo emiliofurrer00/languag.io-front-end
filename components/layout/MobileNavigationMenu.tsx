@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 
 import { buildAuthContinuePath } from '@/lib/auth-flow';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useModalFocus } from '@/hooks/useModalFocus';
 import { cn } from '@/lib/utils';
 
@@ -80,7 +81,6 @@ function drawerToneClassName(isActive: boolean, variant: DrawerLink['variant']) 
 export function MobileNavigationMenu({ className, triggerClassName }: MobileNavigationMenuProps) {
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const pathname = usePathname();
@@ -91,18 +91,7 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
 
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
-  useEffect(() => {
-    if (!isMobileMenuOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isMobileMenuOpen]);
-
+  useBodyScrollLock(isMobileMenuOpen);
   useModalFocus({
     isOpen: isMobileMenuOpen,
     containerRef: drawerRef,
@@ -128,7 +117,6 @@ export function MobileNavigationMenu({ className, triggerClassName }: MobileNavi
   return (
     <div className={cn('inline-flex sm:hidden', className)}>
       <button
-        ref={triggerRef}
         type="button"
         className={cn(
           'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-[2px] border-foreground bg-secondary text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] transition-all',

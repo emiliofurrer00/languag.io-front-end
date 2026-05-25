@@ -1,9 +1,10 @@
-import { proxyAuthorizedDeckWrite, proxyDeckListRead } from './proxy';
+import { proxyAuthorizedApiRequest } from '@/app/api/proxy-authorized';
+import { proxyDeckListRead } from './proxy';
 
 export async function GET(request: Request) {
   return proxyDeckListRead(request);
 }
 
 export async function POST(request: Request) {
-  return proxyAuthorizedDeckWrite(request, '/decks', 'POST');
+  return proxyAuthorizedApiRequest(request, '/decks', 'POST');
 }

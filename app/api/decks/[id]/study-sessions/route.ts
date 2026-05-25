@@ -1,4 +1,4 @@
-import { proxyAuthorizedDeckWrite } from '../../proxy';
+import { proxyAuthorizedApiRequest } from '@/app/api/proxy-authorized';
 
 type StudySessionRouteProps = {
   params: Promise<{
@@ -8,5 +8,5 @@ type StudySessionRouteProps = {
 
 export async function POST(request: Request, { params }: StudySessionRouteProps) {
   const { id } = await params;
-  return proxyAuthorizedDeckWrite(request, `/decks/${id}/study-sessions`, 'POST');
+  return proxyAuthorizedApiRequest(request, `/decks/${id}/study-sessions`, 'POST');
 }

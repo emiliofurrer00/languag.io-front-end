@@ -1,13 +1,7 @@
 import { buildApiUrl } from '@/lib/api';
-import {
-  getMissingAudienceMessage,
-  getOptionalApiAccessToken,
-  getRequiredApiAccessToken,
-} from '@/lib/kinde-server';
-import { NextResponse } from 'next/server';
+import { getOptionalApiAccessToken } from '@/lib/kinde-server';
 import { buildBackendUnavailableResponse } from '../backend-unavailable';
-import { buildRejectedTokenResponse, proxyBackendResponse } from '../proxy-authorized';
-import { rejectCrossOriginMutation } from '../request-guards';
+import { proxyBackendResponse } from '../proxy-authorized';
 
 function appendQueryString(path: string, searchParams: URLSearchParams) {
   const queryString = searchParams.toString();
@@ -54,47 +48,5 @@ export async function proxyDeckListRead(request: Request) {
   }
 
   const response = await fetchDeckList(publicPath);
-  return proxyBackendResponse(response);
-}
-
-export async function proxyAuthorizedDeckWrite(
-  request: Request,
-  path: string,
-  method: 'POST' | 'PUT'
-) {
-  const crossOriginRejection = rejectCrossOriginMutation(request);
-  if (crossOriginRejection) {
-    return crossOriginRejection;
-  }
-
-  let accessToken: string;
-
-  try {
-    accessToken = await getRequiredApiAccessToken();
-  } catch {
-    return NextResponse.json({ message: getMissingAudienceMessage() }, { status: 401 });
-  }
-
-  const body = await request.text();
-  let response: Response;
-
-  try {
-    response = await fetch(buildApiUrl(path), {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: body || undefined,
-      cache: 'no-store',
-    });
-  } catch (error) {
-    response = buildBackendUnavailableResponse(error);
-  }
-
-  if (response.status === 401) {
-    return buildRejectedTokenResponse(accessToken);
-  }
-
   return proxyBackendResponse(response);
 }

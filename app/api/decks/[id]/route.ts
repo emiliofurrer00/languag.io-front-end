@@ -1,4 +1,4 @@
-import { proxyAuthorizedDeckWrite } from '../proxy';
+import { proxyAuthorizedApiRequest } from '@/app/api/proxy-authorized';
 
 type DeckRouteProps = {
   params: Promise<{
@@ -8,5 +8,5 @@ type DeckRouteProps = {
 
 export async function PUT(request: Request, { params }: DeckRouteProps) {
   const { id } = await params;
-  return proxyAuthorizedDeckWrite(request, `/decks/${id}`, 'PUT');
+  return proxyAuthorizedApiRequest(request, `/decks/${id}`, 'PUT');
 }

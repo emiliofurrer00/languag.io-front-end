@@ -8,22 +8,17 @@ import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useModalFocus } from '@/hooks/useModalFocus';
+import {
+  AI_GENERATION_DIFFICULTIES,
+  clampNumber,
+  type AiGenerationDifficulty,
+  type AiGenerationPhase,
+} from '@/lib/ai-generation';
 import { getApiErrorDisplayMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
-const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
 const minCardCount = 5;
 const maxCardCount = 20;
-
-type GenerationPhase = 'idle' | 'pending' | 'completed' | 'failed';
-
-function clampNumber(value: number, min: number, max: number) {
-  if (!Number.isFinite(value)) {
-    return min;
-  }
-
-  return Math.min(max, Math.max(min, value));
-}
 
 export default function AiDeckGeneratorPanel() {
   const router = useRouter();
@@ -34,11 +29,13 @@ export default function AiDeckGeneratorPanel() {
   const [prompt, setPrompt] = useState('');
   const [targetLanguage, setTargetLanguage] = useState('');
   const [nativeLanguage, setNativeLanguage] = useState('English');
-  const [difficulty, setDifficulty] = useState(difficulties[0]);
+  const [difficulty, setDifficulty] = useState<AiGenerationDifficulty>(
+    AI_GENERATION_DIFFICULTIES[0]
+  );
   const [cardCount, setCardCount] = useState(12);
   const [multiChoiceCount, setMultiChoiceCount] = useState(0);
   const [includeAudio, setIncludeAudio] = useState(true);
-  const [phase, setPhase] = useState<GenerationPhase>('idle');
+  const [phase, setPhase] = useState<AiGenerationPhase>('idle');
   const [statusText, setStatusText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const closePanel = useCallback(() => setIsOpen(false), []);
@@ -233,7 +230,7 @@ export default function AiDeckGeneratorPanel() {
 
               <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_10rem_auto] sm:items-end">
                 <div className="flex flex-wrap gap-2">
-                  {difficulties.map((option) => (
+                  {AI_GENERATION_DIFFICULTIES.map((option) => (
                     <button
                       key={option}
                       type="button"

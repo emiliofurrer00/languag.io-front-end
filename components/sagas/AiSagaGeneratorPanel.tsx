@@ -8,24 +8,19 @@ import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useModalFocus } from '@/hooks/useModalFocus';
+import {
+  AI_GENERATION_DIFFICULTIES,
+  clampNumber,
+  type AiGenerationDifficulty,
+  type AiGenerationPhase,
+} from '@/lib/ai-generation';
 import { getApiErrorDisplayMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
-const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
 const minDeckCount = 2;
 const maxDeckCount = 6;
 const minCardsPerDeck = 5;
 const maxCardsPerDeck = 15;
-
-type GenerationPhase = 'idle' | 'pending' | 'completed' | 'failed';
-
-function clampNumber(value: number, min: number, max: number) {
-  if (!Number.isFinite(value)) {
-    return min;
-  }
-
-  return Math.min(max, Math.max(min, value));
-}
 
 export default function AiSagaGeneratorPanel() {
   const router = useRouter();
@@ -36,12 +31,14 @@ export default function AiSagaGeneratorPanel() {
   const [prompt, setPrompt] = useState('');
   const [targetLanguage, setTargetLanguage] = useState('');
   const [nativeLanguage, setNativeLanguage] = useState('English');
-  const [difficulty, setDifficulty] = useState(difficulties[0]);
+  const [difficulty, setDifficulty] = useState<AiGenerationDifficulty>(
+    AI_GENERATION_DIFFICULTIES[0]
+  );
   const [deckCount, setDeckCount] = useState(3);
   const [cardsPerDeck, setCardsPerDeck] = useState(8);
   const [multiChoiceCountPerDeck, setMultiChoiceCountPerDeck] = useState(0);
   const [includeAudio, setIncludeAudio] = useState(false);
-  const [phase, setPhase] = useState<GenerationPhase>('idle');
+  const [phase, setPhase] = useState<AiGenerationPhase>('idle');
   const [statusText, setStatusText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const closePanel = useCallback(() => setIsOpen(false), []);
@@ -239,7 +236,7 @@ export default function AiSagaGeneratorPanel() {
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_7rem_8rem] lg:items-end">
                 <div className="flex flex-wrap gap-2">
-                  {difficulties.map((option) => (
+                  {AI_GENERATION_DIFFICULTIES.map((option) => (
                     <button
                       key={option}
                       type="button"

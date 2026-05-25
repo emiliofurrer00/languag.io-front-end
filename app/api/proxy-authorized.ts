@@ -25,7 +25,7 @@ function buildUnauthorizedResponse() {
   );
 }
 
-function buildRejectedTokenResponse(accessToken: string) {
+export function buildRejectedTokenResponse(accessToken: string) {
   const diagnostics = readAccessTokenDiagnostics(accessToken);
 
   console.warn('The backend rejected the Kinde access token.', {
@@ -43,6 +43,20 @@ function buildRejectedTokenResponse(accessToken: string) {
     },
     { status: 401 }
   );
+}
+
+export async function proxyBackendResponse(response: Response) {
+  if (response.status === 204) {
+    return new Response(null, { status: 204 });
+  }
+
+  const text = await response.text();
+  const contentType = response.headers.get('Content-Type');
+
+  return new Response(text, {
+    status: response.status,
+    headers: contentType ? { 'Content-Type': contentType } : undefined,
+  });
 }
 
 export async function proxyAuthorizedApiRequest(
@@ -90,15 +104,5 @@ export async function proxyAuthorizedApiRequest(
     return buildRejectedTokenResponse(accessToken);
   }
 
-  if (response.status === 204) {
-    return new Response(null, { status: 204 });
-  }
-
-  const text = await response.text();
-  const contentType = response.headers.get('Content-Type');
-
-  return new Response(text, {
-    status: response.status,
-    headers: contentType ? { 'Content-Type': contentType } : undefined,
-  });
+  return proxyBackendResponse(response);
 }

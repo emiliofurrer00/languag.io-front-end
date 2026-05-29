@@ -90,13 +90,13 @@ export default function StudyRecommendations({ recommendations }: StudyRecommend
   const totalReviewLoad = totalDueCards + totalNewCards + totalLapsedCards;
 
   return (
-    <section aria-labelledby="study-next-title" className="mb-8">
+    <section aria-labelledby="study-next-title" className="mb-8 min-w-0">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-[2px] border-foreground bg-primary shadow-[3px_3px_0_0_hsl(var(--foreground))]">
             <BookOpenCheck className="h-5 w-5" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-bold uppercase text-muted-foreground">Daily queue</p>
             <h2 id="study-next-title" className="font-display text-2xl font-bold">
               Study next
@@ -104,67 +104,69 @@ export default function StudyRecommendations({ recommendations }: StudyRecommend
           </div>
         </div>
 
-        <span className="inline-flex w-fit items-center gap-2 rounded-lg border-[2px] border-foreground bg-background px-3 py-2 text-sm font-bold shadow-[3px_3px_0_0_hsl(var(--foreground))]">
-          <Flame className="h-4 w-4 text-neo-coral" />
-          {totalReviewLoad > 0 ? pluralize(totalReviewLoad, 'card') : 'Queue clear'}
+        <span className="inline-flex max-w-full items-center gap-2 self-start rounded-lg border-[2px] border-foreground bg-background px-3 py-2 text-sm font-bold shadow-[3px_3px_0_0_hsl(var(--foreground))] sm:self-auto">
+          <Flame className="h-4 w-4 shrink-0 text-neo-coral" />
+          <span className="min-w-0 truncate">
+            {totalReviewLoad > 0 ? pluralize(totalReviewLoad, 'card') : 'Queue clear'}
+          </span>
         </span>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.85fr)]">
+      <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.85fr)]">
         <Link
           href={`/study/${primaryRecommendation.deckId}`}
           className={cn(
-            'group relative isolate min-h-[16rem] overflow-hidden rounded-lg border-[3px] border-foreground shadow-[6px_6px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4',
+            'group relative isolate min-w-0 overflow-hidden rounded-lg border-[3px] border-foreground shadow-[6px_6px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 sm:min-h-[16rem]',
             getNeoColorClass(primaryRecommendation.color, 'yellow')
           )}
         >
           <div className="absolute inset-y-0 right-0 hidden w-1/3 border-l-[3px] border-foreground/70 bg-background/25 lg:block" />
           <div className="relative flex h-full flex-col justify-between gap-6 p-5 sm:p-6">
-            <div>
+            <div className="min-w-0">
               <div className="mb-4 flex flex-wrap items-center gap-2">
-                <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border-[2px] border-foreground bg-background/85 px-3 py-1.5 text-xs font-bold">
+                <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-lg border-[2px] border-foreground bg-background/85 px-3 py-1.5 text-xs font-bold">
                   <Target className="h-3.5 w-3.5 shrink-0" />
                   <span className="truncate">
                     {formatNextDue(primaryRecommendation.nextDueAtUtc)}
                   </span>
                 </span>
-                <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border-[2px] border-foreground bg-background/85 px-3 py-1.5 text-xs font-bold">
+                <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-lg border-[2px] border-foreground bg-background/85 px-3 py-1.5 text-xs font-bold">
                   <Sparkles className="h-3.5 w-3.5 shrink-0" />
                   <span className="truncate">{getFocusLabel(primaryRecommendation)}</span>
                 </span>
               </div>
 
-              <h3 className="max-w-2xl text-balance font-display text-3xl font-bold leading-tight">
+              <h3 className="max-w-2xl font-display text-2xl font-bold leading-tight [overflow-wrap:anywhere] sm:text-3xl">
                 {primaryRecommendation.title || 'Untitled Deck'}
               </h3>
               {primaryRecommendation.description ? (
-                <p className="mt-3 max-w-2xl line-clamp-2 text-sm font-medium">
+                <p className="mt-3 max-w-2xl break-words line-clamp-2 text-sm font-medium">
                   {primaryRecommendation.description}
                 </p>
               ) : null}
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-bold">
-                <span className="inline-flex items-center gap-1.5">
-                  <Clock className="h-4 w-4" />
+            <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex min-w-0 flex-wrap gap-x-5 gap-y-2 text-sm font-bold">
+                <span className="inline-flex min-w-0 items-center gap-1.5">
+                  <Clock className="h-4 w-4 shrink-0" />
                   {primaryRecommendation.dueCards} due
                 </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4" />
+                <span className="inline-flex min-w-0 items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 shrink-0" />
                   {primaryRecommendation.newCards} new
                 </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <RotateCcw className="h-4 w-4" />
+                <span className="inline-flex min-w-0 items-center gap-1.5">
+                  <RotateCcw className="h-4 w-4 shrink-0" />
                   {primaryRecommendation.lapsedCards} lapsed
                 </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Layers className="h-4 w-4" />
+                <span className="inline-flex min-w-0 items-center gap-1.5">
+                  <Layers className="h-4 w-4 shrink-0" />
                   {pluralize(primaryRecommendation.totalCards, 'card')}
                 </span>
               </div>
 
-              <span className="inline-flex w-fit items-center gap-2 rounded-lg border-[2px] border-foreground bg-foreground px-4 py-2 font-display text-sm font-bold text-background shadow-[3px_3px_0_0_hsl(var(--background))] transition-transform group-hover:translate-x-1">
+              <span className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg border-[2px] border-foreground bg-foreground px-4 py-2 font-display text-sm font-bold text-background shadow-[3px_3px_0_0_hsl(var(--background))] transition-transform group-hover:translate-x-1 sm:w-fit">
                 Start
                 <ArrowRight className="h-4 w-4" />
               </span>
@@ -172,32 +174,38 @@ export default function StudyRecommendations({ recommendations }: StudyRecommend
           </div>
         </Link>
 
-        <div className="rounded-lg border-[3px] border-foreground bg-background p-4 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
+        <div className="min-w-0 overflow-hidden rounded-lg border-[3px] border-foreground bg-background p-4 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+          <div className="mb-4 flex min-w-0 flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
               <h3 className="font-display text-lg font-bold">Today</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="truncate text-sm text-muted-foreground">
                 {formatAccuracy(primaryRecommendation.accuracy)}
               </p>
             </div>
-            <span className="inline-flex items-center gap-1 rounded-lg border-[2px] border-foreground bg-neo-yellow px-2.5 py-1 text-xs font-bold">
-              <CalendarClock className="h-3.5 w-3.5" />
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-lg border-[2px] border-foreground bg-neo-yellow px-2.5 py-1 text-xs font-bold">
+              <CalendarClock className="h-3.5 w-3.5 shrink-0" />
               Top {displayedRecommendations.length}
             </span>
           </div>
 
-          <dl className="grid grid-cols-3 border-y-[2px] border-foreground py-3 text-center">
-            <div>
+          <dl className="grid grid-cols-[repeat(3,minmax(0,1fr))] border-y-[2px] border-foreground py-3 text-center">
+            <div className="min-w-0 px-1">
               <dt className="text-[11px] font-bold uppercase text-muted-foreground">Due</dt>
-              <dd className="font-display text-2xl font-bold">{totalDueCards}</dd>
+              <dd className="font-display text-xl font-bold [overflow-wrap:anywhere] sm:text-2xl">
+                {totalDueCards}
+              </dd>
             </div>
-            <div className="border-x-[2px] border-foreground">
+            <div className="min-w-0 border-x-[2px] border-foreground px-1">
               <dt className="text-[11px] font-bold uppercase text-muted-foreground">New</dt>
-              <dd className="font-display text-2xl font-bold">{totalNewCards}</dd>
+              <dd className="font-display text-xl font-bold [overflow-wrap:anywhere] sm:text-2xl">
+                {totalNewCards}
+              </dd>
             </div>
-            <div>
+            <div className="min-w-0 px-1">
               <dt className="text-[11px] font-bold uppercase text-muted-foreground">Lapsed</dt>
-              <dd className="font-display text-2xl font-bold">{totalLapsedCards}</dd>
+              <dd className="font-display text-xl font-bold [overflow-wrap:anywhere] sm:text-2xl">
+                {totalLapsedCards}
+              </dd>
             </div>
           </dl>
 
@@ -207,7 +215,7 @@ export default function StudyRecommendations({ recommendations }: StudyRecommend
                 <Link
                   key={recommendation.deckId}
                   href={`/study/${recommendation.deckId}`}
-                  className="group flex items-center justify-between gap-3 rounded-lg border-[2px] border-foreground bg-secondary px-3 py-3 transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-secondary/90 hover:shadow-[3px_3px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="group flex min-w-0 items-center justify-between gap-3 rounded-lg border-[2px] border-foreground bg-secondary px-3 py-3 transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-secondary/90 hover:shadow-[3px_3px_0_0_hsl(var(--foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <span
                     className={cn(

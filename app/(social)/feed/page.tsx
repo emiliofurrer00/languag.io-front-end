@@ -319,21 +319,23 @@ export default async function Feed() {
                 <Link key={deck.id} href={`/study/${deck.id}`} className="block">
                   <NeoCard
                     size="sm"
-                    className="cursor-pointer p-4 transition-transform hover:-translate-y-1 hover:translate-x-1"
+                    className="cursor-pointer overflow-hidden p-4 transition-transform hover:-translate-y-1 hover:translate-x-1"
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                       <div
                         className={cn(
-                          'flex h-16 w-14 shrink-0 -rotate-3 items-center justify-center rounded-lg border-[2px] border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))]',
+                          'flex h-14 w-12 shrink-0 -rotate-3 items-center justify-center rounded-lg border-[2px] border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] sm:h-16 sm:w-14',
                           deck.color || feedAccentColors[index % feedAccentColors.length]
                         )}
                       >
                         <BookOpen className="h-6 w-6" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="mb-0.5 flex items-center gap-2">
-                          <p className="truncate font-display text-base font-bold">{deck.title}</p>
-                          <span className="rounded-full border border-foreground bg-neo-yellow px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+                        <div className="mb-0.5 flex min-w-0 items-center gap-2">
+                          <p className="min-w-0 flex-1 truncate font-display text-base font-bold">
+                            {deck.title}
+                          </p>
+                          <span className="shrink-0 whitespace-nowrap rounded-full border border-foreground bg-neo-yellow px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-wider">
                             {deck.lastStudied}
                           </span>
                         </div>
@@ -343,7 +345,7 @@ export default async function Feed() {
                             value={deck.progress}
                             className="h-2 flex-1 rounded-full border border-foreground/30"
                           />
-                          <span className="font-display text-xs font-bold">
+                          <span className="shrink-0 font-display text-xs font-bold">
                             {Math.round(deck.progress)}%
                           </span>
                         </div>

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { DM_Sans, Space_Grotesk } from 'next/font/google';
 import { AuthProvider } from './AuthProvider';
+import { PostHogProvider } from './providers/PostHogProvider';
 import { AppChrome } from '@/components/layout/AppChrome';
 import { getSiteUrl, siteConfig } from '@/lib/seo';
 import './globals.css';
+import { PostHogIdentify } from '@/lib/posthog-identify';
 
 const dmSans = DM_Sans({
   variable: '--font-dm-sans',
@@ -62,11 +64,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${spaceGrotesk.variable} h-full`}>
       <body className="">
-        <AuthProvider>
-          <AppChrome>
-            <div className="h-full bg-neutral-50">{children}</div>
-          </AppChrome>
-        </AuthProvider>
+        <PostHogProvider>
+          <AuthProvider>
+            <PostHogIdentify />
+            <AppChrome>
+              <div className="h-full bg-neutral-50">{children}</div>
+            </AppChrome>
+          </AuthProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

@@ -47,3 +47,4 @@ next-env.d.ts
 # local Codex / agent workspace artifacts
 /.agents/
 /skills-lock.json
+.env.local
